@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="ad.size" content="width=300,height=600">
+    <title></title>
+
+    <!-- Configuration (load first to set title) -->
+    <script src="config.js"></script>
+
+    <!-- Google Ad Manager ClickTag Compliance -->
+    <script type="text/javascript">
+        var clickTag = "http://www.google.com";
+
+        // Set document title from config
+        if (window.AD_CONFIG?.meta?.adTitle) {
+            document.title = window.AD_CONFIG.meta.adTitle;
+        }
+    </script>
+
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="output.css">
+</head>
+<body>
+
+    <!-- Ad Container - 300x600 -->
+    <div id="ad-container" class="ad-container initial-motion">
+
+        <!-- Persistent brand header -->
+        <header class="header">
+            <img id="brand-logo" class="brand-logo" src="" alt="">
+            <img id="header-circle" class="header-circle" src="" alt="">
+        </header>
+
+        <!-- Active recipe card -->
+        <main id="recipe-card" class="recipe-card" data-state="breakfast">
+
+            <!-- Recipe hero -->
+            <div class="recipe-media">
+                <img id="recipe-hero" class="recipe-hero" src="" alt="">
+                <div class="meal-tag">
+                    <span id="meal-dot" class="meal-dot"></span>
+                    <span id="meal-label" class="meal-label"></span>
+                </div>
+            </div>
+
+            <!-- Recipe summary -->
+            <div class="recipe-summary">
+                <h1 id="recipe-title" class="recipe-title"></h1>
+                <p id="recipe-description" class="recipe-description"></p>
+            </div>
+
+            <!-- Recipe metadata -->
+            <div class="recipe-meta">
+                <span id="recipe-time" class="meta-pill"></span>
+                <span id="recipe-serves" class="meta-pill"></span>
+                <span id="recipe-ingredient-count" class="meta-pill meta-pill-ingredients"></span>
+            </div>
+
+            <!-- Ingredient section label -->
+            <h2 id="ingredient-heading" class="section-heading"></h2>
+
+            <!-- Scrollable ingredient cards -->
+            <div class="ingredient-container">
+                <div id="ingredient-viewport" class="ingredient-viewport" tabindex="0" aria-labelledby="ingredient-heading">
+                    <div id="ingredient-list" class="ingredient-list"></div>
+                </div>
+                <div id="scrollbar-track" class="scrollbar-track">
+                    <div id="scrollbar-thumb" class="scrollbar-thumb" role="scrollbar" tabindex="0" data-action="drag-ingredient-scrollbar" aria-controls="ingredient-viewport" aria-orientation="vertical" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></div>
+                </div>
+            </div>
+
+            <!-- Full recipe CTA -->
+            <button id="full-recipe-button" class="full-recipe-button" type="button" data-action="view-full-recipe">
+                <span id="full-recipe-label"></span>
+            </button>
+
+        </main>
+
+        <!-- Recipe state navigation -->
+        <nav class="meal-navigation" aria-labelledby="meal-navigation-heading">
+            <h2 id="meal-navigation-heading" class="section-heading"></h2>
+            <div id="meal-navigation-list" class="meal-navigation-list"></div>
+        </nav>
+
+    </div>
+
+    <!-- Main Application Script -->
+    <script>
+        // Global state
+        const config = window.AD_CONFIG;
+        let currentRecipeIndex = 0;
+        let hasTrackedScrollByRecipe = new Set();
+        let isRecipeTransitioning = false;
+        let isInitialRender = true;
+        let initialMotionTimer = null;
+        let isScrollbarDragging = false;
+        let scrollbarDragStartY = 0;
+        let scrollbarDragStartTop = 0;
+        let autoAdvanceTimer = null;
+        let isAdHovered = false;
+        let hasUserInteracted = false;
+        const reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+        // Initialization
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeFonts();
+            initializeColors();
+            initializeContent();
+            initializeIngredientScroll();
+            initializeButtons();
+            preloadRecipeAssets();
+            initializeMotion();
+            initializeAutoAdvance();
+
+            track('ad_loaded');
+        });
+
+        /**
+         * Initialize CSS color variables from config
+         * Converts config.theme.colors to CSS custom properties
+         */
+        function initializeColors() {
+            const colors = config.theme.colors;
+            const root = document.documentElement;
+
+            Object.keys(colors).forEach(key => {
+                const cssVarName = '--color-' + key.replace(/([A-Z])/g, '-$1').toLowerCase();
+                root.style.setProperty(cssVarName, colors[key]);
+            });
+
+            console.log('[COLORS] Initialized', Object.keys(colors).length, 'color variables');
+        }
+
+        /**
+         * Load custom fonts from config
+         * Supports Google Fonts, local assets, and CDN sources
+         */
+        function initializeFonts() {
+            if (!config.theme.typography || !config.theme.typography.customFonts) {
+                console.log('[FONTS] No custom fonts to load');
+                return;
+            }
+
+            const typography = config.theme.typography;
+            const fonts = typography.customFonts;
+            const root = document.documentElement;
+
+            if (typography.fontPrimary) {
+                root.style.setProperty('--brand-font-primary', typography.fontPrimary);
+            }
+            if (typography.fontPrimaryBold) {
+                root.style.setProperty('--brand-font-primary-bold', typography.fontPrimaryBold);
+            }
+            if (typography.fontSecondary) {
+                root.style.setProperty('--brand-font-secondary', typography.fontSecondary);
+            }
+
+            fonts.forEach(font => {
+                if (font.source === 'google' && font.url) {
+                    const link = document.createElement('link');
+                    link.rel = 'stylesheet';
+                    link.href = font.url;
+                    document.head.appendChild(link);
+                } else if ((font.source === 'local' || font.source === 'cdn') && font.sources) {
+                    const srcValues = font.sources.map(src =>
+                        `url('${src.url}') format('${src.format}')`
+                    ).join(',\n         ');
+                    const fontFaceCSS = `
+@font-face {
+    font-family: '${font.family}';
+    src: ${srcValues};
+    font-weight: ${font.weight || 'normal'};
+    font-style: ${font.style || 'normal'};
+    font-display: ${font.display || 'swap'};
+}
+`;
+                    const style = document.createElement('style');
+                    style.textContent = fontFaceCSS;
+                    document.head.appendChild(style);
+                    console.log('[FONTS] Injected @font-face for:', font.family);
+                }
+            });
+
+            console.log('[FONTS] Loaded', fonts.length, 'custom font(s)');
+        }
+
+        /**
+         * Populate persistent content and render the initial recipe state
+         */
+        function initializeContent() {
+            const logo = document.getElementById('brand-logo');
+            const headerCircle = document.getElementById('header-circle');
+            const ingredientHeading = document.getElementById('ingredient-heading');
+            const navigationHeading = document.getElementById('meal-navigation-heading');
+            const fullRecipeLabel = document.getElementById('full-recipe-label');
+            const scrollbarThumb = document.getElementById('scrollbar-thumb');
+            const initialIndex = findRecipeIndexById(config.content.initialRecipeId);
+
+            logo.src = config.content.logo.src;
+            logo.alt = config.content.logo.alt;
+            headerCircle.src = config.theme.assets.circleDecor;
+            ingredientHeading.textContent = config.content.labels.ingredientSection;
+            navigationHeading.textContent = config.content.labels.moreIdeasSection;
+            fullRecipeLabel.textContent = config.content.buttons.fullRecipe.text;
+            scrollbarThumb.setAttribute('aria-label', config.content.labels.ingredientScrollbar);
+            currentRecipeIndex = initialIndex === -1 ? 0 : initialIndex;
+
+            initializeRecipeNavigation();
+            renderRecipe(currentRecipeIndex);
+            isInitialRender = false;
+            console.log('[CONTENT] Initialized');
+        }
+
+        /**
+         * Find a recipe index from its configured identifier
+         * @param {string} recipeId - Recipe identifier to locate
+         * @returns {number} Matching recipe index or -1 when unavailable
+         */
+        function findRecipeIndexById(recipeId) {
+            return config.content.recipes.findIndex(function(recipe) {
+                return recipe.id === recipeId;
+            });
+        }
+
+        /**
+         * Preload recipe and ingredient imagery after first paint
+         * Keeps state transitions responsive without delaying initial rendering
+         */
+        function preloadRecipeAssets() {
+            const imageUrls = new Set();
+
+            config.content.recipes.forEach(function(recipe) {
+                imageUrls.add(recipe.heroImage);
+                recipe.ingredients.forEach(function(ingredient) {
+                    imageUrls.add(ingredient.image);
+                });
+            });
+
+            /**
+             * Begin deferred image requests without blocking first paint
+             */
+            function preloadImages() {
+                imageUrls.forEach(function(url) {
+                    const image = new Image();
+                    image.decoding = 'async';
+                    image.src = url;
+                });
+                console.log('[MEDIA] Preloaded', imageUrls.size, 'recipe assets');
+            }
+
+            if ('requestIdleCallback' in window) {
+                window.requestIdleCallback(preloadImages, { timeout: 1200 });
+            } else {
+                window.setTimeout(preloadImages, 250);
+            }
+        }
+
+        /**
+         * Retire initial-load classes after the entrance timeline completes
+         */
+        function completeInitialMotion() {
+            if (initialMotionTimer !== null) {
+                window.clearTimeout(initialMotionTimer);
+                initialMotionTimer = null;
+            }
+
+            document.querySelectorAll('.initial-motion').forEach(function(element) {
+                element.classList.remove('initial-motion');
+            });
+        }
+
+        /**
+         * Initialize the one-time entrance timeline
+         */
+        function initializeMotion() {
+            const entranceDurationMs = reducedMotionQuery.matches ? 0 : 1200;
+            initialMotionTimer = window.setTimeout(completeInitialMotion, entranceDurationMs);
+            console.log('[MOTION] Initialized entrance timeline');
+        }
+
+        /**
+         * Build the recipe navigation from configuration
+         */
+        function initializeRecipeNavigation() {
+            const navigationList = document.getElementById('meal-navigation-list');
+            navigationList.textContent = '';
+
+            config.content.recipes.forEach(function(recipe, index) {
+                const button = document.createElement('button');
+                const thumbnail = document.createElement('img');
+                const copy = document.createElement('span');
+                const meal = document.createElement('span');
+                const title = document.createElement('span');
+
+                button.type = 'button';
+                button.className = 'meal-navigation-button';
+                if (isInitialRender) {
+                    button.classList.add('initial-motion');
+                }
+                button.dataset.action = 'select-recipe';
+                button.dataset.recipeIndex = String(index);
+                button.dataset.mealTheme = recipe.mealTheme;
+                button.style.setProperty('--navigation-index', index);
+                button.setAttribute('aria-label', 'Show ' + recipe.title);
+
+                thumbnail.className = 'meal-navigation-image';
+                thumbnail.src = recipe.heroImage;
+                thumbnail.alt = '';
+
+                copy.className = 'meal-navigation-copy';
+                meal.className = 'meal-navigation-label';
+                meal.textContent = recipe.meal;
+                title.className = 'meal-navigation-title';
+                title.textContent = recipe.navTitle;
+
+                copy.appendChild(meal);
+                copy.appendChild(title);
+                button.appendChild(thumbnail);
+                button.appendChild(copy);
+                button.addEventListener('click', function() {
+                    selectRecipe(index);
+                });
+                navigationList.appendChild(button);
+            });
+
+            updateRecipeNavigation();
+            console.log('[NAVIGATION] Initialized recipe selectors');
+        }
+
+        /**
+         * Render the complete active recipe state
+         * @param {number} index - Recipe index to display
+         */
+        function renderRecipe(index) {
+            const recipe = config.content.recipes[index];
+            const card = document.getElementById('recipe-card');
+            const hero = document.getElementById('recipe-hero');
+            const viewport = document.getElementById('ingredient-viewport');
+
+            card.dataset.state = recipe.id;
+            card.dataset.mealTheme = recipe.mealTheme;
+            hero.src = recipe.heroImage;
+            hero.alt = recipe.heroAlt;
+            hero.style.objectPosition = recipe.heroPosition;
+            document.getElementById('meal-label').textContent = recipe.meal;
+            document.getElementById('recipe-title').textContent = recipe.title;
+            document.getElementById('recipe-description').textContent = recipe.description;
+            document.getElementById('recipe-time').textContent = recipe.time;
+            document.getElementById('recipe-serves').textContent = recipe.serves;
+            document.getElementById('recipe-ingredient-count').textContent = recipe.ingredientCount;
+            document.getElementById('full-recipe-button').setAttribute('aria-label', config.content.buttons.fullRecipe.text + ': ' + recipe.title);
+
+            renderIngredients(recipe);
+            viewport.scrollTop = 0;
+            updateScrollbar();
+            updateRecipeNavigation();
+        }
+
+        /**
+         * Render ingredient cards for the active recipe
+         * @param {Object} recipe - Active recipe configuration
+         */
+        function renderIngredients(recipe) {
+            const ingredientList = document.getElementById('ingredient-list');
+            ingredientList.textContent = '';
+
+            recipe.ingredients.forEach(function(ingredient, index) {
+                ingredientList.appendChild(createIngredientCard(ingredient, index));
+            });
+        }
+
+        /**
+         * Create one ingredient card with a tracked external action
+         * @param {Object} ingredient - Ingredient configuration
+         * @param {number} ingredientIndex - Ingredient position in active recipe
+         * @returns {HTMLElement} Configured ingredient card
+         */
+        function createIngredientCard(ingredient, ingredientIndex) {
+            const card = document.createElement('article');
+            const imageStage = document.createElement('div');
+            const image = document.createElement('img');
+            const copy = document.createElement('div');
+            const amount = document.createElement('span');
+            const name = document.createElement('span');
+            const button = document.createElement('button');
+
+            card.className = 'ingredient-card';
+            if (isInitialRender) {
+                card.classList.add('initial-motion');
+            }
+            card.style.setProperty('--ingredient-index', ingredientIndex);
+            imageStage.className = 'ingredient-image-stage';
+            image.className = 'ingredient-image';
+            image.src = ingredient.image;
+            image.alt = ingredient.alt;
+            copy.className = 'ingredient-copy';
+            amount.className = 'ingredient-amount';
+            amount.textContent = ingredient.amount;
+            name.className = 'ingredient-name';
+            name.textContent = ingredient.name;
+            button.type = 'button';
+            button.className = 'ingredient-shop-button';
+            button.dataset.action = 'shop-ingredient';
+            button.dataset.ingredientIndex = String(ingredientIndex);
+            button.textContent = config.content.buttons.ingredientShop.text;
+            button.setAttribute('aria-label', config.content.buttons.ingredientShop.text + ': ' + ingredient.name);
+
+            button.addEventListener('click', function() {
+                track('ingredient_shop_clicked', {
+                    recipe_id: config.content.recipes[currentRecipeIndex].id,
+                    ingredient_index: ingredientIndex + 1,
+                    ingredient_name: ingredient.name,
+                    url: ingredient.shopUrl
+                });
+                openExternalUrl(ingredient.shopUrl);
+            });
+
+            imageStage.appendChild(image);
+            copy.appendChild(amount);
+            copy.appendChild(name);
+            card.appendChild(imageStage);
+            card.appendChild(copy);
+            card.appendChild(button);
+            return card;
+        }
+
+        /**
+         * Update selected navigation treatment and accessibility state
+         */
+        function updateRecipeNavigation() {
+            const buttons = document.querySelectorAll('.meal-navigation-button');
+
+            buttons.forEach(function(button, index) {
+                const isSelected = index === currentRecipeIndex;
+                button.classList.toggle('is-active', isSelected);
+                button.setAttribute('aria-pressed', String(isSelected));
+            });
+        }
+
+        /**
+         * Switch the complete recipe state from a navigation selection
+         * @param {number} index - Recipe index to select
+         * @param {string} source - Selection source for analytics context
+         */
+        function selectRecipe(index, source = 'user') {
+            if (index === currentRecipeIndex || !config.content.recipes[index] || isRecipeTransitioning) {
+                return;
+            }
+
+            const previousRecipe = config.content.recipes[currentRecipeIndex];
+            const nextRecipe = config.content.recipes[index];
+
+            completeInitialMotion();
+            const card = document.getElementById('recipe-card');
+            const transitionOutMs = reducedMotionQuery.matches ? 0 : 170;
+            const transitionInMs = reducedMotionQuery.matches ? 0 : 430;
+
+            isRecipeTransitioning = true;
+            card.classList.remove('is-state-entering');
+            card.classList.add('is-state-leaving');
+
+            track('recipe_selected', {
+                from_recipe: previousRecipe.id,
+                to_recipe: nextRecipe.id,
+                recipe_index: index + 1,
+                selection_source: source
+            });
+
+            window.setTimeout(function() {
+                currentRecipeIndex = index;
+                renderRecipe(index);
+                card.classList.remove('is-state-leaving');
+                void card.offsetWidth;
+                card.classList.add('is-state-entering');
+
+                window.setTimeout(function() {
+                    card.classList.remove('is-state-entering');
+                    isRecipeTransitioning = false;
+                }, transitionInMs);
+            }, transitionOutMs);
+
+            console.log('[STATE] Changed from', previousRecipe.id, 'to', nextRecipe.id);
+        }
+
+        /**
+         * Initialize ingredient scroll tracking and thumb synchronization
+         */
+        function initializeIngredientScroll() {
+            const viewport = document.getElementById('ingredient-viewport');
+            const track = document.getElementById('scrollbar-track');
+            const thumb = document.getElementById('scrollbar-thumb');
+
+            viewport.addEventListener('scroll', handleIngredientScroll, { passive: true });
+            track.addEventListener('pointerdown', handleScrollbarTrackPointerDown);
+            thumb.addEventListener('pointerdown', handleScrollbarPointerDown);
+            thumb.addEventListener('pointermove', handleScrollbarPointerMove);
+            thumb.addEventListener('pointerup', handleScrollbarPointerUp);
+            thumb.addEventListener('pointercancel', handleScrollbarPointerUp);
+            thumb.addEventListener('keydown', handleScrollbarKeydown);
+            console.log('[SCROLL] Initialized ingredient viewport and draggable thumb');
+        }
+
+        /**
+         * Convert a thumb position into ingredient viewport scroll position
+         * @param {number} thumbTop - Requested thumb offset from the track top
+         */
+        function setScrollFromThumbPosition(thumbTop) {
+            const viewport = document.getElementById('ingredient-viewport');
+            const track = document.getElementById('scrollbar-track');
+            const thumb = document.getElementById('scrollbar-thumb');
+            const maxThumbTravel = track.clientHeight - thumb.clientHeight;
+            const maxScroll = viewport.scrollHeight - viewport.clientHeight;
+            const clampedTop = Math.max(0, Math.min(thumbTop, maxThumbTravel));
+            const progress = maxThumbTravel > 0 ? clampedTop / maxThumbTravel : 0;
+
+            viewport.scrollTop = progress * maxScroll;
+        }
+
+        /**
+         * Begin a scrollbar thumb drag with pointer capture
+         * @param {PointerEvent} event - Pointer press on the scrollbar thumb
+         */
+        function handleScrollbarPointerDown(event) {
+            if (event.pointerType === 'mouse' && event.button !== 0) {
+                return;
+            }
+
+            const viewport = document.getElementById('ingredient-viewport');
+            const track = document.getElementById('scrollbar-track');
+            const thumb = document.getElementById('scrollbar-thumb');
+            const maxScroll = viewport.scrollHeight - viewport.clientHeight;
+            const maxThumbTravel = track.clientHeight - thumb.clientHeight;
+            const progress = maxScroll > 0 ? viewport.scrollTop / maxScroll : 0;
+
+            event.preventDefault();
+            event.stopPropagation();
+            isScrollbarDragging = true;
+            scrollbarDragStartY = event.clientY;
+            scrollbarDragStartTop = progress * maxThumbTravel;
+            thumb.classList.add('is-dragging');
+            thumb.setPointerCapture(event.pointerId);
+        }
+
+        /**
+         * Update viewport scroll while the thumb is being dragged
+         * @param {PointerEvent} event - Captured pointer movement
+         */
+        function handleScrollbarPointerMove(event) {
+            if (!isScrollbarDragging) {
+                return;
+            }
+
+            event.preventDefault();
+            setScrollFromThumbPosition(scrollbarDragStartTop + event.clientY - scrollbarDragStartY);
+        }
+
+        /**
+         * Finish a scrollbar thumb drag and release pointer capture
+         * @param {PointerEvent} event - Pointer release or cancellation
+         */
+        function handleScrollbarPointerUp(event) {
+            if (!isScrollbarDragging) {
+                return;
+            }
+
+            const thumb = document.getElementById('scrollbar-thumb');
+            isScrollbarDragging = false;
+            thumb.classList.remove('is-dragging');
+            if (thumb.hasPointerCapture(event.pointerId)) {
+                thumb.releasePointerCapture(event.pointerId);
+            }
+        }
+
+        /**
+         * Jump the ingredient viewport toward a pressed scrollbar track position
+         * @param {PointerEvent} event - Pointer press on the scrollbar track
+         */
+        function handleScrollbarTrackPointerDown(event) {
+            const thumb = document.getElementById('scrollbar-thumb');
+            const track = document.getElementById('scrollbar-track');
+
+            if (event.target === thumb || thumb.contains(event.target)) {
+                return;
+            }
+
+            event.preventDefault();
+            const trackRect = track.getBoundingClientRect();
+            setScrollFromThumbPosition(event.clientY - trackRect.top - thumb.clientHeight / 2);
+        }
+
+        /**
+         * Support keyboard scrolling from the custom scrollbar thumb
+         * @param {KeyboardEvent} event - Keyboard input on the scrollbar thumb
+         */
+        function handleScrollbarKeydown(event) {
+            const viewport = document.getElementById('ingredient-viewport');
+            const cardStep = 54;
+            let nextScrollTop = viewport.scrollTop;
+
+            if (event.key === 'ArrowDown') {
+                nextScrollTop += cardStep;
+            } else if (event.key === 'ArrowUp') {
+                nextScrollTop -= cardStep;
+            } else if (event.key === 'PageDown') {
+                nextScrollTop += viewport.clientHeight;
+            } else if (event.key === 'PageUp') {
+                nextScrollTop -= viewport.clientHeight;
+            } else if (event.key === 'Home') {
+                nextScrollTop = 0;
+            } else if (event.key === 'End') {
+                nextScrollTop = viewport.scrollHeight;
+            } else {
+                return;
+            }
+
+            event.preventDefault();
+            viewport.scrollTop = nextScrollTop;
+        }
+
+        /**
+         * Synchronize the custom scrollbar and record first scroll per recipe
+         */
+        function handleIngredientScroll() {
+            const viewport = document.getElementById('ingredient-viewport');
+            const recipe = config.content.recipes[currentRecipeIndex];
+
+            updateScrollbar();
+            if (viewport.scrollTop > 0 && !hasTrackedScrollByRecipe.has(recipe.id)) {
+                hasTrackedScrollByRecipe.add(recipe.id);
+                track('ingredients_scrolled', {
+                    recipe_id: recipe.id,
+                    scroll_top: Math.round(viewport.scrollTop)
+                });
+            }
+        }
+
+        /**
+         * Position the designed custom scrollbar thumb from native scroll progress
+         */
+        function updateScrollbar() {
+            const viewport = document.getElementById('ingredient-viewport');
+            const thumb = document.getElementById('scrollbar-thumb');
+            const track = thumb.parentElement;
+            const maxScroll = viewport.scrollHeight - viewport.clientHeight;
+            const maxThumbTravel = track.clientHeight - thumb.clientHeight;
+            const progress = maxScroll > 0 ? viewport.scrollTop / maxScroll : 0;
+
+            thumb.style.transform = 'translateY(' + (progress * maxThumbTravel) + 'px)';
+            thumb.setAttribute('aria-valuenow', String(Math.round(progress * 100)));
+            thumb.setAttribute('aria-disabled', String(maxScroll <= 0));
+            track.classList.toggle('is-hidden', maxScroll <= 0);
+        }
+
+        /**
+         * Initialize the persistent full-recipe action
+         */
+        function initializeButtons() {
+            const fullRecipeButton = document.getElementById('full-recipe-button');
+
+            fullRecipeButton.addEventListener('click', function() {
+                const recipe = config.content.recipes[currentRecipeIndex];
+                const url = recipe.fullRecipeUrl;
+
+                track('full_recipe_clicked', {
+                    recipe_id: recipe.id,
+                    destination_url: url
+                });
+                openExternalUrl(url);
+            });
+
+            console.log('[BUTTONS] Initialized click handlers');
+        }
+
+        /**
+         * Clear the pending automatic recipe transition
+         */
+        function clearAutoAdvanceTimer() {
+            if (autoAdvanceTimer !== null) {
+                window.clearTimeout(autoAdvanceTimer);
+                autoAdvanceTimer = null;
+            }
+        }
+
+        /**
+         * Schedule the next automatic recipe transition when conditions allow
+         */
+        function scheduleAutoAdvance() {
+            clearAutoAdvanceTimer();
+
+            if (!config.autoAdvance || !config.autoAdvance.enabled || hasUserInteracted || isAdHovered) {
+                return;
+            }
+            if (config.autoAdvance.pauseWhenHidden && document.hidden) {
+                return;
+            }
+
+            const interval = Math.max(1000, config.autoAdvance.intervalMs || 5000);
+            autoAdvanceTimer = window.setTimeout(function() {
+                autoAdvanceTimer = null;
+                advanceRecipeAutomatically();
+            }, interval);
+        }
+
+        /**
+         * Advance to the next configured recipe through the shared transition flow
+         */
+        function advanceRecipeAutomatically() {
+            if (isRecipeTransitioning || hasUserInteracted || isAdHovered) {
+                scheduleAutoAdvance();
+                return;
+            }
+
+            const nextIndex = (currentRecipeIndex + 1) % config.content.recipes.length;
+            selectRecipe(nextIndex, 'auto');
+            scheduleAutoAdvance();
+        }
+
+        /**
+         * Pause automatic rotation while a pointer is inside the ad
+         */
+        function handleAutoAdvanceMouseEnter() {
+            if (!config.autoAdvance.pauseOnHover || hasUserInteracted) {
+                return;
+            }
+
+            isAdHovered = true;
+            clearAutoAdvanceTimer();
+        }
+
+        /**
+         * Resume with a fresh interval after the pointer leaves the ad
+         */
+        function handleAutoAdvanceMouseLeave() {
+            if (!config.autoAdvance.pauseOnHover || hasUserInteracted) {
+                return;
+            }
+
+            isAdHovered = false;
+            scheduleAutoAdvance();
+        }
+
+        /**
+         * Permanently stop automatic rotation after any user interaction
+         */
+        function handleAutoAdvanceInteraction() {
+            if (hasUserInteracted || !config.autoAdvance.stopOnInteraction) {
+                return;
+            }
+
+            hasUserInteracted = true;
+            clearAutoAdvanceTimer();
+            console.log('[AUTO-ADVANCE] Stopped after user interaction');
+        }
+
+        /**
+         * Pause or resume automatic rotation when page visibility changes
+         */
+        function handleAutoAdvanceVisibilityChange() {
+            if (!config.autoAdvance.pauseWhenHidden || hasUserInteracted) {
+                return;
+            }
+
+            if (document.hidden) {
+                clearAutoAdvanceTimer();
+            } else {
+                scheduleAutoAdvance();
+            }
+        }
+
+        /**
+         * Initialize automatic recipe rotation and global pause/stop behavior
+         */
+        function initializeAutoAdvance() {
+            if (!config.autoAdvance || !config.autoAdvance.enabled) {
+                return;
+            }
+
+            const adContainer = document.getElementById('ad-container');
+            isAdHovered = config.autoAdvance.pauseOnHover && adContainer.matches(':hover');
+            adContainer.addEventListener('mouseenter', handleAutoAdvanceMouseEnter);
+            adContainer.addEventListener('mouseleave', handleAutoAdvanceMouseLeave);
+            adContainer.addEventListener('pointerdown', handleAutoAdvanceInteraction, true);
+            adContainer.addEventListener('click', handleAutoAdvanceInteraction, true);
+            adContainer.addEventListener('keydown', handleAutoAdvanceInteraction, true);
+            document.addEventListener('visibilitychange', handleAutoAdvanceVisibilityChange);
+            scheduleAutoAdvance();
+            console.log('[AUTO-ADVANCE] Initialized');
+        }
+
+        /**
+         * Open a configured destination in a secure new browsing context
+         * @param {string} url - External destination URL
+         */
+        function openExternalUrl(url) {
+            const openedWindow = window.open(url, '_blank', 'noopener,noreferrer');
+
+            if (openedWindow) {
+                openedWindow.opener = null;
+            }
+        }
+
+        /**
+         * Track analytics events and fire optional conversion/retargeting pixels
+         * @param {string} eventName - Event key matching config.tracking.events
+         * @param {Object} payload - Additional event data
+         */
+        function track(eventName, payload = {}) {
+            if (!config.tracking.enabled) {
+                return;
+            }
+
+            const event = config.tracking.events[eventName];
+            if (!event || !event.enabled) {
+                return;
+            }
+
+            const eventData = {
+                event: event.name,
+                category: event.category,
+                timestamp: new Date().toISOString(),
+                ...payload
+            };
+
+            console.log('[TRACKING]', eventData);
+
+            // Fire conversion pixel if configured
+            if (event.convPixel) {
+                const convImg = document.createElement('img');
+                convImg.src = event.convPixel;
+                convImg.width = 1;
+                convImg.height = 1;
+                convImg.style.cssText = 'position:absolute;left:-9999px;';
+                convImg.alt = '';
+                document.body.appendChild(convImg);
+                console.log('[TRACKING] Fired conversion pixel:', event.convPixel);
+            }
+
+            // Fire retargeting pixel if configured
+            if (event.rtPixel) {
+                const rtImg = document.createElement('img');
+                rtImg.src = event.rtPixel;
+                rtImg.width = 1;
+                rtImg.height = 1;
+                rtImg.style.cssText = 'position:absolute;left:-9999px;';
+                rtImg.alt = '';
+                document.body.appendChild(rtImg);
+                console.log('[TRACKING] Fired retargeting pixel:', event.rtPixel);
+            }
+
+            if (typeof gtag !== 'undefined') {
+                gtag('event', event.name, eventData);
+            }
+        }
+    </script>
+
+</body>
+</html>

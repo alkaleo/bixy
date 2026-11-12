@@ -1,0 +1,455 @@
+/**
+ * WHITE-LABEL AD STYLES
+ * Tailwind CSS v4.0 - Config-driven design
+ * 300x600 Programmatic Ad Unit
+ * 
+ * IMPORTANT: NO HARDCODED COLORS
+ * All colors controlled via CSS custom properties from config.js
+ */
+
+/* CSS Custom Properties (Brand Colors) */
+:root {
+    /* All colors and fonts are injected dynamically by JavaScript from config.js */
+    /* NO hardcoded values - 100% config-driven */
+}
+
+/* Reset & Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--brand-font-primary);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    margin: 0;
+    padding: 0;
+}
+
+/* Ad Container - 300x600 */
+.ad-container {
+    width: 300px;
+    height: 600px;
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(to bottom, var(--color-background-gradient-start), var(--color-background-gradient-end));
+    border-radius: 10px;
+    
+    /* Prevent text selection for polished UX */
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+
+/* Background Pattern Image */
+.background-wrapper {
+    position: absolute;
+    height: 318px;
+    left: 50%;
+    top: calc(50% - 141px);
+    transform: translate(-50%, -50%);
+    width: 300px;
+    pointer-events: none;
+}
+
+.background-pattern {
+    position: absolute;
+    width: 184px;
+    height: 200px;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+}
+
+.background-pattern > div {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.background-pattern img {
+    position: absolute;
+    height: 200px;
+    width: 184px;
+    left: 0;
+    top: 0;
+    object-fit: contain;
+    object-position: left top;
+}
+
+/* Logo */
+.logo-container {
+    position: absolute;
+    width: 74px;
+    height: 30px;
+    left: 15px;
+    top: 15px;
+    z-index: 10;
+    overflow: hidden;
+}
+
+.logo-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: left center;
+}
+
+/* Shop Now CTA Button */
+.btn-cta {
+    position: absolute;
+    left: 185px;
+    top: 15px;
+    width: 100px;
+    height: 30px;
+    
+    background-color: var(--color-button-cta-bg);
+    color: var(--color-button-cta-text);
+    
+    border: none;
+    border-radius: 4px;
+    box-shadow: 0px 2px 15px var(--color-shadow-dark);
+    
+    font-family: var(--brand-font-primary);
+    font-size: 12px;
+    font-weight: 700;
+    text-align: center;
+    
+    cursor: pointer;
+    z-index: 10;
+    
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+.btn-cta:hover {
+    background-color: var(--color-button-cta-hover-bg);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px var(--color-shadow-button-cta-hover);
+}
+
+.btn-cta:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px var(--color-shadow-button-cta-active);
+}
+
+/* Divider Line */
+.divider {
+    position: absolute;
+    width: 270px;
+    height: 0.5px;
+    left: 50%;
+    top: 60px;
+    transform: translateX(-50%);
+    background-color: var(--color-divider-line);
+}
+
+/* Main Content Section */
+.content-section {
+    position: absolute;
+    left: 20px;
+    top: 91px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: flex-start;
+    color: var(--color-text-light);
+}
+
+/* Headline - Single line */
+.headline-main {
+    font-family: var(--brand-font-primary);
+    font-size: 40px;
+    font-weight: 900;
+    line-height: 44px;
+    letter-spacing: -0.4px;
+    text-transform: capitalize;
+    width: 140px;
+    margin: 0;
+}
+
+/* Body Text */
+.body-text {
+    font-family: var(--brand-font-primary);
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 20px;
+    letter-spacing: 0.24px;
+    width: 110px;
+}
+
+.body-intro-line {
+    margin: 0;
+}
+
+.body-intro-line:first-child {
+    margin-bottom: 0;
+}
+
+/* Tagline (Bottom text) */
+.tagline {
+    position: absolute;
+    left: 50%;
+    top: 328px;
+    transform: translateX(-50%);
+    
+    font-family: var(--brand-font-primary);
+    font-size: 14px;
+    font-weight: 800;
+    line-height: normal;
+    letter-spacing: 0.14px;
+    text-align: center;
+    white-space: nowrap;
+    
+    color: var(--color-text-light);
+    margin: 0;
+}
+
+/* Scratch Card Container */
+.scratch-card-container {
+    position: absolute;
+    left: 50%;
+    bottom: 20px;
+    transform: translateX(-50%);
+    width: 270px;
+    height: 220px;
+}
+
+/* Card Background - White rounded rectangle */
+.card-background {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background-color: var(--color-card-bg);
+    border-radius: 10px;
+    box-shadow: 0px 2px 15px var(--color-shadow-dark);
+    overflow: hidden;
+}
+
+/* Card Gradient Background */
+.card-gradient-bg {
+    position: absolute;
+    width: 270px;
+    height: 220px;
+    left: 0;
+    top: 0;
+    pointer-events: none;
+}
+
+.gradient-blur {
+    position: absolute;
+    width: 50px;
+    height: 220px;
+    top: 0;
+    filter: blur(100px);
+    box-shadow: 0px 4px 4px var(--color-shadow-light);
+}
+
+.gradient-blur.blue {
+    left: 0;
+    background: linear-gradient(to bottom, 
+        var(--color-card-gradient-blue-start), 
+        var(--color-card-gradient-blue-end) 50%, 
+        var(--color-card-gradient-blue-end));
+}
+
+.gradient-blur.pink {
+    right: 0;
+    background: linear-gradient(to bottom, 
+        var(--color-card-gradient-pink-start), 
+        var(--color-card-gradient-pink-end));
+}
+
+/* Revealed Content (Under scratch layer) */
+.revealed-content {
+    position: absolute;
+    width: 220px;
+    height: 180px;
+    left: 50%;
+    top: 20px;
+    transform: translateX(-50%);
+    
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    
+    color: var(--color-card-text-secondary);
+    text-align: center;
+}
+
+/* Revealed Title */
+.revealed-title {
+    font-family: var(--brand-font-primary);
+    font-size: 24px;
+    font-weight: 900;
+    line-height: 32px;
+    letter-spacing: -0.48px;
+    text-transform: uppercase;
+    margin: 0;
+}
+
+/* Price Display */
+.price-display {
+    position: relative;
+    width: 190px;
+    height: 90px;
+    flex-shrink: 0;
+    white-space: nowrap;
+    color: var(--color-card-text-primary);
+}
+
+.price-currency {
+    position: absolute;
+    left: 0;
+    top: 5px;
+    font-family: var(--brand-font-primary);
+    font-size: 45px;
+    font-weight: 300;
+    line-height: 56px;
+    margin: 0;
+}
+
+.price-main {
+    position: absolute;
+    left: 28px;
+    top: 0;
+    font-family: var(--brand-font-primary);
+    font-size: 78px;
+    font-weight: 700;
+    line-height: 90px;
+    margin: 0;
+}
+
+.price-period {
+    position: absolute;
+    right: 80px;
+    top: 34px;
+    transform: translateX(100%);
+    font-family: var(--brand-font-secondary);
+    font-size: 39px;
+    font-weight: 400;
+    line-height: 56px;
+    margin: 0;
+}
+
+/* Revealed Description */
+.revealed-description {
+    width: 100%;
+}
+
+.description-text {
+    font-family: var(--brand-font-primary);
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 24px;
+    letter-spacing: 0.32px;
+    text-align: center;
+    margin: 0;
+}
+
+.description-bold {
+    font-weight: 800;
+}
+
+.description-normal {
+    font-weight: 600;
+}
+
+/* Scratch Canvas - Overlay layer */
+.scratch-canvas {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 270px;
+    height: 220px;
+    
+    /* Hide default cursor - custom cursor will be used */
+    cursor: none;
+    
+    /* Smooth fade out when revealed */
+    transition: opacity 0.8s ease-out;
+}
+
+/* Custom Cursor for Scratch Card */
+.custom-cursor {
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    pointer-events: none;
+    z-index: 1000;
+    transform: translate(-50%, -50%);
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.custom-cursor img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.custom-cursor.active {
+    opacity: 1;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 320px) {
+    .ad-container {
+        width: 100%;
+        height: auto;
+        min-height: 600px;
+    }
+}
+
+/* Accessibility */
+/* Ensure interactive elements are keyboard accessible */
+button:focus, a:focus {
+    outline: 2px solid var(--color-card-outline);
+    outline-offset: 2px;
+}
+
+/* Touch Device Optimizations */
+@media (hover: none) and (pointer: coarse) {
+    /* Increase touch target size on mobile */
+    .btn-cta {
+        min-width: 44px;
+        min-height: 44px;
+    }
+    
+    /* Remove hover effects on touch devices */
+    .btn-cta:hover {
+        transform: none;
+        background-color: var(--color-button-cta-bg);
+    }
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
+}
+
+/* Print Styles (Prevent printing ads) */
+@media print {
+    .ad-container {
+        display: none;
+    }
+}

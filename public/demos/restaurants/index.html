@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="./output.css" rel="stylesheet" />
+    <!-- Slick Slider (CSS + JS) -->
+    <link rel="stylesheet" href="vendor/slick.css" />
+  </head>
+  <body>
+    <div class="w-[300px] h-[600px] overflow-hidden rounded-[10px] bg-[#EDECE8] border border-[#AFABAB]">
+      <div class="header">
+        <div class="w-full h-[213px] bg-[url(images/header_bg.png)] bg-cover pt-[30px]">
+          <div>
+            <a href="javascript:void(0);" class="w-[132px] h-[24px] bg-[#FFC600] block mx-auto text-[#38312D] font-bold flex items-center justify-center">FIND YOUR</a>
+            <div class="flex justify-center items-center text-[#FFC600] h-[40px] mt-[-2px]">
+              <div class="me-[1px]">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="15" viewBox="0 0 16 15" fill="none">
+                  <path d="M8 0L9.79611 5.52786H15.6085L10.9062 8.94427L12.7023 14.4721L8 11.0557L3.29772 14.4721L5.09383 8.94427L0.391548 5.52786H6.20389L8 0Z" fill="#FFC600" />
+                </svg>
+              </div>
+              <span class="text-[32px] font-bold">Perfect Wing</span>
+              <div class="ms-[1px]">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="15" viewBox="0 0 16 15" fill="none">
+                  <path d="M8 0L9.79611 5.52786H15.6085L10.9062 8.94427L12.7023 14.4721L8 11.0557L3.29772 14.4721L5.09383 8.94427L0.391548 5.52786H6.20389L8 0Z" fill="#FFC600" />
+                </svg>
+              </div>
+            </div>
+            <div class="h-[34px] text-center text-white text-[22px] font-bold leading-[34px] mt-[-5px]">DINE-IN. TAKE OUT. DELIVERY.</div>
+          </div>
+          <div class="w-[100px] h-[46.785px] mx-auto mt-[15px]">
+            <img src="images/logo.png" alt="" />
+          </div>
+        </div>
+        <div class="w-full h-[5px] bg-[#FFC600]"></div>
+      </div>
+      <!-- ========== Header Ends ============= -->
+
+      <div class="w-full step start">
+        <div class="w-[270px] h-[144px] mx-auto mt-5">
+          <div class="flex items-center">
+            <div class="w-6 h-6 border-[2px] border-[#000] me-[9px] flex items-center justify-center rounded-[24px] text-[16px] font-[600] bg-[#FFC600]">1</div>
+            <div class="text-[18px] font-bold uppercase">Choose your wing type:</div>
+          </div>
+          <div class="w-full h-[100px] mt-5 mb-[25px] flex justify-between">
+            <div>
+              <input type="radio" name="wing-type" id="traditional" value="traditional" class="hidden" />
+              <label for="traditional" class="w-[86px] h-[100px] bg-[#FFF] rounded-[4px] border border-[#FFF] block cursor-pointer">
+                <div class="h-[78px] flex justify-center items-center"><img src="images/wing_type/1.png" alt="" class="mx-auto" /></div>
+                <div class="w-full h-[22px] text-[11px] tracking-[0.5px] uppercase font-[500] flex items-center justify-center wing-type">Traditional</div>
+              </label>
+            </div>
+            <div>
+              <input type="radio" name="wing-type" id="boneless" value="boneless" class="hidden" />
+              <label for="boneless" class="w-[86px] h-[100px] bg-[#FFF] rounded-[4px] border border-[#FFF] block cursor-pointer">
+                <div class="h-[78px] flex justify-center items-center"><img src="images/wing_type/2.png" alt="" class="mx-auto" /></div>
+                <div class="w-full h-[22px] text-[11px] tracking-[0.5px] uppercase font-[500] flex items-center justify-center wing-type">Boneless</div>
+              </label>
+            </div>
+            <div>
+              <input type="radio" name="wing-type" id="cauliflower" value="cauliflower" class="hidden" />
+              <label for="cauliflower" class="w-[86px] h-[100px] bg-[#FFF] rounded-[4px] border border-[#FFF] block cursor-pointer">
+                <div class="h-[78px] flex justify-center items-center"><img src="images/wing_type/3.png" alt="" class="mx-auto" /></div>
+                <div class="w-full h-[22px] text-[11px] tracking-[0.5px] uppercase font-[500] flex items-center justify-center wing-type">Cauliflower</div>
+              </label>
+            </div>
+          </div>
+
+          <!-- Choose your heat level -->
+          <div>
+            <div class="flex items-center">
+              <div class="w-6 h-6 border-[2px] border-[#000] me-[9px] flex items-center justify-center rounded-[24px] text-[16px] font-[600] bg-[#FFC600]">2</div>
+              <div class="text-[18px] font-bold uppercase">Choose your heat level:</div>
+            </div>
+
+            <!-- draggable -->
+            <div>
+              <!-- Slider Container -->
+              <div id="heatSlider" class="relative w-full h-[24.7px] mt-5">
+                <div class="absolute bottom-0 w-[25.978px] left-[10px]">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="27" height="1" viewBox="0 0 27 1" fill="none">
+                    <path d="M26.1986 0.560547H0.220703" stroke="white" stroke-width="0.851735" />
+                  </svg>
+                </div>
+                <!-- Track with Gradient -->
+                <div class="absolute bottom-0 flex justify-end w-[270px]">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="234" height="25" viewBox="0 0 234 25" fill="none">
+                    <path d="M0.19873 17.788L234 0.258789V24.9591H0.19873V17.788Z" fill="url(#paint0_linear_6658_3135)" />
+                    <defs>
+                      <linearGradient id="paint0_linear_6658_3135" x1="-25.7792" y1="24.9591" x2="234" y2="24.8528" gradientUnits="userSpaceOnUse">
+                        <stop offset="0.168" stop-color="#F4CC3D" />
+                        <stop offset="0.422" stop-color="#CE7433" />
+                        <stop offset="0.676" stop-color="#BF502F" />
+                        <stop offset="0.93" stop-color="#942B2B" />
+                      </linearGradient>
+                    </defs>
+                  </svg>
+                </div>
+
+                <!-- Static Marks/Points -->
+                <!-- These are positioned absolutely based on percentages. Adjust -ml-2 to center them. -->
+                <div class="absolute bottom-[-3px] w-[6.814px] h-[6.814px] rounded-full bg-white border border-[#808080]" style="left: 6.81px"></div>
+                <div class="absolute bottom-[-3px] w-[6.814px] h-[6.814px] rounded-full bg-white border border-[#808080]" style="left: 67.29px"></div>
+                <div class="absolute bottom-[-3px] w-[6.814px] h-[6.814px] rounded-full bg-white border border-[#808080]" style="left: 128.61px"></div>
+                <div class="absolute bottom-[-3px] w-[6.814px] h-[6.814px] rounded-full bg-white border border-[#808080]" style="left: 189.09px"></div>
+                <div class="absolute bottom-[-3px] w-[6.814px] h-[6.814px] rounded-full bg-white border border-[#808080]" style="left: 249.56px"></div>
+
+                <!-- Draggable Handle -->
+                <div id="sliderHandle" class="absolute top-[-5.11px] cursor-grab flex items-center justify-center w-[17.035px] h-[34.069px]">
+                  <!-- Handle content (if any, but design shows it empty) -->
+                </div>
+              </div>
+
+              <!-- Labels Container -->
+              <div class="flex w-full mt-[8.11px]">
+                <div class="text-center level-label w-[22px] me-[36px]" data-level="ALL">
+                  <div class="font-[500] text-[12px] uppercase semi-font text-[#38312D] cursor-pointer h-[16px]">ALL</div>
+                  <div class="text-[7.666px] leading-[9px]">(24)</div>
+                </div>
+                <div class="text-center level-label w-[24px] me-[30px]" data-level="MILD">
+                  <div class="font-[500] text-[12px] uppercase semi-font text-[#38312D] ps-[3px] cursor-pointer h-[16px]">MILD</div>
+                  <div class="text-[7.666px] leading-[9px]">(8)</div>
+                </div>
+                <div class="text-center level-label w-[40px] me-[30.5px]" data-level="MEDIUM">
+                  <div class="font-[500] text-[12px] uppercase semi-font text-[#38312D] cursor-pointer h-[16px]">MEDIUM</div>
+                  <div class="text-[7.666px] leading-[9px]">(7)</div>
+                </div>
+                <div class="text-center level-label w-[19.5px] me-[38.5px]" data-level="HOT">
+                  <div class="font-[500] text-[12px] uppercase semi-font text-[#38312D] cursor-pointer h-[16px]">HOT</div>
+                  <div class="text-[7.666px] leading-[9px]">(7)</div>
+                </div>
+                <div class="text-center level-label w-[25.5px]" data-level="WILD">
+                  <div class="font-[500] text-[12px] uppercase semi-font text-[#38312D] cursor-pointer h-[16px]">WILD</div>
+                  <div class="text-[7.666px] leading-[9px]">(2)</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- button -->
+          <div class="w-full h-[40px] mt-[25px]">
+            <a
+              class="w-full h-[40px] block text-center bg-[#362E2C] text-[#FFC600] flex justify-center items-center uppercase text-[16px] font-[800] tracking-[0.5px] submit disabled"
+              href="javascript:linkAction('.start', '.one');"
+              >Find Your Perfect Wing</a
+            >
+          </div>
+        </div>
+      </div>
+      <!-- ========== Step strt Ends ============= -->
+
+      <div class="w-full step one hidden">
+        <div class="w-[270px] h-[282px] mx-auto mt-5">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center">
+              <div class="w-6 h-6 border-[2px] border-[#000] me-[9px] flex items-center justify-center rounded-[24px] text-[16px] font-[600] bg-[#FFC600]">3</div>
+              <div class="text-[18px] font-bold uppercase">Choose your sauces:</div>
+            </div>
+
+            <div class="slider-arrow">
+              <div class="flex bg-[#FFC600] rounded-[4px] border border-[#38312D] w-[60px] h-[24px]"></div>
+            </div>
+          </div>
+          <!-- 3rd heading ends -->
+
+          <div class="mt-5">
+            <!-- Carousel Viewport: Hides the overflowing content -->
+            <div id="options-slider"></div>
+            <!--  -->
+          </div>
+        </div>
+
+        <div class="w-[270px] h-[40px] mx-auto mt-[25px]">
+          <a
+            class="w-full h-[40px] block text-center bg-[#362E2C] text-[#FFC600] flex justify-center items-center uppercase text-[16px] font-[800] tracking-[0.5px] submit disabled"
+            href="javascript:linkAction('.one', '.two');"
+            >Get your results
+          </a>
+        </div>
+      </div>
+      <!-- ========== Step One Ends ============= -->
+
+      <div class="w-full step two hidden">
+        <div class="cauliflower bg-[#EDECE8] rounded-[10px] px-[15px] py-5 hidden">
+          <div class="w-full h-[500px] bg-[url(images/bg.png)] bg-cover rounded-[6px] py-5 px-[15px]">
+            <div class="w-full h-[213px]">
+              <div>
+                <a href="javascript:void(0);" class="w-[153px] h-[26px] bg-[#FFC600] block mx-auto text-[#38312D] font-bold flex items-center justify-center text-[18.5px]">ORDER NOW</a>
+                <div class="flex justify-center items-center text-[#FFC600] h-[47px]">
+                  <div class="me-[1px]">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="15" viewBox="0 0 16 15" fill="none">
+                      <path d="M8 0L9.79611 5.52786H15.6085L10.9062 8.94427L12.7023 14.4721L8 11.0557L3.29772 14.4721L5.09383 8.94427L0.391548 5.52786H6.20389L8 0Z" fill="#FFC600" />
+                    </svg>
+                  </div>
+                  <span class="text-[37px] font-bold">CRISPY</span>
+                  <div class="ms-[1px]">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="15" viewBox="0 0 16 15" fill="none">
+                      <path d="M8 0L9.79611 5.52786H15.6085L10.9062 8.94427L12.7023 14.4721L8 11.0557L3.29772 14.4721L5.09383 8.94427L0.391548 5.52786H6.20389L8 0Z" fill="#FFC600" />
+                    </svg>
+                  </div>
+                </div>
+                <div class="h-[40px] text-center text-white text-[30px] font-bold leading-[34px] mt-[-9px]">CAULIFLOWER WINGS</div>
+                <div class="h-[29px] w-full flex justify-center items-center text-white text-[20px] font-bold mt-[-8px]">DINE-IN. TAKE OUT. DELIVERY.</div>
+              </div>
+              <div class="w-[140px] h-[65.499px] mx-auto mt-[10px]">
+                <img src="images/logo.png" alt="" />
+              </div>
+            </div>
+          </div>
+
+          <!-- button -->
+          <div class="mt-5">
+            <a href="https://www.buffalowildwings.com/menu/categories/wings/cauliflower-wings/" class="uppercase text-[16px] tracking-[0.5px] font-[800] block bg-[#FFC600] h-10 flex items-center justify-center text-[#38312D]">Order Now</a>
+          </div>
+        </div>
+
+        <div class="traditional bg-[#EDECE8] rounded-[10px] px-[15px] py-5 hidden">
+          <div class="w-full h-[500px] bg-[url(images/bg_2.png)] bg-cover rounded-[6px] py-5 px-[15px]">
+            <div class="w-full h-[213px]">
+              <div>
+                <a href="javascript:void(0);" class="w-[153px] h-[26px] bg-[#FFC600] block mx-auto text-[#38312D] font-bold flex items-center justify-center text-[18.5px]">WING TUESDAYS</a>
+                <div class="flex justify-center items-center text-[#FFC600] h-[47px]">
+                  <div class="me-[1px]">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="15" viewBox="0 0 16 15" fill="none">
+                      <path d="M8 0L9.79611 5.52786H15.6085L10.9062 8.94427L12.7023 14.4721L8 11.0557L3.29772 14.4721L5.09383 8.94427L0.391548 5.52786H6.20389L8 0Z" fill="#FFC600" />
+                    </svg>
+                  </div>
+                  <span class="text-[37px] font-bold">BOGO</span>
+                  <div class="ms-[1px]">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="15" viewBox="0 0 16 15" fill="none">
+                      <path d="M8 0L9.79611 5.52786H15.6085L10.9062 8.94427L12.7023 14.4721L8 11.0557L3.29772 14.4721L5.09383 8.94427L0.391548 5.52786H6.20389L8 0Z" fill="#FFC600" />
+                    </svg>
+                  </div>
+                </div>
+
+                <div class="h-[35px] w-full flex justify-center items-center text-white text-[22px] font-bold mt-[-8px]">50% OFF TRADITIONAL WINGS</div>
+                <div class="h-[29px] w-full flex justify-center items-center text-white text-[20px] font-bold mt-[-8px]">DINE-IN. TAKE OUT. DELIVERY.</div>
+              </div>
+              <div class="w-[140px] h-[65.499px] mx-auto mt-[10px]">
+                <img src="images/logo.png" alt="" />
+              </div>
+            </div>
+          </div>
+
+          <!-- button -->
+          <div class="mt-5">
+            <a href="https://www.buffalowildwings.com/menu/categories/wings/buy-one-get-50-off-bone-in-wings/" class="uppercase text-[16px] tracking-[0.5px] font-[800] block bg-[#FFC600] h-10 flex items-center justify-center text-[#38312D]">Order Now</a>
+          </div>
+        </div>
+
+        <div class="boneless bg-[#EDECE8] rounded-[10px] px-[15px] py-5 hidden">
+          <div class="w-full h-[500px] bg-[url(images/bg_3.png)] bg-cover rounded-[6px] py-5">
+            <div class="w-full h-[213px]">
+              <div>
+                <a href="javascript:void(0);" class="w-[153px] h-[26px] bg-[#FFC600] block mx-auto text-[#38312D] font-bold flex items-center justify-center text-[18.5px]">BUY ONE, GET ONE</a>
+                <div class="flex justify-center items-center text-[#FFC600] h-[47px]">
+                  <div class="me-[1px]">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="15" viewBox="0 0 16 15" fill="none">
+                      <path d="M8 0L9.79611 5.52786H15.6085L10.9062 8.94427L12.7023 14.4721L8 11.0557L3.29772 14.4721L5.09383 8.94427L0.391548 5.52786H6.20389L8 0Z" fill="#FFC600" />
+                    </svg>
+                  </div>
+                  <span class="text-[37px] font-bold">FREE</span>
+                  <div class="ms-[1px]">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="15" viewBox="0 0 16 15" fill="none">
+                      <path d="M8 0L9.79611 5.52786H15.6085L10.9062 8.94427L12.7023 14.4721L8 11.0557L3.29772 14.4721L5.09383 8.94427L0.391548 5.52786H6.20389L8 0Z" fill="#FFC600" />
+                    </svg>
+                  </div>
+                </div>
+                <div class="h-[40px] text-center text-white text-[30px] font-bold leading-[34px] mt-[-9px]">BONELESS THURSDAYS</div>
+                <div class="h-[29px] w-full flex justify-center items-center text-white text-[20px] font-bold mt-[-8px]">DINE-IN. TAKE OUT. DELIVERY.</div>
+              </div>
+              <div class="w-[140px] h-[65.499px] mx-auto mt-[10px]">
+                <img src="images/logo.png" alt="" />
+              </div>
+            </div>
+          </div>
+
+          <!-- button -->
+          <div class="mt-5">
+            <a href="https://www.buffalowildwings.com/menu/categories/wings/bogo-boneless-wings/" class="uppercase text-[16px] tracking-[0.5px] font-[800] block bg-[#FFC600] h-10 flex items-center justify-center text-[#38312D]">Order Now</a>
+          </div>
+        </div>
+      </div>
+      <!-- ========== Step two Ends ============= -->
+    </div>
+
+    <!-- jQuery and jQuery UI for Slider Functionality -->
+    <script src="js/jquery.min.js"></script>
+
+    <script src="vendor/slick.min.js"></script>
+    <script>
+      // ----- Your dataset -----
+      var options = [
+        { id: 1, title: "Parmesan Garlic", image: "images/sauces_type/all-1.jpg", sauce_type: "MILD" },
+        { id: 2, title: "Honey BBQ", image: "images/sauces_type/all-2.jpg", sauce_type: "MILD" },
+        { id: 3, title: "Lemon Pepper", image: "images/sauces_type/all-3.jpg", sauce_type: "MILD" },
+        { id: 4, title: "Mild", image: "images/sauces_type/all-4.jpg", sauce_type: "MILD" },
+        { id: 5, title: "Sweet BBQ", image: "images/sauces_type/all-5.jpg", sauce_type: "MILD" },
+        { id: 6, title: "Teriyaki", image: "images/sauces_type/all-6.jpg", sauce_type: "MILD" },
+        { id: 7, title: "Salt & Vinegar", image: "images/sauces_type/all-7.jpg", sauce_type: "MILD" },
+        { id: 8, title: "Lemon Pepper", image: "images/sauces_type/all-8.jpg", sauce_type: "MILD" },
+
+        { id: 9, title: "Medium", image: "images/sauces_type/all-9.jpg", sauce_type: "MEDIUM" },
+        { id: 10, title: "Asian Zing", image: "images/sauces_type/all-10.jpg", sauce_type: "MEDIUM" },
+        { id: 11, title: "Spicy Garlic", image: "images/sauces_type/all-11.jpg", sauce_type: "MEDIUM" },
+        { id: 12, title: "Buffalo", image: "images/sauces_type/all-12.jpg", sauce_type: "MEDIUM" },
+        { id: 13, title: "Caribbean Jerk", image: "images/sauces_type/all-13.jpg", sauce_type: "MEDIUM" },
+        { id: 14, title: "Chipotle", image: "images/sauces_type/all-14.jpg", sauce_type: "MEDIUM" },
+        { id: 15, title: "Orange Chicken", image: "images/sauces_type/all-15.jpg", sauce_type: "MEDIUM" },
+
+        { id: 16, title: "Mango Habanero", image: "images/sauces_type/all-16.jpg", sauce_type: "HOT" },
+        { id: 17, title: "Original Buffalo", image: "images/sauces_type/all-17.jpg", sauce_type: "HOT" },
+        { id: 18, title: "Hot", image: "images/sauces_type/all-18.jpg", sauce_type: "HOT" },
+        { id: 19, title: "Thai Curry", image: "images/sauces_type/all-19.jpg", sauce_type: "HOT" },
+        { id: 20, title: "Jammin Jalapeno", image: "images/sauces_type/all-20.jpg", sauce_type: "HOT" },
+        { id: 21, title: "Nashville Hot", image: "images/sauces_type/all-21.jpg", sauce_type: "HOT" },
+        { id: 22, title: "Wild", image: "images/sauces_type/all-22.jpg", sauce_type: "HOT" },
+
+        { id: 23, title: "Desert Heat", image: "images/sauces_type/all-23.jpg", sauce_type: "WILD" },
+        { id: 24, title: "Carolina Reaper", image: "images/sauces_type/all-24.jpg", sauce_type: "WILD" },
+      ];
+
+      var hot_level = "ALL";
+      const TILES_PER_SLIDE = 6; // 2 cols x 3 rows
+
+      function chunk(arr, size) {
+        const out = [];
+        for (let i = 0; i < arr.length; i += size) out.push(arr.slice(i, i + size));
+        return out;
+      }
+
+      function buildTile(option) {
+        return $(`
+        <div class="bg-white w-[86px] h-[100px] rounded-[4px] transition-all">
+          <div>
+            <input type="checkbox" name="sauces-type" id="s-${option.id}" value="${option.title}" class="hidden" />
+            <label for="s-${option.id}" class="w-[86px] h-[100px] bg-[#FFF] rounded-[4px] border border-[#FFF] block cursor-pointer">
+              <div class="h-[78px] flex justify-center items-center"><img src="${option.image}" alt="${option.title}" class="mx-auto" /></div>
+              <div class="w-full h-[22px] text-[11px] tracking-[0.5px] font-[400] leading-[10px] py-[5px] text-center wing-type uppercase">${option.title}</div>
+            </label>
+          </div>
+        </div>
+      `);
+      }
+
+      function buildSlide(optionsChunk) {
+        const $slide = $(`
+        <div class="w-[270px]">
+          <div class="grid grid-cols-3 gap-x-[6px] gap-y-[15px] justify-items-center"></div>
+        </div>
+      `);
+        const $grid = $slide.find(".grid");
+        optionsChunk.forEach((opt) => $grid.append(buildTile(opt)));
+        return $slide;
+      }
+
+      function initSlick($slider) {
+        $slider.slick({
+          slidesToShow: 1,
+          slidesToScroll: 1,
+          infinite: false,
+          adaptiveHeight: false,
+          dots: true,
+          // custom "line" dots
+          customPaging: () => '<button type="button" aria-label="Go to slide"></button>',
+          // custom arrows (compact, outside the 270px by 18px)
+          prevArrow: `<button type="button" id="prevBtn" aria-label="Previous" 
+                      class="w-[29px] h-[22px] flex items-center justify-center disabled:cursor-not-allowed border-r border-r-[#38312D] cursor-pointer absolute top-[-44px] left-[211px]">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                        <path d="M11.78 2.51301L10.6 1.33301L4 7.93301L10.6 14.533L11.78 13.353L6.36 7.93301L11.78 2.51301Z" fill="#38312D" fill-opacity="1" />
+                      </svg>
+                    </button>`,
+          nextArrow: `<button type="button" id="nextBtn" aria-label="Next" 
+                      class="w-[29px] h-[22px] flex items-center justify-center disabled:cursor-not-allowed cursor-pointer slick-next slick-arrow absolute top-[-44px] left-[240px]">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                        <path d="M4.00003 2.51301L5.18003 1.33301L11.78 7.93301L5.18003 14.533L4.00003 13.353L9.42003 7.93301L4.00003 2.51301Z" fill="#38312D" fill-opacity="1" />
+                      </svg>
+                    </button>`,
+        });
+      }
+
+      function renderSlider(filterValue) {
+        const $slider = $("#options-slider");
+
+        // 1) Destroy existing slick if any
+        if ($slider.hasClass("slick-initialized")) {
+          $slider.slick("unslick");
+        }
+
+        // 2) Filter dataset
+        let data = options;
+        if (filterValue && filterValue !== "ALL") {
+          data = options.filter((o) => o.sauce_type === filterValue);
+        }
+
+        // 3) Rebuild slides
+        $slider.empty();
+        const groups = chunk(data, TILES_PER_SLIDE);
+        if (groups.length === 0) {
+          $slider.append(`<div class="text-center text-sm text-slate-500 py-6">No items found.</div>`);
+        } else {
+          groups.forEach((g) => $slider.append(buildSlide(g)));
+        }
+
+        // hide arrow
+        if (filterValue === "WILD") {
+          $(".slider-arrow").addClass("hidden");
+        }
+
+        // 4) Init slick again
+        initSlick($slider);
+
+        // ====== Enable/disable submit button based on checkbox selection
+        $("input[name='sauces-type']").change(function () {
+          if ($('input[name="sauces-type"]').is(":checked")) {
+            $(".one .submit").addClass("active").removeClass("disabled");
+          } else {
+            $(".one .submit").removeClass("active").addClass("disabled");
+          }
+        });
+      }
+    </script>
+
+    <!-- Draggble Slider Logic -->
+    <script>
+      $(document).ready(function () {
+        const $slider = $("#heatSlider");
+        const $handle = $("#sliderHandle");
+        const $labels = $(".level-label"); // All label divs
+        const levels = ["ALL", "MILD", "MEDIUM", "HOT", "WILD"]; // For mapping index to level name
+
+        let isDragging = false;
+        let startX, startHandleX; // For tracking mouse and handle position during drag
+
+        // Dimensions and snap points will be calculated dynamically
+        let trackWidth, trackOffsetLeft, handleWidth;
+        const snapPointsX = []; // Stores the 'left' CSS value for the handle at each snap point
+
+        // Function to calculate all necessary dimensions and snap points
+        function calculateDimensions() {
+          trackWidth = $slider.width();
+          trackOffsetLeft = $slider.offset().left;
+          handleWidth = $handle.outerWidth(); // Use outerWidth to include border/padding
+
+          snapPointsX.length = 0; // Clear previous snap points
+
+          $labels.each(function (index) {
+            const $label = $(this);
+            // Calculate the center of the label relative to the document
+            const labelCenterAbs = $label.offset().left + $label.outerWidth() / 2;
+            const labelCenterRelToSlider = labelCenterAbs - trackOffsetLeft;
+            snapPointsX.push(labelCenterRelToSlider - handleWidth / 2);
+          });
+
+          // Ensure snap points are within reasonable bounds (0 to trackWidth - handleWidth)
+          for (let i = 0; i < snapPointsX.length; i++) {
+            snapPointsX[i] = Math.max(0, Math.min(trackWidth - handleWidth, snapPointsX[i]));
+          }
+
+          // Re-set the current handle position to the closest snap point after resize
+          const currentHandleCenter = $handle.position().left + handleWidth / 2;
+          const closestIndex = findClosestSnapPointIndex(currentHandleCenter);
+          $handle.css("left", snapPointsX[closestIndex] + "px");
+          updateActiveLabel(closestIndex);
+        }
+
+        // Function to find the closest snap point index
+        function findClosestSnapPointIndex(currentHandleCenter) {
+          let closestIndex = 0;
+          let minDistance = Infinity;
+
+          snapPointsX.forEach((snapPointLeft, index) => {
+            // Calculate the center of the handle if it were at this snapPointLeft
+            const snapPointHandleCenter = snapPointLeft + handleWidth / 2;
+            const distance = Math.abs(currentHandleCenter - snapPointHandleCenter);
+
+            if (distance < minDistance) {
+              minDistance = distance;
+              closestIndex = index;
+            }
+          });
+          return closestIndex;
+        }
+
+        // Function to update active label styling
+        function updateActiveLabel(levelIndex) {
+          $labels.removeClass("active"); // Remove active class from all labels
+
+          $($labels[levelIndex]).addClass("active"); // Add active class to the current label
+
+          hot_level = levels[levelIndex];
+        }
+
+        // Initial calculation and set default position (MEDIUM)
+        calculateDimensions();
+        const initialLevelIndex = 2; // Index for 'MEDIUM'
+        $handle.css("left", snapPointsX[initialLevelIndex] + "px");
+        updateActiveLabel(initialLevelIndex);
+
+        // Recalculate dimensions on window resize for responsiveness
+        $(window).on("resize", calculateDimensions);
+
+        // --- Mousedown (Start Drag) ---
+        $handle.on("mousedown", function (e) {
+          isDragging = true;
+          startX = e.clientX; // Mouse X position when drag starts
+          startHandleX = $handle.position().left; // Handle's left position when drag starts
+          $handle.addClass("cursor-grabbing"); // Change cursor style
+          e.preventDefault(); // Prevent default browser drag behavior
+        });
+
+        // --- Mousemove (During Drag) ---
+        $(document).on("mousemove", function (e) {
+          if (!isDragging) return;
+
+          const diffX = e.clientX - startX; // Difference in mouse X position
+          let newLeft = startHandleX + diffX; // New desired left position for the handle
+
+          // Constrain the handle within the track boundaries
+          // Left boundary: 0 (or slightly negative to allow handle to go fully left)
+          // Right boundary: trackWidth - handleWidth (so the right edge of handle doesn't go past track)
+          newLeft = Math.max(0, Math.min(trackWidth - handleWidth, newLeft));
+
+          $handle.css("left", newLeft + "px");
+        });
+
+        // --- Mouseup (End Drag & Snap) ---
+        $(document).on("mouseup", function () {
+          if (!isDragging) return;
+          isDragging = false;
+          $handle.removeClass("cursor-grabbing"); // Reset cursor style
+
+          const currentHandleCenter = $handle.position().left + handleWidth / 2;
+          const closestIndex = findClosestSnapPointIndex(currentHandleCenter);
+
+          // Animate the handle to the closest snap point
+          $handle.stop().animate(
+            {
+              left: snapPointsX[closestIndex] + "px",
+            },
+            100
+          ); // 100ms animation duration
+
+          // Update the active label after snapping
+          updateActiveLabel(closestIndex);
+        });
+
+        // Optional: Clicking on a label snaps the handle to it
+        $labels.on("click", function () {
+          const clickedIndex = $(this).index(); // Get index of the clicked label
+          $handle.stop().animate(
+            {
+              left: snapPointsX[clickedIndex] + "px",
+            },
+            150
+          );
+          updateActiveLabel(clickedIndex);
+        });
+      });
+    </script>
+
+    <script>
+      var timer_1, timer_2, timer_3, timer_4;
+      var wing_type = "";
+
+      function ready_blink($, show, count = 1) {
+        if (show) {
+          timer_1 = setTimeout(function () {
+            $("#boneless,#cauliflower").prop("checked", false);
+            $("#traditional").prop("checked", true);
+          }, 100);
+          timer_2 = setTimeout(function () {
+            $("#traditional,#cauliflower").prop("checked", false);
+            $("#boneless").prop("checked", true);
+          }, 900);
+          timer_3 = setTimeout(function () {
+            $("#traditional,#boneless").prop("checked", false);
+            $("#cauliflower").prop("checked", true);
+          }, 1700);
+          timer_4 = setTimeout(function () {
+            $("#traditional,#boneless,#cauliflower").prop("checked", false);
+          }, 2500);
+        }
+      }
+
+      $(document).ready(function () {
+        ready_blink($, true);
+      });
+
+      $("input[name='wing-type']").click(function () {
+        clearTimeout(timer_1);
+        clearTimeout(timer_2);
+        clearTimeout(timer_3);
+        clearTimeout(timer_4);
+        $(this).prop("checked", true);
+        wing_type = $(this).val();
+        if ($('input[name="wing-type"]').is(":checked")) {
+          $(".start .submit").addClass("active").removeClass("disabled");
+        } else {
+          $(".start .submit").removeClass("active").addClass("disabled");
+        }
+      });
+
+      $("input[name='wing-type']").change(function () {
+        if ($('input[name="wing-type"]').is(":checked")) {
+          $(".start .submit").addClass("active").removeClass("disabled");
+          wing_type = $(this).val();
+        } else {
+          $(".start .submit").removeClass("active").addClass("disabled");
+        }
+      });
+
+      // --- switch step
+      var linkAction = function (_from, _to) {
+        $(_to).removeClass("hidden");
+        $(_from).addClass("hidden");
+
+        if (_to == ".one") {
+          renderSlider(hot_level);
+        }
+
+        if (_to == ".two") {
+          console.log("Wing Type:", wing_type);
+          $(".header").addClass("hidden");
+          if (wing_type == "traditional") {
+            $(".traditional").removeClass("hidden");
+          } else if (wing_type == "boneless") {
+            $(".boneless").removeClass("hidden");
+          } else if (wing_type == "cauliflower") {
+            $(".cauliflower").removeClass("hidden");
+          }
+        }
+      };
+    </script>
+  </body>
+</html>

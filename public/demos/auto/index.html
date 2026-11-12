@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="ad.size" content="width=300,height=600">
+    <title></title>
+
+    <!-- Configuration (load first to set title) -->
+    <script src="config.js"></script>
+
+    <!-- Google Ad Manager ClickTag Compliance -->
+    <script type="text/javascript">
+        var clickTag = "http://www.google.com";
+
+        // Set document title from config
+        if (window.AD_CONFIG?.meta?.adTitle) {
+            document.title = window.AD_CONFIG.meta.adTitle;
+        }
+    </script>
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="output.css">
+</head>
+<body>
+
+    <!-- Ad Container - 300x600 -->
+    <div id="ad-container" class="ad-container" data-state="finder">
+
+        <!-- State transition overlay -->
+        <div id="state-overlay" class="state-overlay"></div>
+
+        <!-- Persistent Header -->
+        <div class="ad-header" id="ad-header">
+
+            <!-- World Car Dealer Logo -->
+            <div class="header-logo-worldcar">
+                <img src="" alt="" id="logo-world-car" class="header-logo-worldcar-img" draggable="false">
+            </div>
+
+            <!-- Kia Brand Logo -->
+            <div class="header-logo-kia">
+                <img src="" alt="" id="logo-kia" class="header-logo-kia-img" draggable="false">
+            </div>
+
+        </div>
+
+        <!-- Finder View -->
+        <div class="state-view state-finder" id="state-finder">
+
+            <!-- Finder Banner -->
+            <div class="finder-banner" id="finder-banner">
+                <div class="finder-tag">
+                    <div class="tag-bar"></div>
+                    <span class="finder-tag-label" id="finder-tag-label"></span>
+                </div>
+                <div class="finder-heading">
+                    <h1 class="finder-headline" id="finder-headline"></h1>
+                    <p class="finder-subheadline" id="finder-subheadline"></p>
+                </div>
+            </div>
+
+            <!-- Vehicle Cards Grid -->
+            <div class="cards-grid" id="cards-grid">
+                <!-- Vehicle cards populated by initializeCards() -->
+            </div>
+
+        </div>
+
+        <!-- Detail View -->
+        <div class="state-view state-detail" id="state-detail">
+
+            <!-- Detail Navigation Bar -->
+            <div class="detail-nav" id="detail-nav">
+                <button class="nav-back-btn" id="nav-back-btn" data-action="back">
+                    <span class="nav-back-icon">
+                        <svg width="10" height="5" viewBox="0 0 10 5" fill="none" aria-hidden="true">
+                            <path d="M10 2.5H1.5M1.5 2.5L4 0.5M1.5 2.5L4 4.5" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </span>
+                    <span class="nav-back-label" id="nav-back-label"></span>
+                </button>
+                <span class="nav-category" id="nav-category"></span>
+            </div>
+
+            <!-- Feature Image Area -->
+            <div class="detail-feature" id="detail-feature">
+                <span class="feature-year-label" id="feature-year-label"></span>
+                <img src="" alt="" id="detail-vehicle-img" class="detail-vehicle-img" draggable="false">
+            </div>
+
+            <!-- Main Detail Content -->
+            <div class="detail-main" id="detail-main">
+
+                <!-- Model Heading -->
+                <div class="detail-heading">
+                    <div class="detail-tag">
+                        <div class="tag-bar"></div>
+                        <span class="detail-tag-label" id="detail-tag-label"></span>
+                    </div>
+                    <div class="detail-text">
+                        <h2 class="detail-model-name" id="detail-model-name"></h2>
+                        <p class="detail-model-tagline" id="detail-model-tagline"></p>
+                    </div>
+                </div>
+
+                <!-- Best For Copy -->
+                <p class="detail-best-for-wrap">
+                    <strong class="best-for-label">Best for:</strong>
+                    <span class="best-for-body" id="detail-best-for-text"> </span>
+                </p>
+
+                <!-- Vehicle Highlight Pills -->
+                <div class="detail-highlights" id="detail-highlights">
+                    <!-- Pills populated by openVehicleDetail() -->
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- Persistent Footer -->
+        <div class="ad-footer" id="ad-footer">
+
+            <!-- Dealer Info -->
+            <div class="footer-dealer">
+                <span class="footer-dealer-name" id="footer-dealer-name"></span>
+                <span class="footer-dealer-location" id="footer-dealer-location"></span>
+            </div>
+
+            <!-- Footer CTA -->
+            <button class="footer-cta-wrap" id="footer-cta-btn" data-action="cta-primary">
+                <span class="footer-cta-label" id="footer-cta-label"></span>
+                <div class="footer-cta-arrow-btn">
+                    <svg width="10" height="5" viewBox="0 0 10 5" fill="none" aria-hidden="true">
+                        <path d="M0 2.5H8.5M8.5 2.5L6 0.5M8.5 2.5L6 4.5" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+            </button>
+
+        </div>
+
+    </div>
+
+    <!-- Main Application Script -->
+    <script>
+        // Global state
+        const config = window.AD_CONFIG;
+        let currentState = 'finder';
+        let currentVehicle = null;
+
+        // Initialization
+        document.addEventListener('DOMContentLoaded', function() {
+            initializePixels();
+            initializeFonts();
+            initializeColors();
+            initializeContent();
+            initializeCards();
+            initializeButtons();
+
+            track('ad_loaded');
+        });
+
+        /**
+         * Initialize CSS color variables from config
+         * Converts config.theme.colors to CSS custom properties
+         */
+        function initializeColors() {
+            const colors = config.theme.colors;
+            const root = document.documentElement;
+
+            Object.keys(colors).forEach(key => {
+                const cssVarName = '--color-' + key.replace(/([A-Z])/g, '-$1').toLowerCase();
+                root.style.setProperty(cssVarName, colors[key]);
+            });
+
+            console.log('[COLORS] Initialized', Object.keys(colors).length, 'color variables');
+        }
+
+        /**
+         * Load custom fonts from config
+         * Supports Google Fonts, local assets, and CDN sources
+         */
+        function initializeFonts() {
+            if (!config.theme.typography || !config.theme.typography.customFonts) {
+                console.log('[FONTS] No custom fonts to load');
+                return;
+            }
+
+            const typography = config.theme.typography;
+            const fonts = typography.customFonts;
+            const root = document.documentElement;
+
+            if (typography.fontPrimary) {
+                root.style.setProperty('--brand-font-primary', typography.fontPrimary);
+            }
+
+            if (typography.fontSecondary) {
+                root.style.setProperty('--brand-font-secondary', typography.fontSecondary);
+            }
+
+            fonts.forEach(function(font) {
+                if (font.source === 'google' && font.url) {
+                    const link = document.createElement('link');
+                    link.rel = 'stylesheet';
+                    link.href = font.url;
+                    document.head.appendChild(link);
+                } else if ((font.source === 'local' || font.source === 'cdn') && font.sources) {
+                    const srcValues = font.sources.map(function(src) {
+                        return "url('" + src.url + "') format('" + src.format + "')";
+                    }).join(',\n         ');
+
+                    const fontFaceCSS = [
+                        "@font-face {",
+                        "    font-family: '" + font.family + "';",
+                        "    src: " + srcValues + ";",
+                        "    font-weight: " + (font.weight || 'normal') + ";",
+                        "    font-style: " + (font.style || 'normal') + ";",
+                        "    font-display: " + (font.display || 'swap') + ";",
+                        "}"
+                    ].join('\n');
+
+                    const style = document.createElement('style');
+                    style.textContent = fontFaceCSS;
+                    document.head.appendChild(style);
+
+                    console.log('[FONTS] Injected @font-face for:', font.family);
+                }
+            });
+
+            console.log('[FONTS] Loaded', fonts.length, 'custom font(s)');
+        }
+
+        /**
+         * Populate all static text and asset content from config
+         */
+        function initializeContent() {
+            // Set logo images
+            const logoWorldCar = document.getElementById('logo-world-car');
+            if (logoWorldCar) {
+                logoWorldCar.src = config.theme.assets.logoWorldCar;
+            }
+
+            const logoKia = document.getElementById('logo-kia');
+            if (logoKia) {
+                logoKia.src = config.theme.assets.logoKia;
+            }
+
+            // Set dealer info in footer
+            const dealerNameEl = document.getElementById('footer-dealer-name');
+            if (dealerNameEl) {
+                dealerNameEl.textContent = config.content.dealer.name;
+            }
+
+            const dealerLocationEl = document.getElementById('footer-dealer-location');
+            if (dealerLocationEl) {
+                dealerLocationEl.textContent = config.content.dealer.location;
+            }
+
+            // Set finder banner content
+            const finderTagLabel = document.getElementById('finder-tag-label');
+            if (finderTagLabel) {
+                finderTagLabel.textContent = config.content.finder.tagLabel;
+            }
+
+            const finderHeadline = document.getElementById('finder-headline');
+            if (finderHeadline) {
+                finderHeadline.textContent = config.content.finder.headline;
+            }
+
+            const finderSubheadline = document.getElementById('finder-subheadline');
+            if (finderSubheadline) {
+                finderSubheadline.textContent = config.content.finder.subheadline;
+            }
+
+            // Set detail navigation back button label
+            const navBackLabel = document.getElementById('nav-back-label');
+            if (navBackLabel) {
+                navBackLabel.textContent = config.content.navigation.backLabel;
+            }
+
+            // Set detail tag label
+            const detailTagLabel = document.getElementById('detail-tag-label');
+            if (detailTagLabel) {
+                detailTagLabel.textContent = config.content.navigation.detailTagLabel;
+            }
+
+            // Set initial footer CTA text for finder state
+            updateFooterCta(config.content.finder.shopAllCta.text);
+
+            console.log('[CONTENT] Initialized');
+        }
+
+        /**
+         * Build and insert vehicle cards into the grid from config data
+         */
+        function initializeCards() {
+            const grid = document.getElementById('cards-grid');
+            if (!grid) return;
+
+            const vehicleOrder = config.content.vehicleOrder;
+            const vehicles = config.content.vehicles;
+
+            vehicleOrder.forEach(function(vehicleId, index) {
+                const vehicle = vehicles[vehicleId];
+                if (vehicle) {
+                    const card = createVehicleCard(vehicle);
+                    card.style.setProperty('--card-delay', (index * 90 + 280) + 'ms');
+                    grid.appendChild(card);
+                    requestAnimationFrame(function() { card.classList.add('anim-enter'); });
+                }
+            });
+        }
+
+        /**
+         * Create a vehicle card DOM element from vehicle data
+         * @param {Object} vehicle - Vehicle data object from config
+         * @returns {HTMLElement} Complete card element with event listeners
+         */
+        function createVehicleCard(vehicle) {
+            const card = document.createElement('div');
+            card.className = 'vehicle-card';
+            card.setAttribute('data-vehicle-id', vehicle.id);
+            card.setAttribute('data-action', 'open-vehicle');
+            card.setAttribute('tabindex', '0');
+            card.setAttribute('role', 'button');
+            card.setAttribute('aria-label', 'View ' + vehicle.name + ' details');
+
+            // Category label
+            const categoryEl = document.createElement('div');
+            categoryEl.className = 'card-category';
+            categoryEl.textContent = vehicle.category;
+
+            // Arrow button with diagonal up-right icon
+            const arrowBtn = document.createElement('div');
+            arrowBtn.className = 'card-arrow-btn';
+            arrowBtn.setAttribute('aria-hidden', 'true');
+            arrowBtn.innerHTML = '<svg class="card-arrow-icon" width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M9.53553 4.93934V2.46447H7.06066L7.06066 2.96439L8.68206 2.96439L2.28769 9.35876L2.64124 9.71231L9.03561 3.31794V4.93934H9.53553Z" fill="currentColor"/></svg>';
+
+            // Vehicle image wrapper
+            const imgWrap = document.createElement('div');
+            imgWrap.className = 'card-img-wrap';
+
+            const img = document.createElement('img');
+            img.src = vehicle.image;
+            img.alt = '';
+            img.className = 'card-vehicle-img';
+            img.draggable = false;
+            imgWrap.appendChild(img);
+
+            // Name and tagline info block
+            const info = document.createElement('div');
+            info.className = 'card-info';
+
+            const nameEl = document.createElement('div');
+            nameEl.className = 'card-name';
+            nameEl.textContent = vehicle.name;
+
+            const taglineEl = document.createElement('div');
+            taglineEl.className = 'card-tagline';
+            taglineEl.textContent = vehicle.tagline;
+
+            info.appendChild(nameEl);
+            info.appendChild(taglineEl);
+
+            card.appendChild(categoryEl);
+            card.appendChild(arrowBtn);
+            card.appendChild(imgWrap);
+            card.appendChild(info);
+
+            // Click handler
+            card.addEventListener('click', function() {
+                openVehicleDetail(vehicle.id);
+            });
+
+            // Keyboard handler for accessibility
+            card.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    openVehicleDetail(vehicle.id);
+                }
+            });
+
+            return card;
+        }
+
+        /**
+         * Initialize footer CTA and navigation back button click handlers
+         */
+        function initializeButtons() {
+            const footerCtaBtn = document.getElementById('footer-cta-btn');
+
+            if (footerCtaBtn) {
+                footerCtaBtn.addEventListener('click', function() {
+                    let url;
+
+                    if (currentState === 'finder') {
+                        const isGamServed = window.clickTag && window.clickTag !== 'http://www.google.com';
+                        url = isGamServed ? window.clickTag : config.content.finder.shopAllCta.url;
+                    } else {
+                        const vehicle = config.content.vehicles[currentVehicle];
+                        url = vehicle.shopCta.url;
+                    }
+
+                    track('cta_clicked', {
+                        button: currentState === 'finder' ? 'shop-all' : 'shop-' + currentVehicle,
+                        url: url
+                    });
+                    fireConversionPixel(config.pixels.stackadapt.conversion.shopAll);
+                    fireRetargetingPixel();
+                    window.open(url, '_blank', 'noopener,noreferrer');
+                });
+            }
+
+            const navBackBtn = document.getElementById('nav-back-btn');
+
+            if (navBackBtn) {
+                navBackBtn.addEventListener('click', function() {
+                    goToFinder();
+                });
+            }
+
+            console.log('[BUTTONS] Initialized click handlers');
+        }
+
+        /**
+         * Open vehicle detail view and populate with vehicle-specific content
+         * @param {string} vehicleId - Vehicle identifier matching a config.content.vehicles key
+         */
+        function openVehicleDetail(vehicleId) {
+            const vehicle = config.content.vehicles[vehicleId];
+            if (!vehicle) return;
+
+            // Populate navigation bar
+            const navCategory = document.getElementById('nav-category');
+            if (navCategory) navCategory.textContent = vehicle.category;
+
+            // Populate feature image area
+            const featureLabel = document.getElementById('feature-year-label');
+            if (featureLabel) {
+                featureLabel.textContent = vehicle.year + ' KIA ' + vehicle.name;
+            }
+
+            const vehicleImg = document.getElementById('detail-vehicle-img');
+            if (vehicleImg) {
+                vehicleImg.src = vehicle.image;
+                vehicleImg.alt = '';
+            }
+
+            // Populate main content
+            const modelName = document.getElementById('detail-model-name');
+            if (modelName) modelName.textContent = vehicle.name;
+
+            const modelTagline = document.getElementById('detail-model-tagline');
+            if (modelTagline) modelTagline.textContent = vehicle.tagline;
+
+            const bestForText = document.getElementById('detail-best-for-text');
+            if (bestForText) bestForText.textContent = ' ' + vehicle.bestFor;
+
+            // Build highlight pills
+            const highlightsEl = document.getElementById('detail-highlights');
+            if (highlightsEl) {
+                highlightsEl.innerHTML = '';
+                vehicle.highlights.forEach(function(highlight, i) {
+                    const pill = document.createElement('div');
+                    pill.className = 'highlight-pill';
+                    pill.textContent = highlight;
+                    pill.style.setProperty('--pill-delay', (300 + i * 75) + 'ms');
+                    highlightsEl.appendChild(pill);
+                });
+            }
+
+            // Update footer CTA for this vehicle
+            updateFooterCta(vehicle.shopCta.text);
+
+            // Track card click before state change
+            track('card_clicked', { vehicle: vehicleId });
+
+            // Transition to detail state with overlay crossfade
+            currentVehicle = vehicleId;
+            transitionTo('detail', function() {
+                animateDetailIn();
+            });
+        }
+
+        /**
+         * Navigate back to the finder grid
+         */
+        function goToFinder() {
+            updateFooterCta(config.content.finder.shopAllCta.text);
+            currentVehicle = null;
+            transitionTo('finder', function() {
+                animateFinderIn();
+            });
+        }
+
+        /**
+         * Update the footer CTA button label text
+         * @param {string} label - Display text for the CTA button
+         */
+        function updateFooterCta(label) {
+            const ctaLabel = document.getElementById('footer-cta-label');
+            if (ctaLabel) ctaLabel.textContent = label;
+        }
+
+        /**
+         * Switch the active ad display state
+         * @param {string} newState - Target state: 'finder' or 'detail'
+         */
+        function setState(newState) {
+            const previousState = currentState;
+            currentState = newState;
+
+            const adContainer = document.getElementById('ad-container');
+            if (adContainer) adContainer.setAttribute('data-state', newState);
+
+            track('state_changed', { from: previousState, to: newState });
+        }
+
+        /**
+         * Crossfade transition between states using the overlay
+         * @param {string} newState - Target state
+         * @param {Function} onComplete - Called after state switch and overlay fades out
+         */
+        function transitionTo(newState, onComplete) {
+            const overlay = document.getElementById('state-overlay');
+            if (!overlay) { setState(newState); if (onComplete) onComplete(); return; }
+
+            overlay.style.transition = 'opacity 0.22s ease';
+            overlay.style.opacity = '1';
+            overlay.style.pointerEvents = 'all';
+
+            setTimeout(function() {
+                setState(newState);
+                overlay.style.transition = 'opacity 0.32s ease';
+                overlay.style.opacity = '0';
+
+                setTimeout(function() {
+                    overlay.style.pointerEvents = 'none';
+                    if (onComplete) onComplete();
+                }, 40);
+            }, 230);
+        }
+
+        /**
+         * Animate detail view elements in after state switch
+         */
+        function animateDetailIn() {
+            var regions = [
+                document.getElementById('detail-nav'),
+                document.getElementById('detail-feature'),
+                document.getElementById('detail-vehicle-img'),
+                document.getElementById('detail-main')
+            ];
+
+            regions.forEach(function(el) {
+                if (!el) return;
+                el.classList.remove('anim-enter');
+                void el.offsetWidth;
+                el.classList.add('anim-enter');
+            });
+
+            var pills = document.querySelectorAll('#detail-highlights .highlight-pill');
+            pills.forEach(function(pill, i) {
+                pill.classList.remove('anim-enter');
+                pill.style.setProperty('--pill-delay', (300 + i * 75) + 'ms');
+                void pill.offsetWidth;
+                pill.classList.add('anim-enter');
+            });
+        }
+
+        /**
+         * Re-animate finder cards when returning from detail
+         */
+        function animateFinderIn() {
+            var cards = document.querySelectorAll('.vehicle-card');
+            cards.forEach(function(card, i) {
+                card.classList.remove('anim-enter');
+                card.style.setProperty('--card-delay', (i * 70) + 'ms');
+                void card.offsetWidth;
+                card.classList.add('anim-enter');
+            });
+        }
+
+        /**
+         * Load the StackAdapt pixel SDK from config
+         * Must be called first in DOMContentLoaded before any fireConversionPixel / fireRetargetingPixel calls
+         */
+        function initializePixels() {
+            const sa = config.pixels && config.pixels.stackadapt;
+            if (!sa || !sa.enabled) {
+                console.log('[PIXELS] No pixels configured');
+                return;
+            }
+            !function(s,a,e,v,n,t,z){if(s.saq)return;n=s.saq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!s._saq)s._saq=n;n.push=n;n.loaded=!0;n.version='1.0';n.queue=[];t=a.createElement(e);t.async=!0;t.src=v;z=a.getElementsByTagName(e)[0];z.parentNode.insertBefore(t,z)}(window,document,'script',sa.sdkUrl);
+            console.log('[PIXELS] StackAdapt SDK initialized');
+        }
+
+        /**
+         * Fire a StackAdapt conversion pixel
+         * @param {string} token
+         */
+        function fireConversionPixel(token) {
+            if (!token || typeof saq === 'undefined') return;
+            saq('conv', token);
+            console.log('[PIXELS] Fired conversion pixel');
+        }
+
+        /**
+         * Fire the StackAdapt retargeting pixel
+         */
+        function fireRetargetingPixel() {
+            const sa = config.pixels && config.pixels.stackadapt;
+            if (!sa || !sa.retargeting || !sa.retargeting.token || typeof saq === 'undefined') return;
+            saq('rt', sa.retargeting.token);
+            console.log('[PIXELS] Fired retargeting pixel');
+        }
+
+        /**
+         * Track analytics events and fire optional conversion/retargeting pixels
+         * @param {string} eventName - Event key matching config.tracking.events
+         * @param {Object} payload - Additional event context data
+         */
+        function track(eventName, payload = {}) {
+            if (!config.tracking.enabled) return;
+
+            const event = config.tracking.events[eventName];
+            if (!event || !event.enabled) return;
+
+            const eventData = {
+                event: event.name,
+                category: event.category,
+                timestamp: new Date().toISOString(),
+                ...payload
+            };
+
+            console.log('[TRACKING]', eventData);
+
+            // Fire conversion pixel if configured
+            if (event.convPixel) {
+                const convImg = document.createElement('img');
+                convImg.src = event.convPixel;
+                convImg.width = 1;
+                convImg.height = 1;
+                convImg.style.cssText = 'position:absolute;left:-9999px;';
+                convImg.alt = '';
+                document.body.appendChild(convImg);
+                console.log('[TRACKING] Fired conversion pixel:', event.convPixel);
+            }
+
+            // Fire retargeting pixel if configured
+            if (event.rtPixel) {
+                const rtImg = document.createElement('img');
+                rtImg.src = event.rtPixel;
+                rtImg.width = 1;
+                rtImg.height = 1;
+                rtImg.style.cssText = 'position:absolute;left:-9999px;';
+                rtImg.alt = '';
+                document.body.appendChild(rtImg);
+                console.log('[TRACKING] Fired retargeting pixel:', event.rtPixel);
+            }
+
+            if (typeof gtag !== 'undefined') {
+                gtag('event', event.name, eventData);
+            }
+        }
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,854 @@
+/**
+ * WHITE-LABEL AD STYLES
+ * 300x600 Programmatic Ad Unit
+ * Config-driven design — NO HARDCODED COLORS
+ */
+
+/* CSS Custom Properties (Brand Colors) */
+:root {
+    /* All colors and fonts are injected dynamically by JavaScript from config.js */
+    /* NO hardcoded values - 100% config-driven */
+}
+
+/* Base Reset */
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+/* Prevent text selection and image dragging throughout the ad */
+.ad-container {
+    cursor: default;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+.ad-container img {
+    -webkit-user-drag: none;
+    user-drag: none;
+    pointer-events: none;
+    draggable: false;
+}
+
+/* Body */
+body {
+    width: 300px;
+    height: 600px;
+    overflow: hidden;
+}
+
+/* Ad Container */
+.ad-container {
+    width: 300px;
+    height: 600px;
+    position: relative;
+    overflow: hidden;
+    background: var(--color-background-ad);
+    border: 1px solid var(--color-border-ad);
+    border-radius: 14px;
+    font-family: var(--brand-font-primary);
+}
+
+/* State Visibility */
+.state-view {
+    display: none;
+}
+
+.ad-container[data-state="finder"] .state-finder {
+    display: block;
+}
+
+.ad-container[data-state="detail"] .state-detail {
+    display: block;
+}
+
+/* Header - persistent across all states */
+.ad-header {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    background: var(--color-background-header);
+    border-bottom: 1px solid var(--color-border-header);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 16px;
+    z-index: 10;
+}
+
+/* World Car Logo */
+.header-logo-worldcar {
+    height: 24px;
+    max-width: 160px;
+    position: relative;
+}
+
+.header-logo-worldcar-img {
+    height: 100%;
+    width: auto;
+    max-width: 100%;
+    display: block;
+    pointer-events: none;
+}
+
+/* Kia Logo */
+.header-logo-kia {
+    width: 55px;
+    height: 13px;
+    overflow: hidden;
+    position: relative;
+}
+
+.header-logo-kia-img {
+    position: absolute;
+    height: 100.05%;
+    left: 0;
+    top: -0.03%;
+    width: 100%;
+    max-width: none;
+    pointer-events: none;
+}
+
+/* Finder Banner */
+.finder-banner {
+    position: absolute;
+    top: 59px;
+    left: 0;
+    right: 0;
+    height: 100px;
+    background: linear-gradient(138.24deg, var(--color-background-banner-start) 0%, var(--color-background-banner-end) 100%);
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    padding: 16px;
+    overflow: hidden;
+}
+
+/* Banner light streak texture overlay */
+.finder-banner::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+        linear-gradient(154deg, transparent 0%, transparent 22%, var(--color-banner-streak-high) 22.4%, var(--color-banner-streak-high) 22.9%, transparent 23.3%),
+        linear-gradient(25deg, transparent 0%, transparent 53%, var(--color-banner-streak-low) 53.4%, var(--color-banner-streak-low) 53.9%, transparent 54.3%);
+    pointer-events: none;
+}
+
+/* Banner radial highlight (top-right) */
+.finder-banner::after {
+    content: '';
+    position: absolute;
+    top: -20px;
+    right: -14px;
+    width: 340px;
+    height: 120px;
+    background: radial-gradient(ellipse at 92% 20%, var(--color-banner-radial-start) 0%, var(--color-banner-radial-end) 48%);
+    pointer-events: none;
+}
+
+/* Shared Tag Bar - red accent bar used in finder and detail tags */
+.tag-bar {
+    width: 22px;
+    height: 2px;
+    background: var(--color-accent-red);
+    flex-shrink: 0;
+}
+
+/* Finder Tag */
+.finder-tag {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    position: relative;
+    z-index: 1;
+}
+
+.finder-tag-label {
+    font-family: var(--brand-font-primary);
+    font-weight: 700;
+    font-size: 9px;
+    color: var(--color-text-banner-tag);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+/* Finder Heading */
+.finder-heading {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    position: relative;
+    z-index: 1;
+}
+
+.finder-headline {
+    font-family: var(--brand-font-primary);
+    font-weight: 700;
+    font-size: 28px;
+    color: var(--color-text-white);
+    letter-spacing: -1.26px;
+    line-height: 28px;
+}
+
+.finder-subheadline {
+    font-family: var(--brand-font-primary);
+    font-weight: 400;
+    font-size: 11px;
+    color: var(--color-text-banner-subheadline);
+    line-height: 15px;
+}
+
+/* Cards Grid Area */
+.cards-grid {
+    position: absolute;
+    top: 159px;
+    left: 0;
+    right: 0;
+    bottom: 53px;
+    background: var(--color-background-ad);
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: 10px;
+    padding: 10px;
+}
+
+/* Vehicle Card */
+.vehicle-card {
+    background: var(--color-background-card);
+    border: 1px solid var(--color-border-card);
+    border-radius: 14px;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 10px;
+    box-shadow: 0 5px 14px 0 var(--color-shadow-card);
+    cursor: pointer;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+/* Card Category Label */
+.card-category {
+    position: absolute;
+    top: 14px;
+    left: 10px;
+    font-family: var(--brand-font-primary);
+    font-weight: 700;
+    font-size: 8px;
+    color: var(--color-text-card-category);
+    letter-spacing: 0.7px;
+    text-transform: uppercase;
+    white-space: nowrap;
+    line-height: normal;
+}
+
+/* Card Arrow Button */
+.card-arrow-btn {
+    position: absolute;
+    top: 10px;
+    left: 102px;
+    width: 20px;
+    height: 20px;
+    border-radius: 10.5px;
+    background: var(--color-background-arrow-btn);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-text-card-name);
+    pointer-events: none;
+}
+
+/* Card Vehicle Image */
+.card-img-wrap {
+    position: absolute;
+    right: -1px;
+    top: 50px;
+    width: 134px;
+    height: 72px;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.card-vehicle-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    pointer-events: none;
+    display: block;
+}
+
+/* Card Info Text */
+.card-info {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    width: 100%;
+}
+
+.card-name {
+    font-family: var(--brand-font-primary);
+    font-weight: 700;
+    font-size: 18px;
+    color: var(--color-text-card-name);
+    letter-spacing: -0.7px;
+    line-height: 18px;
+}
+
+.card-tagline {
+    font-family: var(--brand-font-primary);
+    font-weight: 700;
+    font-size: 9px;
+    color: var(--color-text-card-tagline);
+    line-height: 11px;
+}
+
+/* Detail Navigation Bar */
+.detail-nav {
+    position: absolute;
+    top: 59px;
+    left: 0;
+    right: 0;
+    height: 40px;
+    background: var(--color-background-navigation);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 15px;
+}
+
+/* Navigation Back Button */
+.nav-back-btn {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    color: var(--color-text-white);
+}
+
+.nav-back-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 12px;
+    height: 12px;
+    overflow: hidden;
+}
+
+.nav-back-label {
+    font-family: var(--brand-font-secondary);
+    font-weight: 700;
+    font-size: 10px;
+    color: var(--color-text-white);
+    letter-spacing: 0.7px;
+    text-transform: uppercase;
+    white-space: nowrap;
+    line-height: normal;
+}
+
+.nav-category {
+    font-family: var(--brand-font-secondary);
+    font-weight: 700;
+    font-size: 9px;
+    color: var(--color-text-nav-category);
+    letter-spacing: 0.7px;
+    text-transform: uppercase;
+    white-space: nowrap;
+    line-height: 9px;
+}
+
+/* Detail Feature Image Area */
+.detail-feature {
+    position: absolute;
+    top: 99px;
+    left: 0;
+    right: 0;
+    height: 210px;
+    background: linear-gradient(144.74deg, var(--color-background-feature-start) 0%, var(--color-background-feature-mid) 60%, var(--color-background-feature-end) 100%);
+    overflow: hidden;
+}
+
+.feature-year-label {
+    position: absolute;
+    top: 12px;
+    left: 16px;
+    font-family: var(--brand-font-secondary);
+    font-weight: 700;
+    font-size: 10px;
+    color: var(--color-text-feature-label);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    white-space: nowrap;
+    line-height: normal;
+}
+
+.detail-vehicle-img {
+    position: absolute;
+    right: 0;
+    top: 40px;
+    width: 288px;
+    height: 155px;
+    object-fit: cover;
+    pointer-events: none;
+    display: block;
+}
+
+/* Detail Main Content Area */
+.detail-main {
+    position: absolute;
+    top: 309px;
+    left: 0;
+    right: 0;
+    bottom: 53px;
+    background: var(--color-background-card);
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    overflow: hidden;
+}
+
+/* Detail Heading Block */
+.detail-heading {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+/* Detail Tag Line */
+.detail-tag {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+}
+
+.detail-tag-label {
+    font-family: var(--brand-font-secondary);
+    font-weight: 700;
+    font-size: 9px;
+    color: var(--color-text-detail-tag);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    white-space: nowrap;
+    line-height: 9px;
+}
+
+/* Detail Model Name and Tagline */
+.detail-text {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.detail-model-name {
+    font-family: var(--brand-font-secondary);
+    font-weight: 700;
+    font-size: 31px;
+    color: var(--color-text-model-name);
+    letter-spacing: -0.7px;
+    line-height: 31px;
+}
+
+.detail-model-tagline {
+    font-family: var(--brand-font-primary);
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--color-text-model-tagline);
+    line-height: normal;
+}
+
+/* Best For Section */
+.detail-best-for-wrap {
+    font-size: 12px;
+    line-height: 18px;
+    color: var(--color-text-model-name);
+}
+
+.best-for-label {
+    font-family: var(--brand-font-primary);
+    font-weight: 700;
+    color: var(--color-text-model-name);
+}
+
+.best-for-body {
+    font-family: var(--brand-font-primary);
+    font-weight: 400;
+    color: var(--color-text-best-for);
+}
+
+/* Vehicle Highlight Pills */
+.detail-highlights {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-content: flex-start;
+}
+
+.highlight-pill {
+    background: var(--color-background-pill);
+    border-radius: 999px;
+    padding: 6px 10px;
+    font-family: var(--brand-font-secondary);
+    font-weight: 700;
+    font-size: 9px;
+    color: var(--color-text-pill);
+    white-space: nowrap;
+    line-height: normal;
+}
+
+/* Footer - persistent across all states */
+.ad-footer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 54px;
+    background: var(--color-background-footer);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 16px;
+    z-index: 10;
+}
+
+/* Footer Dealer Info */
+.footer-dealer {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    align-items: flex-start;
+}
+
+.footer-dealer-name {
+    font-family: var(--brand-font-primary);
+    font-weight: 700;
+    font-size: 8px;
+    color: var(--color-text-footer-dealer-dim);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    line-height: normal;
+}
+
+.footer-dealer-location {
+    font-family: var(--brand-font-primary);
+    font-weight: 700;
+    font-size: 10px;
+    color: var(--color-text-white);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    line-height: normal;
+}
+
+/* Footer CTA Button */
+.footer-cta-wrap {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+.footer-cta-label {
+    font-family: var(--brand-font-primary);
+    font-weight: 700;
+    font-size: 9px;
+    color: var(--color-text-white);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    white-space: nowrap;
+    line-height: normal;
+}
+
+/* Footer CTA Arrow Button */
+.footer-cta-arrow-btn {
+    width: 24px;
+    height: 24px;
+    border-radius: 12px;
+    background: var(--color-accent-red);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: var(--color-text-white);
+}
+
+/* ============================================
+   ANIMATIONS & INTERACTIVE STATES
+   ============================================ */
+
+/* --- Keyframes --- */
+
+@keyframes adFadeInDown {
+    from { opacity: 0; transform: translateY(-14px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes adFadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes adFadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+@keyframes adSlideInLeft {
+    from { opacity: 0; transform: translateX(-18px); }
+    to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes kenBurns {
+    from { transform: scale(1.07) translateX(-5px); }
+    to   { transform: scale(1.0) translateX(0); }
+}
+
+@keyframes pillPop {
+    0%   { transform: scale(0.65); opacity: 0; }
+    65%  { transform: scale(1.08); }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes arrowPulse {
+    0%, 100% { transform: scale(1); }
+    50%       { transform: scale(1.15); }
+}
+
+/* --- Load sequence --- */
+
+.ad-header {
+    animation: adFadeInDown 0.55s cubic-bezier(0.22, 1, 0.36, 1) both 60ms;
+}
+
+.ad-footer {
+    animation: adFadeInUp 0.55s cubic-bezier(0.22, 1, 0.36, 1) both 100ms;
+}
+
+.finder-banner {
+    animation: adFadeInDown 0.6s cubic-bezier(0.22, 1, 0.36, 1) both 160ms;
+}
+
+/* --- Card entrance (delay driven by --card-delay set in JS) --- */
+
+.vehicle-card.anim-enter {
+    animation: adFadeInUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation-delay: var(--card-delay, 0ms);
+}
+
+/* --- Enhanced card hover --- */
+
+.vehicle-card {
+    transition: border-color 0.22s ease,
+                transform 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+                box-shadow 0.28s ease;
+    will-change: transform;
+}
+
+@media (hover: hover) {
+    .vehicle-card:hover {
+        border-color: var(--color-border-card-active);
+        transform: translateY(-4px);
+        box-shadow: 0 16px 36px 0 var(--color-shadow-card),
+                    0 0 0 1.5px var(--color-border-card-active);
+        outline: none;
+    }
+}
+
+.vehicle-card:focus,
+.vehicle-card:focus-visible {
+    border-color: var(--color-border-card-active);
+    transform: translateY(-4px);
+    box-shadow: 0 16px 36px 0 var(--color-shadow-card),
+                0 0 0 1.5px var(--color-border-card-active);
+    outline: none;
+}
+
+.vehicle-card:active {
+    transform: translateY(-1px) scale(0.977);
+    transition-duration: 0.09s;
+}
+
+/* Card image zoom */
+.card-img-wrap {
+    overflow: hidden;
+}
+
+.card-vehicle-img {
+    transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+    transform-origin: center center;
+}
+
+@media (hover: hover) {
+    .vehicle-card:hover .card-vehicle-img {
+        transform: scale(1.07);
+    }
+}
+
+.vehicle-card:focus .card-vehicle-img {
+    transform: scale(1.07);
+}
+
+/* Card arrow scale + rotate on hover */
+.card-arrow-btn {
+    transition: background 0.22s ease,
+                transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1),
+                color 0.22s ease;
+}
+
+@media (hover: hover) {
+    .vehicle-card:hover .card-arrow-btn {
+        background: var(--color-background-arrow-btn-active);
+        color: var(--color-text-white);
+        transform: scale(1.14) rotate(-6deg);
+    }
+}
+
+.vehicle-card:focus .card-arrow-btn,
+.vehicle-card:focus-visible .card-arrow-btn {
+    background: var(--color-background-arrow-btn-active);
+    color: var(--color-text-white);
+    transform: scale(1.14) rotate(-6deg);
+}
+
+/* Card category color accent on hover */
+.card-category {
+    transition: color 0.22s ease;
+}
+
+@media (hover: hover) {
+    .vehicle-card:hover .card-category {
+        color: var(--color-border-card-active);
+    }
+}
+
+.vehicle-card:focus .card-category {
+    color: var(--color-border-card-active);
+}
+
+/* --- Detail entrance animations --- */
+
+.detail-nav.anim-enter {
+    animation: adFadeInDown 0.42s cubic-bezier(0.22, 1, 0.36, 1) both 20ms;
+}
+
+.detail-feature.anim-enter {
+    animation: adFadeIn 0.4s ease both 60ms;
+}
+
+.detail-vehicle-img.anim-enter {
+    animation: kenBurns 9s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.detail-main.anim-enter {
+    animation: adFadeInUp 0.5s cubic-bezier(0.22, 1, 0.36, 1) both 100ms;
+}
+
+.detail-heading.anim-enter {
+    animation: adFadeInUp 0.48s cubic-bezier(0.22, 1, 0.36, 1) both 140ms;
+}
+
+.detail-best-for-wrap.anim-enter {
+    animation: adFadeInUp 0.48s cubic-bezier(0.22, 1, 0.36, 1) both 200ms;
+}
+
+.detail-highlights.anim-enter {
+    animation: adFadeIn 0.35s ease both 250ms;
+}
+
+.highlight-pill.anim-enter {
+    animation: pillPop 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation-delay: var(--pill-delay, 280ms);
+}
+
+/* --- Pill hover --- */
+
+.highlight-pill {
+    transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1),
+                background 0.2s ease,
+                color 0.2s ease;
+    cursor: default;
+}
+
+@media (hover: hover) {
+    .highlight-pill:hover {
+        transform: scale(1.08);
+        background: var(--color-background-arrow-btn);
+        color: var(--color-text-card-name);
+    }
+}
+
+/* --- Back button hover --- */
+
+.nav-back-btn {
+    transition: opacity 0.2s ease;
+}
+
+@media (hover: hover) {
+    .nav-back-btn:hover {
+        opacity: 0.75;
+    }
+}
+
+.nav-back-icon {
+    transition: transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@media (hover: hover) {
+    .nav-back-btn:hover .nav-back-icon {
+        transform: translateX(-4px);
+    }
+}
+
+/* --- Footer CTA hover --- */
+
+.footer-cta-wrap {
+    transition: opacity 0.2s ease;
+}
+
+@media (hover: hover) {
+    .footer-cta-wrap:hover {
+        opacity: 0.82;
+    }
+}
+
+.footer-cta-arrow-btn {
+    transition: transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1),
+                background 0.2s ease;
+}
+
+@media (hover: hover) {
+    .footer-cta-wrap:hover .footer-cta-arrow-btn {
+        transform: scale(1.14) translateX(3px);
+    }
+}
+
+/* --- State transition overlay --- */
+
+.state-overlay {
+    position: absolute;
+    top: 60px;
+    left: 0;
+    right: 0;
+    bottom: 54px;
+    background: var(--color-background-ad);
+    z-index: 8;
+    opacity: 0;
+    pointer-events: none;
+    will-change: opacity;
+}

@@ -1,0 +1,1455 @@
+/**
+ * WHITE-LABEL AD STYLES
+ * Tailwind CSS v4.0 - Config-driven design
+ * 300x600 Programmatic Ad Unit
+ *
+ * IMPORTANT: NO HARDCODED COLORS
+ * All colors controlled via CSS custom properties from config.js
+ */
+
+/* CSS Custom Properties (Brand Colors) */
+:root {
+    /* All colors and fonts are injected dynamically by JavaScript from config.js */
+    /* NO hardcoded values - 100% config-driven */
+}
+
+/* Compiled Tailwind CSS utilities */
+/*! tailwindcss v4.3.3 | MIT License | https://tailwindcss.com */
+.visible {
+  visibility: visible;
+}
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border-width: 0;
+}
+.relative {
+  position: relative;
+}
+.static {
+  position: static;
+}
+.container {
+  width: 100%;
+}
+.block {
+  display: block;
+}
+.flex {
+  display: flex;
+}
+.grid {
+  display: grid;
+}
+.hidden {
+  display: none;
+}
+.h-full {
+  height: 100%;
+}
+.w-full {
+  width: 100%;
+}
+.flex-col {
+  flex-direction: column;
+}
+.items-center {
+  align-items: center;
+}
+.justify-between {
+  justify-content: space-between;
+}
+.justify-center {
+  justify-content: center;
+}
+.overflow-hidden {
+  overflow: hidden;
+}
+
+/* Element defaults */
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    width: 300px;
+    height: 600px;
+    font-family: var(--brand-font-primary);
+    font-size: 12px;
+    font-weight: 400;
+    color: var(--color-text-property-title);
+}
+
+button,
+input,
+textarea {
+    font-family: inherit;
+    font-size: inherit;
+}
+
+button,
+a {
+    -webkit-tap-highlight-color: var(--color-button-explore-bg);
+}
+
+button {
+    cursor: pointer;
+    padding: 0;
+}
+
+button:disabled {
+    cursor: wait;
+}
+
+h2,
+h3,
+p {
+    margin: 0;
+}
+
+[hidden] {
+    display: none !important;
+}
+
+/* Screen reader announcements */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* Ad frame and persistent logo */
+.ad-container {
+    width: 300px;
+    height: 600px;
+    border: 1px solid var(--color-border-canvas);
+    background: var(--color-background-primary);
+    isolation: isolate;
+    cursor: default;
+}
+
+/* Ad copy and assets are presentation content; form values remain editable and selectable. */
+.ad-container,
+.ad-container * {
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+.ad-container img,
+.ad-container a {
+    -webkit-user-drag: none;
+}
+
+.ad-container a[data-action] {
+    cursor: pointer;
+}
+
+.ad-container input,
+.ad-container textarea {
+    -webkit-user-select: text;
+    user-select: text;
+    cursor: text;
+}
+
+.ad-container input:disabled,
+.ad-container textarea:disabled {
+    cursor: wait;
+}
+
+.logo-header {
+    position: absolute;
+    inset: -1px -1px auto;
+    height: 60px;
+    padding: 0 20px;
+    border-bottom: 2px solid var(--color-header-border-bottom);
+    background: var(--color-background-header);
+    z-index: 4;
+}
+
+.brand-logo {
+    display: block;
+    width: 104.75px;
+    height: 30px;
+    object-fit: contain;
+}
+
+/* CSS state visibility */
+.state-view {
+    position: absolute;
+    inset: 59px -1px -1px;
+    display: none;
+}
+
+#ad-container[data-state="initial"] [data-view="initial"],
+#ad-container[data-state="confirmation"] [data-view="confirmation"] {
+    display: flex;
+}
+
+#ad-container[data-state="formActive"] [data-view="formActive"] {
+    display: block;
+}
+
+/* Retain the outgoing screen only while its noninteractive crossfade finishes. */
+.state-view.is-leaving {
+    display: flex;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.form-view.is-leaving {
+    display: block;
+}
+
+.motion-word {
+    display: inline-block;
+    white-space: pre;
+    vertical-align: baseline;
+}
+
+/* Property collection */
+.collection {
+    flex: 0 0 114px;
+    height: 114px;
+    padding: 6px 16px 10px;
+}
+
+.collection-heading {
+    height: 34px;
+}
+
+.collection-heading h2 {
+    font-size: 12px;
+    line-height: 20px;
+    font-weight: 700;
+    color: var(--color-text-collection-title);
+    white-space: nowrap;
+}
+
+.collection-navigation {
+    height: 28px;
+    gap: 4px;
+}
+
+.collection-arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border: 0;
+    border-radius: 4px;
+    background: var(--color-button-collection-bg);
+    color: var(--color-button-collection-text);
+    font-size: 18px;
+    line-height: 20px;
+    font-weight: 400;
+}
+
+.property-picker {
+    height: 64px;
+    grid-template-columns: repeat(var(--carousel-visible-items), minmax(0, 1fr));
+    align-items: start;
+    gap: 8px;
+    touch-action: pan-y;
+    user-select: none;
+}
+
+.property-thumbnail {
+    min-width: 0;
+    min-height: 62px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    border: 0;
+    text-align: left;
+    background: none;
+    color: var(--color-thumbnail-text-inactive);
+}
+
+.thumbnail-frame {
+    display: block;
+    position: relative;
+    width: 100%;
+    height: 44px;
+    overflow: hidden;
+    border-radius: 4px;
+    background: var(--color-thumbnail-border-inactive);
+}
+
+.thumbnail-frame img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* The frame supplies the stroke; clipping prevents image pixels beneath its corners. */
+.thumbnail-frame img {
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: var(--color-thumbnail-bg);
+}
+
+.thumbnail-crop {
+    display: block;
+    position: absolute;
+    inset: 0;
+    clip-path: inset(1px round 3px);
+}
+
+.property-thumbnail[aria-pressed="true"] {
+    color: var(--color-thumbnail-text-active);
+}
+
+.property-thumbnail[aria-pressed="true"] .thumbnail-frame {
+    background: var(--color-thumbnail-border-active);
+}
+
+.property-thumbnail[aria-pressed="true"] .thumbnail-crop {
+    clip-path: inset(2px round 2px);
+}
+
+.thumbnail-caption {
+    display: block;
+    width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    font-size: 11px;
+    line-height: 14px;
+    font-weight: 400;
+}
+
+/* Gallery card */
+.property-card {
+    flex: 0 0 350px;
+    height: 350px;
+    margin: 0 12px;
+}
+
+.gallery {
+    height: 200px;
+    border-radius: 6px 6px 0 0;
+    background: var(--color-background-gallery);
+}
+
+.gallery-image {
+    display: block;
+    position: absolute;
+    inset: 0;
+    object-fit: cover;
+}
+
+.gallery-media {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+}
+
+.gallery-image-previous {
+    pointer-events: none;
+}
+
+.gallery-image.is-pending {
+    opacity: 0;
+}
+
+.gallery-arrow {
+    position: absolute;
+    top: calc(50% - 22px);
+    width: 44px;
+    height: 44px;
+    border: 0;
+    border-radius: 50%;
+    background: none;
+    color: var(--color-button-gallery-text);
+    font-size: 22px;
+    line-height: 24px;
+    font-weight: 400;
+    z-index: 2;
+}
+
+.gallery-arrow::before {
+    content: "";
+    position: absolute;
+    inset: 7px;
+    border: 1px solid var(--color-button-gallery-border);
+    border-radius: 50%;
+    background: var(--color-button-gallery-bg);
+    box-shadow: 0 1px 4px var(--color-shadow-gallery-arrow);
+}
+
+.gallery-arrow .control-icon {
+    position: relative;
+}
+
+.gallery-previous {
+    left: 3px;
+}
+
+.gallery-next {
+    right: 3px;
+}
+
+.gallery-label,
+.gallery-counter {
+    position: absolute;
+    bottom: 10px;
+    max-width: 70%;
+    padding: 3px 7px;
+    border-radius: 4px;
+    font-size: 11px;
+    line-height: 16px;
+    font-weight: 400;
+    white-space: nowrap;
+    z-index: 2;
+}
+
+.gallery-label {
+    left: 10px;
+    background: var(--color-gallery-label-bg);
+    color: var(--color-gallery-label-text);
+}
+
+.gallery-counter {
+    right: 8.22px;
+    background: var(--color-gallery-counter-bg);
+    color: var(--color-gallery-counter-text);
+}
+
+/* Configured SVG control assets */
+.control-icon {
+    display: block;
+    flex: 0 0 auto;
+    object-fit: contain;
+    pointer-events: none;
+}
+
+.collection-arrow .control-icon {
+    width: 14px;
+    height: 14px;
+}
+
+.gallery-arrow .control-icon {
+    width: 18px;
+    height: 18px;
+}
+
+/* Property details */
+.property-info {
+    height: 150px;
+    padding: 14px 12px 0;
+    gap: 2px;
+    border-radius: 0 0 6px 6px;
+    background: var(--color-background-card);
+}
+
+.property-price-row {
+    flex: 0 0 22px;
+    height: 22px;
+}
+
+.property-price-label {
+    font-size: 11px;
+    line-height: 16px;
+    letter-spacing: .7px;
+    color: var(--color-text-price-label);
+}
+
+.property-price {
+    font-size: 18px;
+    line-height: 24px;
+    font-weight: 700;
+    letter-spacing: -.45px;
+    color: var(--color-text-price-value);
+}
+
+.property-title {
+    padding-top: 3px;
+    font-family: var(--brand-font-secondary);
+    font-size: 20px;
+    line-height: 27px;
+    font-weight: 700;
+    letter-spacing: -.4px;
+    color: var(--color-text-property-title);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.property-location {
+    padding-bottom: 11px;
+    font-size: 11px;
+    line-height: 17px;
+    color: var(--color-text-property-location);
+}
+
+.property-facts {
+    flex: 0 0 34px;
+    height: 34px;
+    padding: 0 9px;
+    border-radius: 5px;
+    background: var(--color-background-facts);
+}
+
+.property-fact {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 4px;
+    white-space: nowrap;
+}
+
+.property-fact strong {
+    font-size: 14px;
+    line-height: 20px;
+    font-weight: 400;
+    color: var(--color-text-fact-value);
+}
+
+.property-fact span {
+    font-size: 12px;
+    line-height: 18px;
+    color: var(--color-text-fact-label);
+}
+
+/* Action controls */
+.property-actions {
+    flex: 0 0 76px;
+    height: 76px;
+    padding: 16px;
+    gap: 8px;
+}
+
+.action-button {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+    min-width: 0;
+    min-height: 44px;
+    padding: 12.5px 0 13.5px;
+    border: 1px solid;
+    border-radius: 5px;
+    font-size: 12px;
+    line-height: 16px;
+    font-weight: 700;
+    text-align: center;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.property-actions .action-button {
+    flex: 1 1 0;
+}
+
+.request-button {
+    background: var(--color-button-cta-bg);
+    border-color: var(--color-button-cta-bg);
+    color: var(--color-button-cta-text);
+}
+
+.explore-button {
+    background: var(--color-button-explore-bg);
+    border-color: var(--color-button-explore-border);
+    color: var(--color-button-explore-text);
+}
+
+/* Form screen */
+.form-view {
+    background: var(--color-background-form);
+    overflow: hidden;
+}
+
+.back-button {
+    position: absolute;
+    top: 0;
+    left: 0;
+    min-height: 44px;
+    padding: 13.5px 16px 14px;
+    gap: 5px;
+    border: 0;
+    border-radius: 0 0 4px 0;
+    background: var(--color-button-back-bg);
+    color: var(--color-button-back-text);
+    font-size: 12px;
+    line-height: 16px;
+    font-weight: 400;
+}
+
+#back-glyph {
+    font-size: 16px;
+    line-height: 16px;
+}
+
+.back-button:disabled {
+    color: var(--color-button-back-disabled-text);
+}
+
+.form-heading {
+    position: absolute;
+    top: 49px;
+    left: 16px;
+    right: 16px;
+    font-family: var(--brand-font-secondary);
+    font-size: 24px;
+    line-height: 30px;
+    font-weight: 700;
+    color: var(--color-text-form-heading);
+}
+
+.form-context {
+    position: absolute;
+    top: 91px;
+    left: 16px;
+    right: 16px;
+    padding: 10px 12px;
+    border-radius: 5px;
+    background: var(--color-background-form-context);
+    color: var(--color-text-form-context);
+    font-size: 12px;
+    line-height: 17px;
+}
+
+.lead-form {
+    position: absolute;
+    top: 141px;
+    bottom: 16px;
+    left: 16px;
+    right: 16px;
+    min-height: 0;
+    gap: 10px;
+    margin: 0;
+}
+
+/* Scroll fields when feedback needs space while keeping the submit control visible. */
+.form-fields {
+    flex: 1 1 auto;
+    min-height: 0;
+    gap: 10px;
+    margin: -2px;
+    padding: 2px;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+}
+
+.form-footer {
+    flex: 0 0 auto;
+    gap: 10px;
+}
+
+.form-field {
+    flex: 0 0 auto;
+    gap: 4px;
+}
+
+.form-field label {
+    font-size: 11px;
+    line-height: 15px;
+    font-weight: 400;
+    color: var(--color-text-form-label);
+}
+
+.form-field input,
+.form-field textarea {
+    display: block;
+    width: 100%;
+    height: 37px;
+    padding: 8px 31px 8px 9px;
+    margin: 0;
+    border: 1px solid var(--color-input-border);
+    border-radius: 4px;
+    outline: none;
+    appearance: none;
+    background: var(--color-input-bg);
+    color: var(--color-input-text);
+    font-size: 12px;
+    line-height: normal;
+    font-weight: 400;
+}
+
+.form-field textarea {
+    height: 70px;
+    padding: 7px 31px 7px 9px;
+    resize: none;
+    line-height: 20px;
+}
+
+.form-field input::placeholder,
+.form-field textarea::placeholder {
+    color: var(--color-input-placeholder);
+}
+
+.form-field input:focus,
+.form-field textarea:focus {
+    border-color: var(--color-input-focus-border);
+    box-shadow: 0 0 0 2px var(--color-input-focus-glow);
+}
+
+/* Keep browser autofill within the configured input theme. */
+.form-field input:-webkit-autofill {
+    -webkit-text-fill-color: var(--color-input-text);
+    caret-color: var(--color-input-text);
+    box-shadow: inset 0 0 0 1000px var(--color-input-bg);
+}
+
+.form-field input:-webkit-autofill:focus {
+    box-shadow: inset 0 0 0 1000px var(--color-input-bg), 0 0 0 2px var(--color-input-focus-glow);
+}
+
+.form-field input:autofill {
+    color: var(--color-input-text);
+    caret-color: var(--color-input-text);
+    box-shadow: inset 0 0 0 1000px var(--color-input-bg);
+}
+
+.form-field input:autofill:focus {
+    box-shadow: inset 0 0 0 1000px var(--color-input-bg), 0 0 0 2px var(--color-input-focus-glow);
+}
+
+.form-field [aria-invalid="true"] {
+    border-color: var(--color-input-error-border);
+}
+
+/* Warning indicators occupy the input padding rather than adding a text row. */
+.field-control {
+    position: relative;
+}
+
+/* The warning uses CSS geometry so local previews do not need a mask request. */
+.field-warning {
+    position: absolute;
+    top: 10.5px;
+    right: 9px;
+    width: 16px;
+    height: 16px;
+    border: 1.3px solid var(--color-input-error-icon);
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+.field-warning::before,
+.field-warning::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--color-input-error-icon);
+    border-radius: 1px;
+}
+
+.field-warning::before {
+    top: 2.5px;
+    width: 1.5px;
+    height: 5px;
+}
+
+.field-warning::after {
+    top: 9px;
+    width: 2px;
+    height: 2px;
+}
+
+.form-consent {
+    font-size: 11px;
+    line-height: 16px;
+    color: var(--color-text-form-consent);
+}
+
+/* Consent remains part of the fixed form footer. */
+.consent-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    min-height: 32px;
+}
+
+.consent-control {
+    position: relative;
+    flex: 0 0 16px;
+    width: 16px;
+    height: 16px;
+}
+
+.consent-control input {
+    position: absolute;
+    inset: -3px;
+    width: 22px;
+    height: 22px;
+    margin: 0;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.consent-box {
+    position: absolute;
+    inset: 1px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--color-checkbox-border);
+    border-radius: 3px;
+    background: var(--color-checkbox-bg);
+    pointer-events: none;
+    transition: transform var(--motion-control-duration) var(--motion-easing),
+        background-color var(--motion-control-duration) var(--motion-easing),
+        border-color var(--motion-control-duration) var(--motion-easing);
+}
+
+.consent-box img {
+    display: block;
+    visibility: hidden;
+    flex: 0 0 auto;
+}
+
+.consent-row.is-checked .consent-box {
+    border-color: var(--color-checkbox-checked-border);
+    background: var(--color-checkbox-checked-bg);
+}
+
+.consent-row.is-checked .consent-box img {
+    visibility: visible;
+}
+
+.consent-control input:focus-visible + .consent-box {
+    outline: 2px solid var(--color-checkbox-focus-ring);
+    outline-offset: 3px;
+}
+
+.consent-control input[aria-invalid="true"] + .consent-box {
+    border-color: var(--color-checkbox-error-border);
+}
+
+.consent-label {
+    flex: 1 1 auto;
+    min-width: 0;
+    font-size: 11px;
+    line-height: 16px;
+    font-weight: 400;
+    color: var(--color-text-form-consent);
+}
+
+.consent-label label {
+    cursor: pointer;
+}
+
+.consent-link {
+    display: inline;
+    padding: 0;
+    margin: 0;
+    border: 0;
+    background: none;
+    font: inherit;
+    line-height: inherit;
+    color: var(--color-button-consent-link-text);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    white-space: nowrap;
+    transition: color var(--motion-control-duration) var(--motion-easing);
+}
+
+.submit-button:disabled {
+    cursor: not-allowed;
+}
+
+.submit-button.is-submitting {
+    cursor: wait;
+}
+
+/* Privacy overlay stays within the programmatic ad frame. */
+.privacy-overlay {
+    position: absolute;
+    inset: -1px;
+    z-index: 10;
+    background: var(--color-modal-overlay-bg);
+}
+
+.privacy-panel {
+    position: absolute;
+    top: 76px;
+    left: 12px;
+    right: 12px;
+    bottom: 16px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border-radius: 8px;
+    background: var(--color-background-privacy);
+    box-shadow: 0 12px 36px var(--color-shadow-privacy);
+}
+
+.privacy-header {
+    position: relative;
+    flex: 0 0 auto;
+    padding: 16px;
+    border-bottom: 1px solid var(--color-border-privacy-divider);
+}
+
+.privacy-title {
+    margin: 0;
+    padding-right: 28px;
+    font-size: 20px;
+    line-height: 26px;
+    font-weight: 700;
+    color: var(--color-text-privacy-title);
+}
+
+.privacy-close {
+    position: absolute;
+    right: 10px;
+    top: 14px;
+    width: 28px;
+    height: 28px;
+    border: 0;
+    border-radius: 4px;
+    background: var(--color-button-privacy-close-bg);
+    transition: transform var(--motion-control-duration) var(--motion-easing),
+        background-color var(--motion-control-duration) var(--motion-easing);
+}
+
+.privacy-close::before,
+.privacy-close::after {
+    content: "";
+    position: absolute;
+    top: 13.25px;
+    left: 8px;
+    width: 12px;
+    height: 1.5px;
+    border-radius: 1px;
+    background: var(--color-button-privacy-close-icon);
+}
+
+.privacy-close::before {
+    transform: rotate(45deg);
+}
+
+.privacy-close::after {
+    transform: rotate(-45deg);
+}
+
+.privacy-scroll-region {
+    display: flex;
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: hidden;
+}
+
+.privacy-copy {
+    flex: 1 1 auto;
+    min-width: 0;
+    min-height: 0;
+    padding: 14px 12px 16px 16px;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: none;
+}
+
+.privacy-copy::-webkit-scrollbar {
+    display: none;
+}
+
+.privacy-copy p {
+    margin: 0 0 12px;
+    font-size: 11px;
+    line-height: 17px;
+    font-weight: 400;
+    color: var(--color-text-privacy-body);
+}
+
+.privacy-copy > p:last-child {
+    margin-bottom: 0;
+}
+
+.privacy-copy a {
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    transition: color var(--motion-control-duration) var(--motion-easing);
+}
+
+#privacy-policy-link {
+    color: var(--color-button-privacy-policy-text);
+}
+
+#privacy-terms-link {
+    color: var(--color-button-privacy-terms-text);
+}
+
+.privacy-scrollbar {
+    position: relative;
+    flex: 0 0 6px;
+    width: 6px;
+    margin: 14px 10px 14px 0;
+    border-radius: 3px;
+    background: var(--color-scrollbar-privacy-track);
+    cursor: pointer;
+    touch-action: none;
+}
+
+.privacy-scrollbar:focus-visible {
+    outline: 2px solid var(--color-button-focus-ring);
+    outline-offset: 2px;
+}
+
+.privacy-scrollbar-thumb {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 6px;
+    min-height: 32px;
+    height: 50%;
+    border-radius: 3px;
+    background: var(--color-scrollbar-privacy-thumb);
+    cursor: grab;
+    transition: background-color var(--motion-control-duration) var(--motion-easing);
+}
+
+.privacy-scrollbar.is-dragging,
+.privacy-scrollbar.is-dragging .privacy-scrollbar-thumb {
+    cursor: grabbing;
+}
+
+.privacy-footer {
+    flex: 0 0 auto;
+    padding: 12px 16px 16px;
+    border-top: 1px solid var(--color-border-privacy-divider);
+}
+
+.privacy-back-button {
+    display: block;
+    width: 100%;
+    height: 44px;
+    background: var(--color-button-privacy-back-bg);
+    border-color: var(--color-button-privacy-back-bg);
+    color: var(--color-button-privacy-back-text);
+}
+
+.form-feedback {
+    font-size: 12px;
+    line-height: 17px;
+    color: var(--color-text-form-error);
+}
+
+.submit-button {
+    width: 100%;
+    background: var(--color-button-submit-bg);
+    border-color: var(--color-button-submit-bg);
+    color: var(--color-button-submit-text);
+}
+
+.submit-button:disabled {
+    background: var(--color-button-submit-disabled-bg);
+    border-color: var(--color-button-submit-disabled-bg);
+    color: var(--color-button-submit-disabled-text);
+}
+
+/* Confirmation screen */
+.confirmation-view {
+    padding: 30px 24px;
+    background: var(--color-background-confirmation);
+    text-align: center;
+}
+
+.confirmation-icon {
+    position: relative;
+    flex: 0 0 56px;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: var(--color-confirmation-icon-bg);
+    color: var(--color-confirmation-icon-text);
+    font-size: 28px;
+    line-height: 32px;
+    font-weight: 400;
+}
+
+.confirmation-ring {
+    position: absolute;
+    inset: -1px;
+    border: 1.5px solid var(--color-confirmation-ring);
+    border-radius: 50%;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.confirmation-icon img {
+    display: block;
+    width: 44px;
+    height: 44px;
+    object-fit: contain;
+}
+
+.confirmation-heading {
+    margin: 20px 0 10px;
+    font-family: var(--brand-font-secondary);
+    font-size: 28px;
+    line-height: 34px;
+    font-weight: 700;
+    color: var(--color-text-confirmation-heading);
+}
+
+.confirmation-body {
+    font-size: 14px;
+    line-height: 21px;
+    color: var(--color-text-confirmation-body);
+    white-space: nowrap;
+}
+
+.confirmation-followup {
+    margin-top: 10px;
+    font-size: 12px;
+    line-height: 18px;
+    color: var(--color-text-confirmation-followup);
+}
+
+.confirmation-context {
+    width: 100%;
+    margin: 24px 0;
+    padding: 14px 12px;
+    border-radius: 6px;
+    background: var(--color-background-confirmation-context);
+}
+
+.confirmation-context strong {
+    display: block;
+    font-family: var(--brand-font-secondary);
+    font-size: 18px;
+    line-height: 24px;
+    font-weight: 700;
+    color: var(--color-text-confirmation-address);
+}
+
+.confirmation-context span {
+    display: block;
+    margin-top: 5px;
+    font-size: 11px;
+    line-height: 17px;
+    color: var(--color-text-confirmation-location);
+}
+
+.browse-button {
+    flex: 0 0 auto;
+    background: var(--color-button-browse-bg);
+    border-color: var(--color-button-browse-bg);
+    color: var(--color-button-browse-text);
+}
+
+/* Pointer and keyboard feedback */
+.property-card {
+    border-radius: 6px;
+    box-shadow: 0 4px 12px var(--color-shadow-card);
+    transition: box-shadow var(--motion-control-duration) var(--motion-easing);
+}
+
+.gallery-media {
+    transition: transform var(--motion-image-drift-duration) var(--motion-easing);
+}
+
+.collection-arrow,
+.thumbnail-frame,
+.thumbnail-caption,
+.gallery-arrow::before,
+.gallery-label,
+.gallery-counter,
+.property-fact strong,
+.action-button,
+.back-button {
+    transition: transform var(--motion-control-duration) var(--motion-easing),
+        background-color var(--motion-control-duration) var(--motion-easing),
+        border-color var(--motion-control-duration) var(--motion-easing),
+        box-shadow var(--motion-control-duration) var(--motion-easing),
+        color var(--motion-control-duration) var(--motion-easing);
+}
+
+.control-icon,
+#back-glyph {
+    transition: transform var(--motion-control-duration) var(--motion-easing);
+}
+
+.thumbnail-frame img {
+    transition: transform var(--motion-image-drift-duration) var(--motion-easing);
+}
+
+.property-thumbnail[aria-pressed="true"] .thumbnail-frame {
+    box-shadow: 0 0 0 2px var(--color-thumbnail-selected-glow);
+}
+
+.action-button > span {
+    position: relative;
+    display: inline-block;
+    z-index: 1;
+}
+
+.action-button::before {
+    content: "";
+    position: absolute;
+    inset: -20% -50%;
+    background: linear-gradient(110deg, var(--color-button-sheen-edge) 35%, var(--color-button-sheen-highlight) 50%, var(--color-button-sheen-edge) 65%);
+    transform: translateX(-100%);
+    pointer-events: none;
+}
+
+.submit-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.submit-button.is-submitting::after {
+    content: "";
+    order: -1;
+    flex: 0 0 12px;
+    width: 12px;
+    height: 12px;
+    border: 2px solid var(--color-button-submit-spinner-track);
+    border-top-color: var(--color-button-submit-spinner-fill);
+    border-radius: 50%;
+    animation: pending-rotation var(--motion-loading-duration) linear infinite;
+}
+
+.form-field input,
+.form-field textarea {
+    transition: border-color var(--motion-control-duration) var(--motion-easing),
+        box-shadow var(--motion-control-duration) var(--motion-easing);
+}
+
+.form-field label {
+    transition: color var(--motion-control-duration) var(--motion-easing);
+}
+
+.form-field:focus-within label {
+    color: var(--color-text-form-label-focus);
+}
+
+@media (hover: hover) {
+    .consent-control:hover input:not(:disabled) + .consent-box {
+        border-color: var(--color-checkbox-hover-border);
+        transform: scale(1.08);
+    }
+
+    .consent-link:hover:not(:disabled) {
+        color: var(--color-button-consent-link-hover-text);
+    }
+
+    .privacy-close:hover {
+        background: var(--color-button-privacy-close-hover-bg);
+        transform: scale(1.06);
+    }
+
+    .privacy-back-button:hover {
+        background: var(--color-button-privacy-back-hover-bg);
+        border-color: var(--color-button-privacy-back-hover-bg);
+        box-shadow: 0 6px 14px var(--color-button-privacy-back-hover-shadow);
+    }
+
+    #privacy-policy-link:hover {
+        color: var(--color-button-privacy-policy-hover-text);
+    }
+
+    #privacy-terms-link:hover {
+        color: var(--color-button-privacy-terms-hover-text);
+    }
+
+    .privacy-scrollbar:hover .privacy-scrollbar-thumb {
+        background: var(--color-scrollbar-privacy-thumb-hover);
+    }
+
+    .property-card:hover {
+        box-shadow: 0 10px 24px var(--color-shadow-card-hover);
+    }
+
+    .gallery:hover .gallery-media {
+        transform: scale(1.025);
+    }
+
+    .property-thumbnail:hover .thumbnail-frame,
+    .property-thumbnail:focus-visible .thumbnail-frame {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 10px var(--color-thumbnail-hover-shadow);
+    }
+
+    .property-thumbnail:hover .thumbnail-frame img,
+    .property-thumbnail:focus-visible .thumbnail-frame img {
+        transform: scale(1.06);
+    }
+
+    .property-thumbnail:hover .thumbnail-caption {
+        color: var(--color-thumbnail-text-active);
+        transform: translateX(1px);
+    }
+
+    .action-button:hover:not(:disabled) {
+        transform: translateY(-2px);
+    }
+
+    .action-button:hover:not(:disabled)::before {
+        animation: cta-sheen var(--motion-sheen-duration) var(--motion-easing) both;
+    }
+
+    .request-button:hover {
+        background: var(--color-button-cta-hover-bg);
+        border-color: var(--color-button-cta-hover-bg);
+        box-shadow: 0 6px 14px var(--color-button-cta-hover-shadow);
+    }
+
+    .explore-button:hover {
+        background: var(--color-button-explore-hover-bg);
+        box-shadow: 0 6px 14px var(--color-button-explore-hover-shadow);
+    }
+
+    .submit-button:hover:not(:disabled) {
+        background: var(--color-button-submit-hover-bg);
+        border-color: var(--color-button-submit-hover-bg);
+        box-shadow: 0 6px 14px var(--color-button-submit-hover-shadow);
+    }
+
+    .browse-button:hover {
+        background: var(--color-button-browse-hover-bg);
+        border-color: var(--color-button-browse-hover-bg);
+        box-shadow: 0 6px 14px var(--color-button-browse-hover-shadow);
+    }
+
+    .back-button:hover:not(:disabled) {
+        background: var(--color-button-back-hover-bg);
+    }
+
+    .back-button:hover:not(:disabled) #back-glyph {
+        transform: scale(1.08);
+    }
+
+    .collection-arrow:hover {
+        background: var(--color-button-collection-hover-bg);
+        box-shadow: inset 0 0 0 1px var(--color-button-collection-hover-border);
+    }
+
+    .collection-arrow:hover .control-icon,
+    .gallery-arrow:hover .control-icon {
+        transform: scale(1.1);
+    }
+
+    .gallery-arrow:hover::before {
+        background: var(--color-button-gallery-hover-bg);
+        border-color: var(--color-button-gallery-hover-border);
+        box-shadow: 0 3px 8px var(--color-button-gallery-hover-shadow);
+        transform: scale(1.12);
+    }
+
+    .gallery-label:hover {
+        background: var(--color-gallery-label-hover-bg);
+        color: var(--color-gallery-label-hover-text);
+        box-shadow: 0 3px 9px var(--color-gallery-label-hover-shadow);
+        transform: translateY(-2px);
+    }
+
+    .gallery-counter:hover {
+        background: var(--color-gallery-counter-hover-bg);
+        color: var(--color-gallery-counter-hover-text);
+        box-shadow: 0 3px 9px var(--color-gallery-counter-hover-shadow);
+        transform: translateY(-2px);
+    }
+
+    .property-fact:hover strong {
+        color: var(--color-text-fact-hover-value);
+        transform: translateY(-1px);
+    }
+
+    .form-field input:hover:not(:focus):not([aria-invalid="true"]),
+    .form-field textarea:hover:not(:focus):not([aria-invalid="true"]) {
+        border-color: var(--color-input-hover-border);
+        box-shadow: 0 2px 6px var(--color-input-hover-shadow);
+    }
+
+    .property-thumbnail:hover:not([aria-pressed="true"]) .thumbnail-frame {
+        background: var(--color-thumbnail-border-hover);
+    }
+}
+
+.action-button:active:not(:disabled),
+.collection-arrow:active {
+    transform: translateY(0) scale(0.975);
+}
+
+.gallery-arrow:active::before {
+    transform: scale(0.94);
+}
+
+.privacy-close:active,
+.consent-control input:active + .consent-box {
+    transform: scale(0.95);
+}
+
+.privacy-scrollbar:focus-visible .privacy-scrollbar-thumb,
+.privacy-scrollbar.is-dragging .privacy-scrollbar-thumb {
+    background: var(--color-scrollbar-privacy-thumb-hover);
+}
+
+.action-button:focus-visible::before {
+    animation: cta-sheen var(--motion-sheen-duration) var(--motion-easing) both;
+}
+
+button:focus-visible,
+a:focus-visible {
+    outline: 2px solid var(--color-button-focus-ring);
+    outline-offset: 2px;
+}
+
+/* Motion is transient; nothing loops while the ad is idle except an actual pending request. */
+@keyframes cta-sheen {
+    from { transform: translateX(-100%); }
+    to { transform: translateX(100%); }
+}
+
+@keyframes pending-rotation {
+    to { transform: rotate(360deg); }
+}
+
+/* Keep complete content and color feedback when motion is disabled. */
+html[data-motion="off"] .ad-container *,
+html[data-motion="off"] .ad-container *::before,
+html[data-motion="off"] .ad-container *::after {
+    animation: none !important;
+    transition: none !important;
+}
+
+html[data-motion="off"] .gallery-media,
+html[data-motion="off"] .thumbnail-frame,
+html[data-motion="off"] .thumbnail-frame img,
+html[data-motion="off"] .thumbnail-caption,
+html[data-motion="off"] .control-icon,
+html[data-motion="off"] .action-button,
+html[data-motion="off"] .gallery-arrow::before,
+html[data-motion="off"] .gallery-label,
+html[data-motion="off"] .gallery-counter,
+html[data-motion="off"] .property-fact strong,
+html[data-motion="off"] .privacy-close,
+html[data-motion="off"] .consent-box,
+html[data-motion="off"] #back-glyph {
+    transform: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .ad-container *,
+    .ad-container *::before,
+    .ad-container *::after {
+        animation: none !important;
+        transition: none !important;
+    }
+}

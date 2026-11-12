@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="ad.size" content="width=300,height=600">
+    <title></title>
+    
+    <!-- Configuration (load first to set title) -->
+    <script src="config.js"></script>
+    
+    <!-- Google Ad Manager ClickTag Compliance -->
+    <script type="text/javascript">
+        var clickTag = "http://www.google.com";
+        
+        // Set document title from config
+        if (window.AD_CONFIG?.meta?.adTitle) {
+            document.title = window.AD_CONFIG.meta.adTitle;
+        }
+    </script>
+    
+    <!-- Tailwind CSS -->
+    <link rel="stylesheet" href="output.css">
+</head>
+<body>
+    <!-- Ad Container - 300x600 -->
+    <div id="ad-container" class="ad-container">
+        
+        <!-- Background Pattern Image -->
+        <div class="background-wrapper">
+            <div class="background-pattern">
+                <div>
+                    <img id="background-image" src="" alt="">
+                </div>
+            </div>
+        </div>
+        
+        <!-- Brand Logo -->
+        <div class="logo-container">
+            <img id="brand-logo" src="" alt="">
+        </div>
+        
+        <!-- Shop Now CTA Button -->
+        <button id="btn-shop-now" class="btn-cta" data-action="cta-shop-now">
+            <span id="btn-shop-now-label"></span>
+        </button>
+        
+        <!-- Divider Line -->
+        <div class="divider"></div>
+        
+        <!-- Content Section (Left side text) -->
+        <div class="content-section">
+            <!-- Headline -->
+            <p id="main-headline" class="headline-main"></p>
+            
+            <!-- Body Text -->
+            <div class="body-text">
+                <p id="body-intro" class="body-intro-line"></p>
+                <p id="body-intro-secondary" class="body-intro-line"></p>
+            </div>
+        </div>
+        
+        <!-- Scratch Card Container -->
+        <div id="scratch-card-container" class="scratch-card-container">
+            
+            <!-- Card Background (White rounded rectangle with shadow) -->
+            <div class="card-background">
+                
+                <!-- Background Gradient (Blue & Pink blur effects) -->
+                <div class="card-gradient-bg">
+                    <div class="gradient-blur blue"></div>
+                    <div class="gradient-blur pink"></div>
+                </div>
+                
+                <!-- Revealed Content (visible after scratching) -->
+                <div id="revealed-content" class="revealed-content">
+                    <p id="revealed-title" class="revealed-title"></p>
+                    
+                    <div class="price-display">
+                        <p id="price-currency" class="price-currency"></p>
+                        <p id="price-main" class="price-main"></p>
+                        <p id="price-period" class="price-period"></p>
+                    </div>
+                    
+                    <div class="revealed-description">
+                        <p id="revealed-description" class="description-text">
+                            <span id="description-bold" class="description-bold"></span><span id="description-normal" class="description-normal"></span>
+                        </p>
+                    </div>
+                </div>
+                
+                <!-- Canvas Element for Scratch Overlay -->
+                <canvas id="scratch-canvas" class="scratch-canvas"></canvas>
+                
+                <!-- Custom Cursor (Coin Icon) -->
+                <div id="custom-cursor" class="custom-cursor">
+                    <img id="cursor-img" src="" alt="">
+                </div>
+            </div>
+        </div>
+        
+        <!-- Tagline -->
+        <p id="tagline" class="tagline"></p>
+        
+    </div>
+    
+    <!-- Main Application Script -->
+    <script>
+        // Global state
+        const config = window.AD_CONFIG;
+        
+        // Scratch Card State
+        let isScratching = false;
+        let scratchCanvas = null;
+        let scratchCtx = null;
+        let scratchPercentage = 0;
+        let hasStartedScratching = false;
+        let isRevealed = false;
+        let autoScratchPlayed = false;
+        
+        // Custom Cursor
+        let customCursor = null;
+        
+        // Initialization
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize in sequence
+            initializeColors();
+            initializeFonts();
+            initializeContent();
+            initializeScratchCard();
+            initializeButtons();
+            
+            // Track ad loaded
+            track('ad_loaded');
+        });
+        
+        // Core functions
+        
+        /**
+         * Initialize CSS color variables from config
+         * Converts config.theme.colors to CSS custom properties
+         */
+        function initializeColors() {
+            const colors = config.theme.colors;
+            const root = document.documentElement;
+            
+            Object.keys(colors).forEach(key => {
+                const cssVarName = '--color-' + key.replace(/([A-Z])/g, '-$1').toLowerCase();
+                root.style.setProperty(cssVarName, colors[key]);
+            });
+            
+            console.log('[COLORS] Initialized', Object.keys(colors).length, 'color variables');
+        }
+        
+        /**
+         * Load custom fonts from config
+         * Supports Google Fonts, local assets, and CDN sources
+         */
+        function initializeFonts() {
+            if (!config.theme.typography || !config.theme.typography.customFonts) {
+                console.log('[FONTS] No custom fonts to load');
+                return;
+            }
+            
+            const typography = config.theme.typography;
+            const fonts = typography.customFonts;
+            
+            // Set CSS variables for font families
+            const root = document.documentElement;
+            if (typography.fontPrimary) {
+                root.style.setProperty('--brand-font-primary', typography.fontPrimary);
+            }
+            if (typography.fontSecondary) {
+                root.style.setProperty('--brand-font-secondary', typography.fontSecondary);
+            }
+            
+            // Load each custom font
+            fonts.forEach(font => {
+                if (font.source === 'google' && font.url) {
+                    // Load Google Fonts or external stylesheet
+                    const link = document.createElement('link');
+                    link.rel = 'stylesheet';
+                    link.href = font.url;
+                    document.head.appendChild(link);
+                } else if ((font.source === 'local' || font.source === 'cdn') && font.sources) {
+                    // Inject @font-face for local or CDN fonts
+                    const srcValues = font.sources.map(src => 
+                        `url('${src.url}') format('${src.format}')`
+                    ).join(',\n         ');
+                    
+                    const fontFaceCSS = `
+@font-face {
+    font-family: '${font.family}';
+    src: ${srcValues};
+    font-weight: ${font.weight || 'normal'};
+    font-style: ${font.style || 'normal'};
+    font-display: ${font.display || 'swap'};
+}
+`;
+                    const style = document.createElement('style');
+                    style.textContent = fontFaceCSS;
+                    document.head.appendChild(style);
+                    
+                    console.log('[FONTS] Injected @font-face for:', font.family);
+                }
+            });
+            
+            console.log('[FONTS] Loaded', fonts.length, 'custom font(s)');
+        }
+        
+        /**
+         * Populate all text content from config
+         * Maps config content to DOM elements by ID
+         */
+        function initializeContent() {
+            // Logo
+            const logo = document.getElementById('brand-logo');
+            if (logo && config.content.logo) {
+                logo.src = config.content.logo.src;
+                logo.alt = config.content.logo.alt;
+            }
+            
+            // Headlines
+            const mainHeadline = document.getElementById('main-headline');
+            if (mainHeadline) mainHeadline.textContent = config.content.headlines.main;
+            
+            const tagline = document.getElementById('tagline');
+            if (tagline) tagline.textContent = config.content.headlines.tagline;
+            
+            // Body Text
+            const bodyIntro = document.getElementById('body-intro');
+            if (bodyIntro) bodyIntro.textContent = config.content.body.intro;
+            
+            const bodyIntroSecondary = document.getElementById('body-intro-secondary');
+            if (bodyIntroSecondary) bodyIntroSecondary.textContent = config.content.body.introSecondary;
+            
+            // Button Label
+            const shopNowLabel = document.getElementById('btn-shop-now-label');
+            if (shopNowLabel) shopNowLabel.textContent = config.content.buttons.shopNow.text;
+            
+            // Revealed Content (hidden initially)
+            const revealedTitle = document.getElementById('revealed-title');
+            if (revealedTitle) revealedTitle.textContent = config.content.scratchCard.revealed.title;
+            
+            const priceCurrency = document.getElementById('price-currency');
+            if (priceCurrency) priceCurrency.textContent = config.content.scratchCard.revealed.priceCurrency;
+            
+            const priceMain = document.getElementById('price-main');
+            if (priceMain) priceMain.textContent = config.content.scratchCard.revealed.priceMain;
+            
+            const pricePeriod = document.getElementById('price-period');
+            if (pricePeriod) pricePeriod.textContent = config.content.scratchCard.revealed.pricePeriod;
+            
+            const descriptionBold = document.getElementById('description-bold');
+            if (descriptionBold) descriptionBold.textContent = config.content.scratchCard.revealed.description;
+            
+            const descriptionNormal = document.getElementById('description-normal');
+            if (descriptionNormal) descriptionNormal.textContent = config.content.scratchCard.revealed.descriptionSecondary;
+            
+            // Background Image
+            const backgroundImage = document.getElementById('background-image');
+            if (backgroundImage && config.content.backgroundImage) {
+                backgroundImage.src = config.content.backgroundImage.src;
+                backgroundImage.alt = config.content.backgroundImage.alt;
+            }
+            
+            // Custom Cursor Image
+            const cursorImg = document.getElementById('cursor-img');
+            if (cursorImg && config.scratchCard.customCursor) {
+                cursorImg.src = config.scratchCard.customCursor.image;
+                cursorImg.alt = config.scratchCard.customCursor.alt;
+            }
+            
+            console.log('[CONTENT] Populated all text and images');
+        }
+        
+        /**
+         * Initialize the scratch card canvas and interaction
+         * Sets up canvas, drawing context, and event listeners
+         */
+        function initializeScratchCard() {
+            const scratchConfig = config.scratchCard;
+            
+            if (!scratchConfig || !scratchConfig.enabled) {
+                console.log('[SCRATCH] Scratch card disabled');
+                return;
+            }
+            
+            scratchCanvas = document.getElementById('scratch-canvas');
+            if (!scratchCanvas) {
+                console.error('[SCRATCH] Canvas element not found');
+                return;
+            }
+            
+            // Set canvas dimensions with high DPI support for crisp text
+            const dimensions = scratchConfig.dimensions;
+            const dpr = window.devicePixelRatio || 2; // Use 2x for retina displays
+            
+            scratchCanvas.width = dimensions.width * dpr;
+            scratchCanvas.height = dimensions.height * dpr;
+            
+            // Scale back down with CSS
+            scratchCanvas.style.width = dimensions.width + 'px';
+            scratchCanvas.style.height = dimensions.height + 'px';
+            
+            scratchCtx = scratchCanvas.getContext('2d');
+            
+            // Scale context to match DPI
+            scratchCtx.scale(dpr, dpr);
+            
+            // Wait for fonts to load before drawing
+            if (document.fonts && document.fonts.ready) {
+                document.fonts.ready.then(() => {
+                    // Draw the scratch overlay gradient after fonts are loaded
+                    drawScratchOverlay();
+                    
+                    // Set up event listeners
+                    setupScratchListeners();
+                    
+                    // Start auto-scratch preview animation after a short delay
+                    setTimeout(() => {
+                        playAutoScratchPreview();
+                    }, 1000);
+                    
+                    console.log('[SCRATCH] Initialized scratch card with fonts loaded:', dimensions.width + 'x' + dimensions.height, 'DPR:', dpr);
+                });
+            } else {
+                // Fallback if Font Loading API not available
+                // Draw the scratch overlay gradient
+                drawScratchOverlay();
+                
+                // Set up event listeners
+                setupScratchListeners();
+                
+                // Start auto-scratch preview animation after a short delay
+                setTimeout(() => {
+                    playAutoScratchPreview();
+                }, 1000);
+                
+                console.log('[SCRATCH] Initialized scratch card:', dimensions.width + 'x' + dimensions.height, 'DPR:', dpr);
+            }
+        }
+        
+        /**
+         * Draw the initial scratch overlay with gradient and text
+         */
+        function drawScratchOverlay() {
+            const dimensions = config.scratchCard.dimensions;
+            
+            // Reset canvas context state before redrawing
+            scratchCtx.globalCompositeOperation = 'source-over';
+            
+            // Clear the canvas completely
+            scratchCtx.clearRect(0, 0, dimensions.width, dimensions.height);
+            
+            // Create simple gradient from config colors
+            const gradient = scratchCtx.createLinearGradient(0, 0, dimensions.width, 0);
+            
+            // Use config-driven gradient colors
+            const startColor = config.theme.colors.cardScratchOverlayStart;
+            const endColor = config.theme.colors.cardScratchOverlayEnd;
+            
+            gradient.addColorStop(0, startColor);
+            gradient.addColorStop(1, endColor);
+            
+            // Fill canvas with gradient
+            scratchCtx.fillStyle = gradient;
+            scratchCtx.fillRect(0, 0, dimensions.width, dimensions.height);
+            
+            // Draw overlay text
+            scratchCtx.fillStyle = config.theme.colors.cardTextSecondary;
+            scratchCtx.textAlign = 'center';
+            scratchCtx.textBaseline = 'middle';
+            
+            // Title text
+            scratchCtx.font = '500 22px ' + config.theme.typography.fontPrimary;
+            const titleText = config.content.scratchCard.overlay.title.toUpperCase();
+            scratchCtx.fillText(titleText, dimensions.width / 2, 95);
+            
+            // Subtitle text
+            scratchCtx.font = '900 24px ' + config.theme.typography.fontPrimary;
+            const subtitleText = config.content.scratchCard.overlay.subtitle.toUpperCase();
+            scratchCtx.fillText(subtitleText, dimensions.width / 2, 127);
+        }
+        
+        /**
+         * Set up mouse and touch event listeners for scratching
+         */
+        function setupScratchListeners() {
+            const scratchConfig = config.scratchCard;
+            
+            // Initialize custom cursor
+            customCursor = document.getElementById('custom-cursor');
+            
+            // Mouse events
+            if (scratchConfig.interaction.enableMouse) {
+                scratchCanvas.addEventListener('mouseenter', showCustomCursor);
+                scratchCanvas.addEventListener('mouseleave', hideCustomCursor);
+                scratchCanvas.addEventListener('mousedown', handleScratchStart);
+                scratchCanvas.addEventListener('mousemove', handleScratchMove);
+                scratchCanvas.addEventListener('mouseup', handleScratchEnd);
+            }
+            
+            // Touch events
+            if (scratchConfig.interaction.enableTouch) {
+                scratchCanvas.addEventListener('touchstart', handleScratchStart);
+                scratchCanvas.addEventListener('touchmove', handleScratchMove);
+                scratchCanvas.addEventListener('touchend', handleScratchEnd);
+            }
+        }
+        
+        /**
+         * Show custom cursor when hovering over scratch area
+         */
+        function showCustomCursor(e) {
+            if (isRevealed || !customCursor) return;
+            
+            // Stop the animation when user hovers
+            if (!hasStartedScratching) {
+                hasStartedScratching = true; // This will stop the animation loop
+            }
+            
+            customCursor.classList.add('active');
+            updateCustomCursorPosition(e);
+        }
+        
+        /**
+         * Hide custom cursor when leaving scratch area
+         */
+        function hideCustomCursor() {
+            if (!customCursor) return;
+            customCursor.classList.remove('active');
+        }
+        
+        /**
+         * Update custom cursor position to follow mouse
+         */
+        function updateCustomCursorPosition(e) {
+            if (!customCursor || isRevealed) return;
+            
+            const cardBackground = scratchCanvas.closest('.card-background');
+            const rect = cardBackground.getBoundingClientRect();
+            
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            customCursor.style.left = x + 'px';
+            customCursor.style.top = y + 'px';
+        }
+        
+        /**
+         * Handle scratch start (mouse down or touch start)
+         */
+        function handleScratchStart(e) {
+            e.preventDefault();
+            isScratching = true;
+            
+            // Track first scratch
+            if (!hasStartedScratching) {
+                hasStartedScratching = true;
+                track('scratch_started');
+            }
+            
+            // Perform initial scratch at touch point
+            scratch(e);
+        }
+        
+        /**
+         * Handle scratch move (mouse move or touch move while scratching)
+         */
+        function handleScratchMove(e) {
+            // Always update cursor position on mouse move
+            if (e.type === 'mousemove') {
+                updateCustomCursorPosition(e);
+            }
+            
+            if (!isScratching) return;
+            e.preventDefault();
+            scratch(e);
+        }
+        
+        /**
+         * Handle scratch end (mouse up or touch end)
+         */
+        function handleScratchEnd(e) {
+            if (!isScratching) return;
+            e.preventDefault();
+            isScratching = false;
+        }
+        
+        /**
+         * Perform scratch action at current mouse/touch position
+         * Removes overlay at the brush position
+         */
+        function scratch(e) {
+            const rect = scratchCanvas.getBoundingClientRect();
+            let x, y;
+            
+            // Get coordinates (already in logical pixels)
+            if (e.type.includes('touch')) {
+                const touch = e.touches[0] || e.changedTouches[0];
+                x = touch.clientX - rect.left;
+                y = touch.clientY - rect.top;
+            } else {
+                x = e.clientX - rect.left;
+                y = e.clientY - rect.top;
+            }
+            
+            // Offset the scratch position to simulate edge of coin scratching
+            // This makes it look like the bottom-left edge of the coin is doing the scratching
+            const offsetX = 5; // Offset left from center
+            const offsetY = 7;  // Offset down from center
+            
+            x += offsetX;
+            y += offsetY;
+            
+            // Set composite operation to erase
+            scratchCtx.globalCompositeOperation = 'destination-out';
+            
+            // Draw circular brush
+            const brushSize = config.scratchCard.brush.size;
+            scratchCtx.beginPath();
+            scratchCtx.arc(x, y, brushSize / 2, 0, Math.PI * 2);
+            scratchCtx.fill();
+            
+            // Reset composite operation
+            scratchCtx.globalCompositeOperation = 'source-over';
+            
+            // Check scratch percentage
+            checkScratchPercentage();
+        }
+        
+        /**
+         * Calculate percentage of canvas that has been scratched
+         * Triggers auto-reveal when threshold is reached
+         */
+        function checkScratchPercentage() {
+            if (isRevealed) return;
+            
+            // Sample pixels to check transparency
+            const imageData = scratchCtx.getImageData(0, 0, scratchCanvas.width, scratchCanvas.height);
+            const pixels = imageData.data;
+            let transparentPixels = 0;
+            const totalPixels = pixels.length / 4;
+            
+            // Count transparent pixels (alpha < 128)
+            for (let i = 3; i < pixels.length; i += 4) {
+                if (pixels[i] < 128) {
+                    transparentPixels++;
+                }
+            }
+            
+            scratchPercentage = (transparentPixels / totalPixels) * 100;
+            
+            // Check if threshold reached
+            const threshold = config.scratchCard.threshold;
+            if (scratchPercentage >= threshold) {
+                revealCard();
+            }
+        }
+        
+        /**
+         * Automatically reveal the card with animation
+         * Triggered when scratch threshold is reached
+         */
+        function revealCard() {
+            if (isRevealed) return;
+            isRevealed = true;
+            
+            console.log('[SCRATCH] Threshold reached, revealing card');
+            track('scratch_completed', { scratchPercentage: Math.round(scratchPercentage) });
+            
+            // Animate canvas fade out
+            const animationDuration = config.scratchCard.animation.autoRevealDuration;
+            scratchCanvas.style.transition = `opacity ${animationDuration}ms ease-out`;
+            scratchCanvas.style.opacity = '0';
+            scratchCanvas.style.pointerEvents = 'none';
+            
+            // Remove canvas after animation
+            setTimeout(() => {
+                scratchCanvas.style.display = 'none';
+                track('card_revealed');
+                console.log('[SCRATCH] Card fully revealed');
+            }, animationDuration);
+        }
+        
+        /**
+         * Play auto-scratch preview animation
+         * Simulates a user scratching the card following a specific sweep pattern
+         */
+        function playAutoScratchPreview() {
+            if (isRevealed || hasStartedScratching) return;
+            
+            console.log('[SCRATCH] Playing auto-scratch preview');
+            
+            // Show custom cursor for animation
+            if (customCursor) {
+                customCursor.classList.add('active');
+            }
+            
+            // Define waypoints based on exact Figma path coordinates
+            // Scaled to fit in top-left quadrant (divide by ~3)
+            const waypoints = [
+                { x: 40, y: 0 },      // Point 1: Top middle
+                { x: 0, y: 30 },      // Point 2: Left edge
+                { x: 77, y: 0 },      // Point 3: Top right
+                { x: 0, y: 59 },      // Point 6: Back to left (lower)
+                { x: 109, y: 0 },     // Point 5: Far right top
+                { x: 1, y: 89 },      // Bottom left corner
+                { x: 77, y: 59 }      // Point 7: Right side middle
+            ];
+            
+            const totalSteps = 60; // Much faster - reduced from 150
+            let currentStep = 0;
+            let lastX = null;
+            let lastY = null;
+            
+            function animateStep() {
+                // Stop animation if user has started scratching or card is revealed
+                if (currentStep >= totalSteps || isRevealed || hasStartedScratching) {
+                    // Hide cursor when animation ends (unless user is hovering)
+                    if (!isRevealed && !hasStartedScratching && customCursor) {
+                        customCursor.classList.remove('active');
+                    }
+                    
+                    // Animation complete - wait 2 seconds, redraw, and restart
+                    // Only restart if user hasn't interacted and card isn't revealed
+                    if (!isRevealed && !hasStartedScratching) {
+                        setTimeout(() => {
+                            // Double check user hasn't started scratching during timeout
+                            if (!hasStartedScratching && !isRevealed) {
+                                // Use requestAnimationFrame for smooth visual update
+                                requestAnimationFrame(() => {
+                                    // Reset scratch state
+                                    scratchPercentage = 0;
+                                    
+                                    // Reset canvas visual state (remove any transition styles)
+                                    scratchCanvas.style.transition = 'none';
+                                    scratchCanvas.style.opacity = '1';
+                                    scratchCanvas.style.display = '';
+                                    scratchCanvas.style.pointerEvents = '';
+                                    
+                                    // Redraw the scratch overlay
+                                    drawScratchOverlay();
+                                    
+                                    // Wait one more frame before restarting animation
+                                    requestAnimationFrame(() => {
+                                        playAutoScratchPreview();
+                                    });
+                                });
+                            }
+                        }, 2000);
+                    }
+                    return;
+                }
+                
+                // Calculate which segment we're on and progress within that segment
+                const progress = currentStep / totalSteps;
+                const totalSegments = waypoints.length - 1;
+                const currentSegmentFloat = progress * totalSegments;
+                const currentSegmentIndex = Math.floor(currentSegmentFloat);
+                const segmentProgress = currentSegmentFloat - currentSegmentIndex;
+                
+                // Get start and end points for current segment
+                const startPoint = waypoints[currentSegmentIndex];
+                const endPoint = waypoints[Math.min(currentSegmentIndex + 1, waypoints.length - 1)];
+                
+                // Linear interpolation for straight lines
+                const x = startPoint.x + (endPoint.x - startPoint.x) * segmentProgress;
+                const y = startPoint.y + (endPoint.y - startPoint.y) * segmentProgress;
+                
+                // Update coin cursor position to follow animation path
+                if (customCursor && !hasStartedScratching) {
+                    customCursor.style.left = x + 'px';
+                    customCursor.style.top = y + 'px';
+                }
+                
+                // Draw crisp lines by connecting previous point to current point
+                scratchCtx.globalCompositeOperation = 'destination-out';
+                const brushSize = config.scratchCard.brush.size;
+                
+                if (lastX !== null && lastY !== null) {
+                    // Draw line from last position to current position
+                    scratchCtx.lineWidth = brushSize;
+                    scratchCtx.lineCap = 'round';
+                    scratchCtx.lineJoin = 'round';
+                    scratchCtx.beginPath();
+                    scratchCtx.moveTo(lastX, lastY);
+                    scratchCtx.lineTo(x, y);
+                    scratchCtx.stroke();
+                } else {
+                    // First point - draw circle
+                    scratchCtx.beginPath();
+                    scratchCtx.arc(x, y, brushSize / 2, 0, Math.PI * 2);
+                    scratchCtx.fill();
+                }
+                
+                scratchCtx.globalCompositeOperation = 'source-over';
+                
+                // Store current position for next iteration
+                lastX = x;
+                lastY = y;
+                
+                currentStep++;
+                
+                // Continue animation at consistent speed
+                requestAnimationFrame(animateStep);
+            }
+            
+            // Start animation
+            animateStep();
+        }
+        
+        /**
+         * Initialize button click handlers
+         * Sets up event delegation for all interactive elements
+         */
+        function initializeButtons() {
+            document.addEventListener('click', function(e) {
+                const action = e.target.closest('[data-action]')?.getAttribute('data-action');
+                if (!action) return;
+                
+                switch(action) {
+                    case 'cta-shop-now':
+                        handleShopNowClick();
+                        break;
+                    
+                    default:
+                        console.warn('[ACTION] Unknown action:', action);
+                }
+            });
+            
+            console.log('[BUTTONS] Initialized button handlers');
+        }
+        
+        /**
+         * Handle Shop Now button click
+         * Tracks event and opens URL in new tab
+         */
+        function handleShopNowClick() {
+            track('cta_clicked', { button: 'shop-now' });
+            
+            // Open URL in new tab
+            const url = config.content.buttons.shopNow.url;
+            window.open(url, '_blank', 'noopener,noreferrer');
+        }
+        
+        /**
+         * Track analytics events
+         * Logs events and sends to analytics providers
+         * @param {string} eventName - Name of event to track
+         * @param {object} payload - Additional event data
+         */
+        function track(eventName, payload = {}) {
+            if (!config.tracking || !config.tracking.enabled) {
+                return;
+            }
+            
+            const eventConfig = config.tracking.events[eventName];
+            
+            if (!eventConfig || !eventConfig.enabled) {
+                return;
+            }
+            
+            const trackingData = {
+                event: eventConfig.name || eventName,
+                category: eventConfig.category || 'engagement',
+                timestamp: Date.now(),
+                adUnit: config.meta.adUnit,
+                client: config.meta.client,
+                campaign: config.meta.campaign,
+                ...payload
+            };
+            
+            console.log('[TRACKING]', trackingData);
+            
+            // Fire conversion pixel if configured
+            if (eventConfig.convPixel) {
+                const convImg = document.createElement('img');
+                convImg.src = eventConfig.convPixel;
+                convImg.width = 1;
+                convImg.height = 1;
+                convImg.style.cssText = 'position:absolute;left:-9999px;';
+                convImg.alt = '';
+                document.body.appendChild(convImg);
+                console.log('[TRACKING] Fired conversion pixel:', eventConfig.convPixel);
+            }
+            
+            // Fire retargeting pixel if configured
+            if (eventConfig.rtPixel) {
+                const rtImg = document.createElement('img');
+                rtImg.src = eventConfig.rtPixel;
+                rtImg.width = 1;
+                rtImg.height = 1;
+                rtImg.style.cssText = 'position:absolute;left:-9999px;';
+                rtImg.alt = '';
+                document.body.appendChild(rtImg);
+                console.log('[TRACKING] Fired retargeting pixel:', eventConfig.rtPixel);
+            }
+            
+            // Integration with analytics providers
+            if (typeof gtag === 'function') {
+                gtag('event', eventConfig.name, {
+                    event_category: eventConfig.category,
+                    ...payload
+                });
+            }
+            
+            if (typeof fbq === 'function') {
+                fbq('track', eventConfig.name, payload);
+            }
+        }
+        
+    </script>
+    
+</body>
+</html>

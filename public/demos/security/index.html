@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="ad.size" content="width=300,height=600">
+    <title></title>
+    
+    <!-- Configuration (load first to set title) -->
+    <script src="config.js"></script>
+    
+    <!-- Google Ad Manager ClickTag Compliance -->
+    <script type="text/javascript">
+        var clickTag = "http://www.google.com";
+        
+        // Set document title from config
+        if (window.AD_CONFIG?.meta?.adTitle) {
+            document.title = window.AD_CONFIG.meta.adTitle;
+        }
+    </script>
+    
+    <!-- Tailwind CSS -->
+    <link rel="stylesheet" href="output.css">
+</head>
+<body>
+    <!-- Ad Container - 300x600 -->
+    <div id="ad-container" class="ad-container">
+        
+        <!-- Logo Header -->
+        <div id="logo-header" class="logo-header">
+            <div class="logo-wrapper">
+                <!-- Logo will be injected by JavaScript -->
+            </div>
+        </div>
+        
+        <!-- Video Section -->
+        <div id="video-shell" class="video-shell">
+            <div class="video-section">
+                <div class="video-wrapper">
+                    <video id="ad-video" autoplay loop muted playsinline controlslist="nodownload">
+                        <!-- Source will be injected by JavaScript -->
+                    </video>
+                </div>
+                
+                <!-- Mute/Unmute Button -->
+                <button 
+                    id="mute-toggle" 
+                    class="mute-toggle" 
+                    aria-label="Toggle sound"
+                    data-action="media-mute-toggle">
+                    <img id="mute-icon" src="" alt="Mute">
+                </button>
+            </div>
+            
+            <!-- Video Progress Bar -->
+            <div class="video-progress-wrapper">
+                <div class="video-progress">
+                    <div class="progress-bar">
+                        <div id="progress-fill" class="progress-fill"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- STATE 1 & 2: Form Section -->
+        <div id="form-state" class="content-section active">
+            <div class="content-box">
+                <!-- Form Header -->
+                <div class="form-header">
+                    <div class="main-header">
+                        <p id="headline-line1"></p>
+                        <p id="headline-line2"></p>
+                    </div>
+                    <div class="subtitle">
+                        <p id="subtitle-text"></p>
+                    </div>
+                </div>
+                
+                <!-- Form Inputs -->
+                <form id="lead-form" class="form-inputs">
+                    <div class="input-wrapper">
+                        <img class="input-icon" id="icon-name" src="" alt="">
+                        <input 
+                            type="text" 
+                            id="input-name" 
+                            class="form-input"
+                            name="name"
+                            placeholder=""
+                            autocomplete="name"
+                            data-action="form-input"
+                        >
+                    </div>
+                    
+                    <div class="input-wrapper">
+                        <img class="input-icon" id="icon-phone" src="" alt="">
+                        <input 
+                            type="tel" 
+                            id="input-phone" 
+                            class="form-input"
+                            name="phone"
+                            placeholder=""
+                            autocomplete="tel"
+                            data-action="form-input"
+                        >
+                        <span class="error-icon hidden">✕</span>
+                    </div>
+                    
+                    <div class="input-wrapper">
+                        <img class="input-icon" id="icon-email" src="" alt="">
+                        <input 
+                            type="email" 
+                            id="input-email" 
+                            class="form-input"
+                            name="email"
+                            placeholder=""
+                            autocomplete="email"
+                            data-action="form-input"
+                        >
+                        <span class="error-icon hidden">✕</span>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <!-- STATE 3: Terms & Conditions -->
+        <div id="terms-state" class="content-section">
+            <div class="content-box">
+                <!-- Terms Header -->
+                <div class="terms-header">
+                    <div class="terms-title">
+                        <p id="terms-title-text"></p>
+                    </div>
+                    <div class="terms-subtitle">
+                        <p id="terms-subtitle-text"></p>
+                    </div>
+                </div>
+                
+                <!-- Terms Text -->
+                <div class="terms-text" id="terms-content">
+                    <!-- Terms items will be injected by JavaScript -->
+                </div>
+            </div>
+        </div>
+        
+        <!-- STATE 4: Confirmation -->
+        <div id="confirmation-state" class="content-section">
+            <div class="content-box">
+                <!-- Confirmation Header -->
+                <div class="confirmation-header">
+                    <div class="confirmation-title">
+                        <p id="confirmation-title-text"></p>
+                    </div>
+                    <div class="confirmation-subtitle">
+                        <p id="confirmation-subtitle-text"></p>
+                    </div>
+                </div>
+                
+                <!-- Confirmation Body -->
+                <div class="confirmation-body">
+                    <div class="phone-icon-large" id="phone-icon-large">
+                        <!-- SVG will be injected by JavaScript -->
+                    </div>
+                    <p id="confirmation-body-text"></p>
+                    <p id="confirmation-cta-text"></p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Bottom Buttons -->
+        <div id="bottom-buttons" class="bottom-buttons">
+            <!-- Form State Buttons -->
+            <div id="form-buttons" class="button-group active">
+                <button 
+                    id="btn-submit" 
+                    class="btn btn-primary disabled" 
+                    disabled
+                    data-action="submit">
+                    <span id="btn-submit-label"></span>
+                </button>
+                <button 
+                    id="btn-call" 
+                    class="btn btn-call"
+                    data-action="cta-primary">
+                    <img id="btn-call-icon" class="btn-icon" src="" alt="">
+                    <span id="btn-call-label"></span>
+                </button>
+            </div>
+            
+            <!-- Terms State Buttons -->
+            <div id="terms-buttons" class="button-group">
+                <button 
+                    id="btn-accept" 
+                    class="btn btn-primary"
+                    data-action="accept-legal">
+                    <span id="btn-accept-label"></span>
+                </button>
+                <button 
+                    id="btn-back-terms" 
+                    class="btn btn-back"
+                    data-action="back">
+                    <span id="btn-back-label"></span>
+                </button>
+            </div>
+            
+            <!-- Confirmation State Buttons -->
+            <div id="confirmation-buttons" class="button-group">
+                <button 
+                    id="btn-call-confirm" 
+                    class="btn btn-primary"
+                    data-action="cta-primary">
+                    <img id="btn-call-confirm-icon" class="btn-icon" src="" alt="">
+                    <span id="btn-call-confirm-label"></span>
+                </button>
+            </div>
+        </div>
+        
+    </div>
+    
+    <!-- Main Application Script -->
+    <script>
+        // Global state
+        const AppState = {
+            currentState: 'form',
+            previousState: null,
+            formData: {
+                name: '',
+                phone: '',
+                email: ''
+            },
+            formTouched: {
+                name: false,
+                phone: false,
+                email: false
+            },
+            formValid: {
+                name: false,
+                phone: false,
+                email: false
+            }
+        };
+        
+        let legalAccepted = false;
+        let pendingSubmit = false;
+        
+        // Centralized tracking
+        function track(eventName, payload = {}) {
+            const config = window.AD_CONFIG;
+            
+            if (!config.tracking || !config.tracking.enabled) {
+                return;
+            }
+            
+            // Find event configuration
+            const eventConfig = Object.values(config.tracking.events).find(e => e.name === eventName);
+            
+            if (!eventConfig || !eventConfig.enabled) {
+                return;
+            }
+            
+            // Build tracking payload
+            const trackingData = {
+                event: eventName,
+                timestamp: new Date().toISOString(),
+                adUnit: config.meta.adUnit,
+                campaign: config.meta.campaign,
+                state: AppState.currentState,
+                ...payload
+            };
+            
+            console.log('[TRACK]', eventName, trackingData);
+            
+            // Fire conversion pixel if configured
+            if (eventConfig.convPixel) {
+                const convImg = document.createElement('img');
+                convImg.src = eventConfig.convPixel;
+                convImg.width = 1;
+                convImg.height = 1;
+                convImg.style.cssText = 'position:absolute;left:-9999px;';
+                convImg.alt = '';
+                document.body.appendChild(convImg);
+                console.log('[TRACK] Fired conversion pixel:', eventConfig.convPixel);
+            }
+            
+            // Fire retargeting pixel if configured
+            if (eventConfig.rtPixel) {
+                const rtImg = document.createElement('img');
+                rtImg.src = eventConfig.rtPixel;
+                rtImg.width = 1;
+                rtImg.height = 1;
+                rtImg.style.cssText = 'position:absolute;left:-9999px;';
+                rtImg.alt = '';
+                document.body.appendChild(rtImg);
+                console.log('[TRACK] Fired retargeting pixel:', eventConfig.rtPixel);
+            }
+            
+            // Route to appropriate provider
+            switch (config.tracking.provider) {
+                case 'stackadapt':
+                    // StackAdapt tracking implementation
+                    if (window.sa_track) {
+                        window.sa_track(eventName, trackingData);
+                    }
+                    break;
+                    
+                case 'google':
+                    // Google Analytics implementation
+                    if (window.gtag) {
+                        window.gtag('event', eventName, trackingData);
+                    }
+                    break;
+                    
+                case 'custom':
+                default:
+                    // Custom tracking - can be extended
+                    if (window.customTrack) {
+                        window.customTrack(eventName, trackingData);
+                    }
+                    break;
+            }
+        }
+        
+        // Initialization
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeFonts();
+            initializeColors();
+            initializeContent();
+            initializeMedia();
+            initializeForm();
+            initializeButtons();
+            setState(window.AD_CONFIG.theme.ui.states.initial);
+            
+            // Track ad load
+            track('ad_loaded');
+        });
+        
+        // Font loading system
+        /**
+         * Load custom fonts from config
+         * Supports Google Fonts, local assets, and CDN sources
+         */
+        function initializeFonts() {
+            const config = window.AD_CONFIG;
+            
+            if (!config.theme.typography || !config.theme.typography.customFonts) {
+                return;
+            }
+            
+            const typography = config.theme.typography;
+            const fonts = typography.customFonts;
+            
+            // Set CSS variables for font families
+            const root = document.documentElement;
+            if (typography.fontPrimary) {
+                root.style.setProperty('--brand-font-primary', typography.fontPrimary);
+            }
+            if (typography.fontSecondary) {
+                root.style.setProperty('--brand-font-secondary', typography.fontSecondary);
+            }
+            
+            // Load each custom font
+            fonts.forEach(font => {
+                if (font.source === 'google' && font.url) {
+                    // Load Google Fonts or external stylesheet
+                    const link = document.createElement('link');
+                    link.rel = 'stylesheet';
+                    link.href = font.url;
+                    document.head.appendChild(link);
+                } else if ((font.source === 'local' || font.source === 'cdn') && font.sources) {
+                    // Inject @font-face for local or CDN fonts
+                    const srcValues = font.sources.map(src => 
+                        `url('${src.url}') format('${src.format}')`
+                    ).join(',\n         ');
+                    
+                    const fontFaceCSS = `
+@font-face {
+    font-family: '${font.family}';
+    src: ${srcValues};
+    font-weight: ${font.weight || 'normal'};
+    font-style: ${font.style || 'normal'};
+    font-display: ${font.display || 'swap'};
+}
+`;
+                    const style = document.createElement('style');
+                    style.textContent = fontFaceCSS;
+                    document.head.appendChild(style);
+                }
+            });
+        }
+        
+        // Color system
+        function initializeColors() {
+            const colors = window.AD_CONFIG.theme.colors;
+            const root = document.documentElement;
+            
+            Object.keys(colors).forEach(key => {
+                const cssVarName = '--color-' + key.replace(/([A-Z])/g, '-$1').toLowerCase();
+                root.style.setProperty(cssVarName, colors[key]);
+            });
+            
+            console.log('[COLORS] Initialized ' + Object.keys(colors).length + ' color variables');
+        }
+        
+        // Content population
+        function initializeContent() {
+            const config = window.AD_CONFIG;
+            const content = config.content;
+            const assets = config.theme.assets;
+            
+            // Headlines
+            document.getElementById('headline-line1').textContent = content.headlines.primary.line1;
+            document.getElementById('headline-line2').textContent = content.headlines.primary.line2;
+            document.getElementById('subtitle-text').textContent = content.headlines.subtitle;
+            
+            // Form placeholders and icons
+            config.lead.fields.forEach(field => {
+                const input = document.getElementById(`input-${field.id}`);
+                if (input) {
+                    input.placeholder = field.placeholder;
+                }
+                
+                const icon = document.getElementById(`icon-${field.id}`);
+                if (icon && assets[field.icon]) {
+                    icon.src = assets[field.icon];
+                }
+            });
+            
+            // Button labels
+            document.getElementById('btn-submit-label').textContent = content.buttons.submitDisabled.text;
+            document.getElementById('btn-call-label').textContent = content.buttons.call.text;
+            document.getElementById('btn-call-icon').src = assets.iconPhone;
+            document.getElementById('btn-accept-label').textContent = content.buttons.accept.text;
+            document.getElementById('btn-back-label').textContent = content.buttons.back.text;
+            
+            // Confirmation call button
+            document.getElementById('btn-call-confirm-label').textContent = content.buttons.call.text;
+            document.getElementById('btn-call-confirm-icon').src = assets.iconPhone;
+            
+            // Terms content
+            document.getElementById('terms-title-text').textContent = content.terms.title;
+            document.getElementById('terms-subtitle-text').textContent = content.terms.subtitle;
+            
+            // Build terms items
+            const termsContainer = document.getElementById('terms-content');
+            content.terms.items.forEach(item => {
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'terms-item';
+                
+                let html = `<span class="terms-number">${item.number}</span><span class="terms-item-text">`;
+                html += item.text;
+                
+                if (item.linkText) {
+                    html += `<a href="${item.linkUrl}" target="_blank" rel="noopener noreferrer" class="terms-link" data-action="open-legal">${item.linkText}</a>`;
+                }
+                
+                if (item.middleText) {
+                    html += item.middleText;
+                    html += `<a href="${item.linkUrl2}" target="_blank" rel="noopener noreferrer" class="terms-link" data-action="open-legal">${item.linkText2}</a>`;
+                }
+                
+                html += item.suffix + '</span>';
+                
+                itemDiv.innerHTML = html;
+                termsContainer.appendChild(itemDiv);
+            });
+            
+            // Confirmation content
+            document.getElementById('confirmation-title-text').textContent = content.confirmation.title;
+            document.getElementById('confirmation-subtitle-text').textContent = content.confirmation.subtitle;
+            document.getElementById('confirmation-body-text').textContent = content.confirmation.bodyText;
+            document.getElementById('confirmation-cta-text').textContent = content.confirmation.callToAction;
+            
+            // Large phone icon
+            const phoneIconContainer = document.getElementById('phone-icon-large');
+            const phoneIconImg = document.createElement('img');
+            phoneIconImg.src = assets.iconPhoneLarge;
+            phoneIconImg.alt = 'Phone';
+            phoneIconContainer.innerHTML = '';
+            phoneIconContainer.appendChild(phoneIconImg);
+            
+            // Mute icon
+            document.getElementById('mute-icon').src = assets.iconSpeakerMute;
+            
+            // Logo
+            const logoWrapper = document.querySelector('.logo-wrapper');
+            const logoImg = document.createElement('img');
+            logoImg.src = assets.logo;
+            logoImg.alt = config.meta.client + ' Logo';
+            logoImg.className = 'logo';
+            logoWrapper.appendChild(logoImg);
+        }
+        
+        // Media initialization
+        function initializeMedia() {
+            const config = window.AD_CONFIG;
+            
+            // Route to appropriate media handler based on type
+            switch (config.media.type) {
+                case 'video':
+                    initializeVideo();
+                    break;
+                case 'static':
+                    // Future: initializeStaticImage();
+                    break;
+                case 'carousel':
+                    // Future: initializeCarousel();
+                    break;
+            }
+        }
+        
+        function initializeVideo() {
+            const config = window.AD_CONFIG;
+            const mediaConfig = config.media.video;
+            const video = document.getElementById('ad-video');
+            const muteToggle = document.getElementById('mute-toggle');
+            const muteIcon = document.getElementById('mute-icon');
+            const progressFill = document.getElementById('progress-fill');
+            
+            // Set video source with fallback support
+            const source = document.createElement('source');
+            source.src = mediaConfig.src;
+            source.type = 'video/mp4';
+            
+            // Add fallback if configured
+            if (mediaConfig.fallbackSrc) {
+                source.onerror = function() {
+                    console.warn('Primary video failed, trying fallback');
+                    video.src = mediaConfig.fallbackSrc;
+                };
+            }
+            
+            video.appendChild(source);
+            
+            // Track video play
+            video.addEventListener('play', function() {
+                track('video_played');
+            });
+            
+            // Mute toggle with tracking
+            muteToggle.addEventListener('click', function() {
+                video.muted = !video.muted;
+                
+                // Track mute state
+                track(video.muted ? 'video_muted' : 'video_unmuted');
+                
+                // Swap icon based on muted state
+                if (video.muted) {
+                    muteIcon.src = config.theme.assets.iconSpeakerMute;
+                    muteIcon.alt = 'Muted - Click to unmute';
+                } else {
+                    muteIcon.src = config.theme.assets.iconSpeakerUnmute;
+                    muteIcon.alt = 'Unmuted - Click to mute';
+                }
+            });
+            
+            // Progress bar
+            if (mediaConfig.progressBar.enabled) {
+                let isDragging = false;
+                const progressBar = document.querySelector('.progress-bar');
+                
+                function updateProgressBar() {
+                    if (video.duration && !isDragging) {
+                        const percentage = (video.currentTime / video.duration) * 100;
+                        progressFill.style.width = percentage + '%';
+                    }
+                    requestAnimationFrame(updateProgressBar);
+                }
+                
+                video.addEventListener('play', function() {
+                    requestAnimationFrame(updateProgressBar);
+                });
+                
+                if (mediaConfig.autoplay) {
+                    requestAnimationFrame(updateProgressBar);
+                }
+                
+                // Click and drag functionality
+                function getProgressBarPosition(event) {
+                    const rect = progressBar.getBoundingClientRect();
+                    const clickX = event.clientX - rect.left;
+                    const percentage = Math.max(0, Math.min(100, (clickX / rect.width) * 100));
+                    return percentage;
+                }
+                
+                function seekToPosition(percentage) {
+                    const newTime = (percentage / 100) * video.duration;
+                    const currentTime = video.currentTime;
+                    
+                    // Respect allowRewind/allowForward settings
+                    if (newTime < currentTime && mediaConfig.progressBar.allowRewind) {
+                        video.currentTime = newTime;
+                        progressFill.style.width = percentage + '%';
+                    } else if (newTime > currentTime && mediaConfig.progressBar.allowForward) {
+                        video.currentTime = newTime;
+                        progressFill.style.width = percentage + '%';
+                    }
+                }
+                
+                progressBar.addEventListener('mousedown', function(e) {
+                    isDragging = true;
+                    const percentage = getProgressBarPosition(e);
+                    seekToPosition(percentage);
+                    progressBar.style.cursor = 'grabbing';
+                });
+                
+                document.addEventListener('mousemove', function(e) {
+                    if (isDragging) {
+                        const percentage = getProgressBarPosition(e);
+                        seekToPosition(percentage);
+                    }
+                });
+                
+                document.addEventListener('mouseup', function() {
+                    if (isDragging) {
+                        isDragging = false;
+                        progressBar.style.cursor = 'pointer';
+                    }
+                });
+                
+                progressBar.style.cursor = 'pointer';
+            }
+        }
+        
+        // Form validation
+        function initializeForm() {
+            const config = window.AD_CONFIG;
+            
+            config.lead.fields.forEach(field => {
+                const input = document.getElementById(`input-${field.id}`);
+                if (!input) return;
+                
+                // Track form start
+                input.addEventListener('focus', function() {
+                    if (!AppState.formTouched.name && !AppState.formTouched.phone && !AppState.formTouched.email) {
+                        track('form_started');
+                    }
+                    
+                    // Hide error icon while typing
+                    const wrapper = input.parentElement;
+                    const errorIcon = wrapper.querySelector('.error-icon');
+                    if (errorIcon) {
+                        errorIcon.classList.add('hidden');
+                    }
+                });
+                
+                // Validate on blur
+                input.addEventListener('blur', function() {
+                    AppState.formTouched[field.id] = true;
+                    validateField(field.id);
+                    updateSubmitButton();
+                    
+                    // Check if form is complete
+                    if (Object.values(AppState.formValid).every(v => v === true)) {
+                        track('form_completed');
+                    }
+                });
+                
+                // Real-time validation
+                input.addEventListener('input', function(e) {
+                    AppState.formData[field.id] = e.target.value;
+                    
+                    // Phone formatting
+                    if (field.type === 'tel' && config.lead.phoneFormat.enableFormatting) {
+                        formatPhoneNumber(e.target);
+                    }
+                    
+                    // Update validation state silently
+                    validateFieldSilent(field.id);
+                    updateSubmitButton();
+                });
+            });
+        }
+        
+        function formatPhoneNumber(input) {
+            let value = input.value.replace(/\D/g, '');
+            
+            if (value.length === 0) {
+                input.value = '';
+                return;
+            }
+            
+            let formatted = '';
+            
+            if (value.length === 11 && value[0] === '1') {
+                formatted = '+1 (' + value.substring(1, 4) + ') ' + 
+                           value.substring(4, 7) + '-' + value.substring(7, 11);
+            } else if (value.length === 10) {
+                formatted = '(' + value.substring(0, 3) + ') ' + 
+                           value.substring(3, 6) + '-' + value.substring(6, 10);
+            } else if (value.length > 10) {
+                formatted = '+1 (' + value.substring(1, 4) + ') ' + 
+                           value.substring(4, 7) + '-' + value.substring(7, 11);
+            } else {
+                formatted = value;
+            }
+            
+            input.value = formatted;
+        }
+        
+        function validateField(fieldId) {
+            const config = window.AD_CONFIG;
+            const field = config.lead.fields.find(f => f.id === fieldId);
+            const value = AppState.formData[fieldId];
+            let isValid = false;
+            
+            if (field.validation === 'email') {
+                isValid = config.lead.validation.emailRegex.test(value);
+            } else if (field.validation === 'phone') {
+                const digits = value.replace(/\\D/g, '');
+                isValid = digits.length >= config.lead.phoneFormat.minDigits;
+            } else if (field.validation === 'text') {
+                isValid = value.trim().length > 0;
+            }
+            
+            AppState.formValid[fieldId] = isValid;
+            
+            // Show/hide error icon
+            const input = document.getElementById(`input-${fieldId}`);
+            const wrapper = input.parentElement;
+            const errorIcon = wrapper.querySelector('.error-icon');
+            
+            if (errorIcon) {
+                if (AppState.formTouched[fieldId] && !isValid && value.length > 0) {
+                    errorIcon.classList.remove('hidden');
+                } else {
+                    errorIcon.classList.add('hidden');
+                }
+            }
+            
+            return isValid;
+        }
+        
+        function validateFieldSilent(fieldId) {
+            const config = window.AD_CONFIG;
+            const field = config.lead.fields.find(f => f.id === fieldId);
+            const value = AppState.formData[fieldId];
+            let isValid = false;
+            
+            if (field.validation === 'email') {
+                isValid = config.lead.validation.emailRegex.test(value);
+            } else if (field.validation === 'phone') {
+                const digits = value.replace(/\\D/g, '');
+                isValid = digits.length >= config.lead.phoneFormat.minDigits;
+            } else if (field.validation === 'text') {
+                isValid = value.trim().length > 0;
+            }
+            
+            AppState.formValid[fieldId] = isValid;
+            return isValid;
+        }
+        
+        function updateSubmitButton() {
+            const submitBtn = document.getElementById('btn-submit');
+            const allValid = Object.values(AppState.formValid).every(v => v === true);
+            
+            if (allValid) {
+                submitBtn.classList.remove('disabled');
+                submitBtn.disabled = false;
+            } else {
+                submitBtn.classList.add('disabled');
+                submitBtn.disabled = true;
+            }
+        }
+        
+        // Button interactions
+        function initializeButtons() {
+            const config = window.AD_CONFIG;
+            
+            // Delegated click handler for all actions
+            document.addEventListener('click', function(e) {
+                const action = e.target.closest('[data-action]')?.getAttribute('data-action');
+                if (!action) return;
+                
+                switch(action) {
+                    case 'submit':
+                        const submitBtn = e.target.closest('button');
+                        if (!submitBtn.disabled) {
+                            if (window.AD_CONFIG?.compliance?.requiredBeforeSubmit && !legalAccepted) {
+                                pendingSubmit = true;
+                                track('form_submitted');
+                                setState('terms');
+                                return;
+                            }
+                            track('form_submitted');
+                            submitFormData();
+                            setState('confirmation');
+                        }
+                        break;
+                    
+                    case 'cta-primary':
+                        const location = AppState.currentState === 'confirmation' ? 'confirmation' : 'form';
+                        track('call_clicked', { location });
+                        window.open(config.content.buttons.call.url, '_blank');
+                        break;
+                    
+                    case 'accept-legal':
+                        track('terms_accepted');
+                        legalAccepted = true;
+                        if (pendingSubmit) {
+                            pendingSubmit = false;
+                            submitFormData();
+                        }
+                        setState('confirmation');
+                        break;
+                    
+                    case 'back':
+                        track('terms_declined');
+                        pendingSubmit = false;
+                        setState('form');
+                        break;
+                }
+            });
+        }
+        
+        // State management
+        function setState(newState) {
+            const config = window.AD_CONFIG;
+            
+            // Update state
+            AppState.previousState = AppState.currentState;
+            AppState.currentState = newState;
+            
+            // Track state transitions
+            if (newState === 'terms') {
+                track('terms_viewed');
+            } else if (newState === 'confirmation') {
+                track('confirmation_viewed');
+            }
+            
+            // Hide all states - ONLY manage visibility, let screens handle their own visuals
+            document.querySelectorAll('.content-section').forEach(el => {
+                el.classList.remove('active');
+            });
+            
+            document.querySelectorAll('.button-group').forEach(el => {
+                el.classList.remove('active');
+            });
+            
+            // Show current state
+            const stateElement = document.getElementById(`${newState}-state`);
+            const buttonsElement = document.getElementById(`${newState}-buttons`);
+            
+            if (stateElement) {
+                stateElement.classList.add('active');
+            }
+            
+            if (buttonsElement) {
+                buttonsElement.classList.add('active');
+            }
+        }
+        
+        // Webhook submission
+        function submitFormData() {
+            const config = window.AD_CONFIG;
+            
+            if (!config.lead.webhook.enabled) {
+                console.log('Webhook disabled');
+                return;
+            }
+            
+            const payload = {
+                firstName: AppState.formData.name,
+                lastName: '',  // Not collected separately
+                email: AppState.formData.email,
+                mobile: AppState.formData.phone,
+                timestamp: new Date().toISOString(),
+                campaign: config.meta.campaign,
+                adUnit: config.meta.adUnit,
+                source: config.lead.webhook.payloadTemplate.source || 'programmatic_ad'
+            };
+            
+            // Non-blocking webhook call with timeout
+            if (config.lead.webhook.url !== 'YOUR_WEBHOOK_URL_HERE') {
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), config.lead.webhook.timeout || 5000);
+                
+                fetch(config.lead.webhook.url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload),
+                    signal: controller.signal
+                })
+                .then(response => {
+                    clearTimeout(timeoutId);
+                })
+                .catch(error => {
+                    clearTimeout(timeoutId);
+                    console.error('Webhook error (non-blocking):', error);
+                });
+            } else {
+                console.warn('Webhook URL not configured');
+            }
+        }
+    </script>
+</body>
+</html>

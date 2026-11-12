@@ -1,0 +1,1662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="ad.size" content="width=300,height=600">
+    <title></title>
+
+    <!-- Configuration (load first to set title) -->
+    <script src="config.js"></script>
+
+    <!-- Google Ad Manager ClickTag Compliance -->
+    <script type="text/javascript">
+        var clickTag = "http://www.google.com";
+
+        // Set document title from config
+        if (window.AD_CONFIG?.meta?.adTitle) {
+            document.title = window.AD_CONFIG.meta.adTitle;
+        }
+    </script>
+
+    <!-- Tailwind CSS -->
+    <link rel="stylesheet" href="output.css">
+</head>
+<body>
+    <!-- Ad container -->
+    <article id="ad-container" class="ad-container relative overflow-hidden" data-state="initial">
+
+        <!-- Persistent brand header -->
+        <header class="logo-header flex items-center">
+            <img draggable="false" id="brand-logo" src="" alt="" class="brand-logo" fetchpriority="high" decoding="async">
+        </header>
+
+        <!-- Property browsing screen -->
+        <section id="state-initial" class="state-view browse-view flex flex-col" data-view="initial">
+            <div class="collection">
+                <div class="collection-heading flex items-center justify-between">
+                    <h2 id="collection-title"></h2>
+                    <nav id="collection-navigation" class="collection-navigation flex items-center">
+                        <button id="collection-previous" class="collection-arrow" type="button" data-action="collection-prev"><img draggable="false" class="control-icon" src="" alt="" aria-hidden="true"></button>
+                        <button id="collection-next" class="collection-arrow" type="button" data-action="collection-next"><img draggable="false" class="control-icon" src="" alt="" aria-hidden="true"></button>
+                    </nav>
+                </div>
+                <div id="property-picker" class="property-picker grid"></div>
+                <span id="collection-status" class="sr-only" aria-live="polite" aria-atomic="true"></span>
+            </div>
+
+            <!-- Selected property gallery and information -->
+            <div class="property-card">
+                <div id="gallery" class="gallery relative overflow-hidden">
+                    <div class="gallery-media">
+                        <img draggable="false" id="gallery-image-previous" src="" alt="" class="gallery-image gallery-image-previous w-full h-full" aria-hidden="true" hidden>
+                        <img draggable="false" id="gallery-image" src="" alt="" class="gallery-image w-full h-full" fetchpriority="high" decoding="async">
+                    </div>
+                    <button id="gallery-previous" class="gallery-arrow gallery-previous flex items-center justify-center" type="button" data-action="gallery-prev"><img draggable="false" class="control-icon" src="" alt="" aria-hidden="true"></button>
+                    <button id="gallery-next" class="gallery-arrow gallery-next flex items-center justify-center" type="button" data-action="gallery-next"><img draggable="false" class="control-icon" src="" alt="" aria-hidden="true"></button>
+                    <span id="gallery-label" class="gallery-label"></span>
+                    <span id="gallery-counter" class="gallery-counter" aria-live="polite" aria-atomic="true"></span>
+                </div>
+                <div class="property-info flex flex-col">
+                    <div class="property-price-row flex items-center justify-between">
+                        <span id="property-price-label" class="property-price-label"></span>
+                        <span id="property-price" class="property-price"></span>
+                    </div>
+                    <h3 id="property-title" class="property-title"></h3>
+                    <p id="property-location" class="property-location"></p>
+                    <div id="property-facts" class="property-facts flex items-center justify-between"></div>
+                </div>
+            </div>
+
+            <!-- Property actions -->
+            <div class="property-actions flex items-center">
+                <button id="request-button" class="action-button request-button" type="button" data-action="cta-primary"><span></span></button>
+                <a draggable="false" id="explore-button" class="action-button explore-button flex items-center justify-center" href="" target="_blank" rel="noopener noreferrer" data-action="cta-secondary"><span></span></a>
+            </div>
+        </section>
+
+        <!-- Lead form screen -->
+        <section id="state-form" class="state-view form-view" data-view="formActive" aria-labelledby="form-heading" aria-hidden="true" inert>
+            <button id="form-back" class="back-button flex items-center" type="button" data-action="back"><span id="back-glyph" aria-hidden="true"></span><span id="back-label"></span></button>
+            <h3 id="form-heading" class="form-heading"></h3>
+            <p id="form-context" class="form-context"></p>
+
+            <!-- Single lead form shared by empty and filled conditions -->
+            <form id="lead-form" class="lead-form flex flex-col" method="post" autocomplete="on" novalidate>
+                <div id="form-fields" class="form-fields flex flex-col">
+                    <div class="form-field flex flex-col">
+                        <label id="label-name" for="field-name"></label>
+                        <div class="field-control">
+                            <input id="field-name" name="name" type="text" autocomplete="name" autocapitalize="words" enterkeyhint="next" aria-describedby="error-name">
+                            <span id="warning-name" class="field-warning" aria-hidden="true" hidden></span>
+                        </div>
+                        <span id="error-name" class="sr-only"></span>
+                    </div>
+                    <div class="form-field flex flex-col">
+                        <label id="label-email" for="field-email"></label>
+                        <div class="field-control">
+                            <input id="field-email" name="email" type="email" inputmode="email" autocomplete="email" aria-describedby="error-email">
+                            <span id="warning-email" class="field-warning" aria-hidden="true" hidden></span>
+                        </div>
+                        <span id="error-email" class="sr-only"></span>
+                    </div>
+                    <div class="form-field flex flex-col">
+                        <label id="label-mobile" for="field-mobile"></label>
+                        <div class="field-control">
+                            <input id="field-mobile" name="mobile" type="tel" inputmode="tel" autocomplete="tel" aria-describedby="error-mobile">
+                            <span id="warning-mobile" class="field-warning" aria-hidden="true" hidden></span>
+                        </div>
+                        <span id="error-mobile" class="sr-only"></span>
+                    </div>
+                    <div class="form-field flex flex-col">
+                        <label id="label-message" for="field-message"></label>
+                        <div class="field-control">
+                            <textarea id="field-message" name="message" aria-describedby="error-message"></textarea>
+                            <span id="warning-message" class="field-warning" aria-hidden="true" hidden></span>
+                        </div>
+                        <span id="error-message" class="sr-only"></span>
+                    </div>
+                </div>
+
+                <div class="form-footer flex flex-col">
+                    <div id="consent-row" class="consent-row">
+                        <span class="consent-control">
+                            <input id="consent-checkbox" type="checkbox" name="consent" aria-labelledby="consent-label" aria-describedby="error-consent">
+                            <span class="consent-box" aria-hidden="true"><img id="consent-check" draggable="false" src="" alt=""></span>
+                        </span>
+                        <p id="consent-label" class="consent-label"><label id="consent-text" for="consent-checkbox"></label><button id="open-privacy" class="consent-link" type="button" data-action="open-legal" aria-haspopup="dialog" aria-controls="privacy-dialog"><span></span></button></p>
+                        <span id="error-consent" class="sr-only"></span>
+                    </div>
+                    <p id="form-feedback" class="form-feedback" role="alert" hidden></p>
+                    <button id="submit-button" class="action-button submit-button" type="submit" data-action="submit" disabled aria-disabled="true"><span></span></button>
+                </div>
+            </form>
+        </section>
+
+        <!-- Confirmation screen -->
+        <section id="state-confirmation" class="state-view confirmation-view flex flex-col items-center justify-center" data-view="confirmation" aria-labelledby="confirmation-heading" aria-hidden="true" inert>
+            <div id="confirmation-icon" class="confirmation-icon flex items-center justify-center" aria-hidden="true"><span id="confirmation-ring" class="confirmation-ring"></span><img draggable="false" id="confirmation-check" src="" alt=""></div>
+            <h3 id="confirmation-heading" class="confirmation-heading"></h3>
+            <p id="confirmation-body" class="confirmation-body"></p>
+            <p id="confirmation-followup" class="confirmation-followup"></p>
+            <div class="confirmation-context">
+                <strong id="confirmation-address"></strong>
+                <span id="confirmation-location"></span>
+            </div>
+            <button id="browse-button" class="action-button browse-button w-full" type="button" data-action="confirmation-browse"><span></span></button>
+        </section>
+
+        <!-- Privacy and terms dialog -->
+        <div id="privacy-overlay" class="privacy-overlay" hidden>
+            <section id="privacy-dialog" class="privacy-panel" role="dialog" aria-modal="true" aria-labelledby="privacy-title">
+                <header class="privacy-header">
+                    <h3 id="privacy-title" class="privacy-title"></h3>
+                    <button id="close-privacy" class="privacy-close" type="button" data-action="close-legal"><span class="sr-only"></span></button>
+                </header>
+                <div id="privacy-scroll-region" class="privacy-scroll-region">
+                    <div id="privacy-copy" class="privacy-copy" tabindex="0">
+                        <div id="privacy-paragraphs"></div>
+                        <p class="privacy-links"><a id="privacy-policy-link" draggable="false" href="" target="_blank" rel="noopener noreferrer" data-action="privacy-policy"><span></span></a><span id="privacy-link-separator"></span><a id="privacy-terms-link" draggable="false" href="" target="_blank" rel="noopener noreferrer" data-action="privacy-terms"><span></span></a></p>
+                    </div>
+                    <div id="privacy-scrollbar" class="privacy-scrollbar" role="scrollbar" tabindex="0" aria-controls="privacy-copy" aria-orientation="vertical" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+                        <span id="privacy-scrollbar-thumb" class="privacy-scrollbar-thumb" aria-hidden="true"></span>
+                    </div>
+                </div>
+                <footer id="privacy-footer" class="privacy-footer"><button id="back-to-form" class="action-button privacy-back-button" type="button" data-action="close-legal"><span></span></button></footer>
+            </section>
+        </div>
+
+    </article>
+
+    <!-- Main application script -->
+    <script>
+        // Global state
+        const config = window.AD_CONFIG;
+        let currentState = null;
+        let selectedPropertyIndex = 0;
+        let thumbnailStart = 0;
+        let imageIndices = [];
+        let thumbnailButtons = [];
+        let formStarted = false;
+        let isFormValid = false;
+        let isSubmitting = false;
+        let submittedProperty = null;
+        let pickerGesture = null;
+        let suppressPickerClick = false;
+        let propertyAdvanceTimer = null;
+        let isAdHovered = false;
+        let galleryRequestId = 0;
+        let displayedGalleryPhoto = null;
+        let preloadTask = null;
+        let consentAcceptedAt = null;
+        let isPrivacyOpen = false;
+        let privacyTransitionToken = 0;
+        let privacyScrollbarDrag = null;
+        const activeAnimations = new Map();
+        const imagePreloads = new Map();
+        const motionPreference = window.matchMedia('(prefers-reduced-motion: reduce)');
+        const touchedFields = new Set();
+
+        // Initialization
+        document.addEventListener('DOMContentLoaded', function() {
+            initializePixels();
+            initializeFonts();
+            initializeColors();
+            initializeContent();
+            initializeMedia();
+            initializeForm();
+            initializeButtons();
+            initializeAnimations();
+            initializePrivacy();
+            initializeAutoAdvance();
+            setState(config.states.initial, false);
+            playInitialEntrance();
+            track('ad_loaded', { propertyId: getSelectedProperty().id });
+        });
+
+        /**
+         * Initialize provider-neutral event pixel handling before interaction modules.
+         * Event URLs remain optional and are configured under config.tracking.events.
+         */
+        function initializePixels() {
+            const events = config.tracking && config.tracking.events ? config.tracking.events : {};
+            const configuredCount = Object.values(events).filter(event => event.convPixel || event.rtPixel).length;
+            console.log('[PIXELS] Initialized', configuredCount, 'event pixel configuration(s)');
+        }
+
+        /**
+         * Fire a provider-neutral conversion image pixel.
+         * @param {string} url - Conversion pixel URL from a tracking event.
+         */
+        function fireConversionPixel(url) {
+            if (!url) return;
+            const image = document.createElement('img');
+            image.src = url;
+            image.width = 1;
+            image.height = 1;
+            image.style.cssText = 'position:absolute;left:-9999px;';
+            image.alt = '';
+            document.body.appendChild(image);
+            console.log('[PIXELS] Fired conversion pixel:', url);
+        }
+
+        /**
+         * Fire a provider-neutral retargeting image pixel.
+         * @param {string} url - Retargeting pixel URL from a tracking event.
+         */
+        function fireRetargetingPixel(url) {
+            if (!url) return;
+            const image = document.createElement('img');
+            image.src = url;
+            image.width = 1;
+            image.height = 1;
+            image.style.cssText = 'position:absolute;left:-9999px;';
+            image.alt = '';
+            document.body.appendChild(image);
+            console.log('[PIXELS] Fired retargeting pixel:', url);
+        }
+
+        /**
+         * Initialize CSS color variables from config
+         * Converts config.theme.colors to CSS custom properties
+         */
+        function initializeColors() {
+            const colors = config.theme.colors;
+            const root = document.documentElement;
+
+            Object.keys(colors).forEach(key => {
+                const cssVarName = '--color-' + key.replace(/([A-Z])/g, '-$1').toLowerCase();
+                root.style.setProperty(cssVarName, colors[key]);
+            });
+
+            console.log('[COLORS] Initialized', Object.keys(colors).length, 'color variables');
+        }
+
+        /** Load configured Google, local, or CDN fonts and expose both font stacks. */
+        function initializeFonts() {
+            if (!config.theme.typography || !config.theme.typography.customFonts) {
+                console.log('[FONTS] No custom fonts to load');
+                return;
+            }
+
+            const typography = config.theme.typography;
+            const root = document.documentElement;
+            root.style.setProperty('--brand-font-primary', typography.fontPrimary);
+            root.style.setProperty('--brand-font-secondary', typography.fontSecondary || typography.fontPrimary);
+
+            typography.customFonts.forEach(font => {
+                if (font.source === 'google' && font.url) {
+                    const link = document.createElement('link');
+                    link.rel = 'stylesheet';
+                    link.href = font.url;
+                    document.head.appendChild(link);
+                } else if ((font.source === 'local' || font.source === 'cdn') && font.sources) {
+                    const sources = font.sources.map(src => "url('" + src.url + "') format('" + src.format + "')").join(', ');
+                    const style = document.createElement('style');
+                    style.textContent = "@font-face { font-family: '" + font.family + "'; src: " + sources +
+                        "; font-weight: " + (font.weight || 'normal') + "; font-style: " + (font.style || 'normal') +
+                        "; font-display: " + (font.display || 'swap') + "; }";
+                    document.head.appendChild(style);
+                    console.log('[FONTS] Injected @font-face for:', font.family);
+                }
+            });
+
+            console.log('[FONTS] Loaded', typography.customFonts.length, 'custom font(s)');
+        }
+
+        /** Populate persistent branding, screen copy, button labels, and field settings. */
+        function initializeContent() {
+            const content = config.content;
+            document.getElementById('ad-container').setAttribute('aria-label', content.accessibility.adLabel);
+            const logo = document.getElementById('brand-logo');
+            logo.src = config.theme.assets.logo;
+            logo.alt = content.logo.alt;
+            setText('collection-title', content.headlines.collection);
+            const picker = document.getElementById('property-picker');
+            picker.setAttribute('aria-label', content.accessibility.collectionLabel);
+            picker.setAttribute('role', 'group');
+            document.getElementById('collection-navigation').setAttribute('aria-label', content.accessibility.collectionNavigationLabel);
+            setText('property-price-label', content.property.priceLabel);
+            Object.entries(getButtonConfigs()).forEach(([id, settings]) => {
+                if (id === 'form-back') {
+                    setText('back-glyph', settings.glyph);
+                    setText('back-label', settings.text);
+                } else if (!settings.icon) {
+                    const label = document.getElementById(id).querySelector('span');
+                    label.textContent = settings.text;
+                }
+                if (settings.ariaLabel) document.getElementById(id).setAttribute('aria-label', settings.ariaLabel);
+            });
+            setText('form-heading', content.form.heading);
+            setText('consent-text', content.form.consent.text);
+            document.getElementById('consent-checkbox').required = content.form.consent.required;
+            setText('privacy-title', content.privacy.title);
+            setText('privacy-link-separator', content.privacy.linkSeparator);
+            document.getElementById('privacy-copy').setAttribute('aria-label', content.privacy.contentLabel);
+            document.getElementById('privacy-scrollbar').setAttribute('aria-label', content.privacy.scrollbarLabel);
+            const paragraphs = document.getElementById('privacy-paragraphs');
+            content.privacy.paragraphs.forEach(text => {
+                const paragraph = document.createElement('p');
+                paragraph.textContent = formatText(text, { advertiser: config.meta.client });
+                paragraphs.appendChild(paragraph);
+            });
+            document.getElementById('privacy-policy-link').href = content.privacy.policyCta.url;
+            document.getElementById('privacy-terms-link').href = content.privacy.termsCta.url;
+            setText('confirmation-heading', content.confirmation.heading);
+            setText('confirmation-body', content.confirmation.body);
+            setText('confirmation-followup', content.confirmation.followup);
+
+            Object.keys(content.form.fields).forEach(key => {
+                const settings = content.form.fields[key];
+                const input = document.getElementById('field-' + key);
+                setText('label-' + key, settings.label);
+                input.placeholder = settings.placeholder;
+                input.required = settings.required;
+                input.maxLength = settings.maxLength;
+            });
+
+            console.log('[CONTENT] Initialized');
+        }
+
+        /** Initialize configured SVG icons, thumbnails, and each property's independent gallery. */
+        function initializeMedia() {
+            Object.entries(getButtonConfigs()).forEach(([id, settings]) => {
+                if (settings.icon) {
+                    document.getElementById(id).querySelector('img').src = config.theme.assets[settings.icon];
+                }
+            });
+            document.getElementById('confirmation-check').src = config.theme.assets.iconConfirmationCheck;
+            document.getElementById('consent-check').src = config.theme.assets.iconConsentCheck;
+
+            const properties = config.content.properties;
+            selectedPropertyIndex = Math.max(0, properties.findIndex(property => property.id === config.states.selectedPropertyId));
+            thumbnailStart = wrapIndex(config.states.thumbnailStart, properties.length);
+            imageIndices = properties.map(() => 0);
+            imageIndices[selectedPropertyIndex] = wrapIndex(config.states.selectedImageIndex, getSelectedProperty().images.length);
+            const picker = document.getElementById('property-picker');
+            picker.style.setProperty('--carousel-visible-items', Math.min(config.media.carousel.visibleItems, properties.length));
+            thumbnailButtons = properties.map((property, index) => {
+                const button = document.createElement('button');
+                button.type = 'button';
+                button.className = 'property-thumbnail';
+                button.dataset.action = 'select-property';
+                button.dataset.propertyIndex = String(index);
+                button.setAttribute('aria-label', formatText(config.content.accessibility.propertySelection, { title: property.title }));
+                const frame = document.createElement('span');
+                frame.className = 'thumbnail-frame';
+                const image = document.createElement('img');
+                const crop = document.createElement('span');
+                crop.className = 'thumbnail-crop';
+                image.src = property.thumbnail.src;
+                image.alt = property.thumbnail.alt;
+                image.draggable = false;
+                image.decoding = 'async';
+                image.fetchPriority = 'low';
+                image.style.objectPosition = property.thumbnail.position;
+                const caption = document.createElement('span');
+                caption.className = 'thumbnail-caption';
+                caption.textContent = property.thumbnailLabel;
+                crop.appendChild(image);
+                frame.appendChild(crop);
+                button.append(frame, caption);
+                return button;
+            });
+            renderThumbnailPage();
+            renderSelectedProperty();
+            initializePickerGestures();
+            console.log('[MEDIA] Initialized');
+        }
+
+        /** Bind one form without prepopulating the design's sample values. */
+        function initializeForm() {
+            const form = document.getElementById('lead-form');
+            form.addEventListener('focusin', handleFormFocus);
+            form.addEventListener('input', handleFormInput);
+            form.addEventListener('focusout', handleFormBlur);
+            form.addEventListener('submit', submitForm);
+            document.getElementById('consent-checkbox').addEventListener('change', handleConsentChange);
+            updateSubmitButton();
+            console.log('[FORM] Initialized');
+        }
+
+        /** Bind delegated control actions and keyboard navigation once. */
+        function initializeButtons() {
+            document.getElementById('ad-container').addEventListener('click', handleActionClick);
+            document.getElementById('ad-container').addEventListener('dragstart', preventContentDrag);
+            document.getElementById('property-picker').addEventListener('keydown', handlePickerKeydown);
+            document.getElementById('gallery').addEventListener('keydown', handleGalleryKeydown);
+            console.log('[BUTTONS] Initialized click handlers');
+        }
+
+        /**
+         * Prevent native dragging of presentation content while preserving normal text editing.
+         * @param {DragEvent} event - Native image, link, or text drag.
+         */
+        function preventContentDrag(event) {
+            if (!event.target.closest('input, textarea')) event.preventDefault();
+        }
+
+        /** Bind consent policy controls without loading or displaying the dialog on initial view. */
+        function initializePrivacy() {
+            const copy = document.getElementById('privacy-copy');
+            const rail = document.getElementById('privacy-scrollbar');
+            copy.addEventListener('scroll', updatePrivacyScrollbar, { passive: true });
+            rail.addEventListener('pointerdown', startPrivacyScrollbarDrag);
+            rail.addEventListener('pointermove', movePrivacyScrollbarDrag);
+            rail.addEventListener('pointerup', stopPrivacyScrollbarDrag);
+            rail.addEventListener('pointercancel', stopPrivacyScrollbarDrag);
+            rail.addEventListener('keydown', handlePrivacyScrollbarKey);
+            document.addEventListener('keydown', handlePrivacyKeyboard);
+            window.addEventListener('resize', updatePrivacyScrollbar);
+            if ('ResizeObserver' in window) new ResizeObserver(updatePrivacyScrollbar).observe(copy);
+            new MutationObserver(updatePrivacyScrollbar).observe(copy, { childList: true, subtree: true, characterData: true });
+            document.fonts.ready.then(updatePrivacyScrollbar);
+            console.log('[PRIVACY] Initialized');
+        }
+
+        /**
+         * Reflect the visitor's explicit consent choice and retain its acceptance time.
+         * @param {Event} event - Native checkbox change event.
+         */
+        function handleConsentChange(event) {
+            const checkbox = event.target;
+            consentAcceptedAt = checkbox.checked ? new Date().toISOString() : null;
+            checkbox.setAttribute('aria-invalid', 'false');
+            setText('error-consent', '');
+            updateSubmitButton();
+            animateElement(document.querySelector('.consent-box'), [
+                { transform: 'scale(0.92)' },
+                { transform: 'scale(1.06)', offset: 0.65 },
+                { transform: 'scale(1)' }
+            ], { duration: config.animations.controlDuration, easing: config.animations.springEasing });
+            if (checkbox.checked) {
+                animateElement(document.getElementById('consent-check'), [
+                    { opacity: 0, clipPath: 'inset(0 100% 0 0)' },
+                    { opacity: 1, clipPath: 'inset(0 0 0 0)' }
+                ], { duration: config.animations.controlDuration });
+            }
+            track('consent_changed', { accepted: checkbox.checked, noticeVersion: config.content.privacy.noticeVersion, propertyId: getSelectedProperty().id });
+        }
+
+        /**
+         * Set background accessibility while keeping the single persistent logo and form intact.
+         * @param {boolean} blocked - Whether the modal owns interaction.
+         */
+        function setPrivacyBackgroundInert(blocked) {
+            const header = document.querySelector('.logo-header');
+            header.inert = blocked;
+            if (blocked) header.setAttribute('aria-hidden', 'true');
+            else header.removeAttribute('aria-hidden');
+            document.querySelectorAll('[data-view]').forEach(view => {
+                const inactive = blocked || view.dataset.view !== currentState;
+                view.inert = inactive;
+                view.setAttribute('aria-hidden', String(inactive));
+            });
+        }
+
+        /** Open the approved notice independently of the consent checkbox. */
+        function openPrivacy() {
+            if (currentState !== 'formActive' || isSubmitting || isPrivacyOpen) return;
+            privacyTransitionToken += 1;
+            const overlay = document.getElementById('privacy-overlay');
+            const panel = document.getElementById('privacy-dialog');
+            activeAnimations.get(overlay)?.cancel();
+            activeAnimations.get(panel)?.cancel();
+            isPrivacyOpen = true;
+            overlay.hidden = false;
+            document.getElementById('ad-container').dataset.overlay = 'privacy';
+            setPrivacyBackgroundInert(true);
+            document.getElementById('privacy-copy').scrollTop = 0;
+            updatePrivacyScrollbar();
+            animateElement(overlay, [{ opacity: 0 }, { opacity: 1 }], { duration: config.animations.privacyBackdropDuration });
+            animateElement(panel, [
+                { opacity: 0, transform: 'translateY(12px) scale(0.98)' },
+                { opacity: 1, transform: 'translateY(0) scale(1)' }
+            ], { duration: config.animations.privacyDuration });
+            revealHeadline(document.getElementById('privacy-title'), config.animations.contentStagger);
+            revealElement(document.getElementById('privacy-scroll-region'), config.animations.contentStagger, 4);
+            revealElement(document.getElementById('privacy-footer'), config.animations.contentStagger * 2, 4);
+            document.getElementById('close-privacy').focus({ preventScroll: true });
+            track('privacy_opened', { propertyId: getSelectedProperty().id });
+        }
+
+        /**
+         * Dismiss the notice while retaining values, validation state, and consent.
+         * @param {boolean} restoreFocus - Whether to return focus to the policy trigger.
+         * @param {boolean} animate - Whether to play the configured exit motion.
+         */
+        function closePrivacy(restoreFocus = true, animate = true) {
+            const overlay = document.getElementById('privacy-overlay');
+            const panel = document.getElementById('privacy-dialog');
+            if (overlay.hidden || (!isPrivacyOpen && animate)) return;
+            const wasOpen = isPrivacyOpen;
+            const token = ++privacyTransitionToken;
+            isPrivacyOpen = false;
+            if (privacyScrollbarDrag) stopPrivacyScrollbarDrag({ pointerId: privacyScrollbarDrag.id });
+            activeAnimations.get(overlay)?.cancel();
+            activeAnimations.get(panel)?.cancel();
+            const cleanup = () => {
+                if (token !== privacyTransitionToken) return;
+                overlay.hidden = true;
+                delete document.getElementById('ad-container').dataset.overlay;
+                setPrivacyBackgroundInert(false);
+                if (restoreFocus && currentState === 'formActive') document.getElementById('open-privacy').focus({ preventScroll: true });
+            };
+            if (animate && isMotionEnabled()) {
+                animateElement(overlay, [{ opacity: 1 }, { opacity: 0 }], { duration: config.animations.privacyExitDuration });
+                const exit = animateElement(panel, [
+                    { opacity: 1, transform: 'translateY(0) scale(1)' },
+                    { opacity: 0, transform: 'translateY(8px) scale(0.99)' }
+                ], { duration: config.animations.privacyExitDuration });
+                exit.finished.then(cleanup, cleanup);
+            } else cleanup();
+            if (wasOpen) track('privacy_closed', { propertyId: getSelectedProperty().id });
+        }
+
+        /**
+         * Trap keyboard focus inside the current modal and support Escape dismissal.
+         * @param {KeyboardEvent} event - Document keyboard event.
+         */
+        function handlePrivacyKeyboard(event) {
+            const overlay = document.getElementById('privacy-overlay');
+            if (overlay.hidden) return;
+            if (event.key === 'Escape') {
+                event.preventDefault();
+                closePrivacy();
+                return;
+            }
+            if (event.key !== 'Tab') return;
+            const controls = [...overlay.querySelectorAll('button, a[href], [tabindex="0"]')].filter(element => !element.hidden && !element.disabled && element.getClientRects().length > 0);
+            const first = controls[0];
+            const last = controls[controls.length - 1];
+            if (event.shiftKey && document.activeElement === first) {
+                event.preventDefault();
+                last.focus();
+            } else if (!event.shiftKey && document.activeElement === last) {
+                event.preventDefault();
+                first.focus();
+            }
+        }
+
+        /** Synchronize the visible thumb with notice length and native scroll position. */
+        function updatePrivacyScrollbar() {
+            if (document.getElementById('privacy-overlay').hidden) return;
+            const copy = document.getElementById('privacy-copy');
+            const rail = document.getElementById('privacy-scrollbar');
+            const thumb = document.getElementById('privacy-scrollbar-thumb');
+            const maximum = Math.max(0, copy.scrollHeight - copy.clientHeight);
+            rail.hidden = maximum <= 1;
+            if (rail.hidden) return;
+            const minimum = parseFloat(getComputedStyle(thumb).minHeight);
+            const height = Math.min(rail.clientHeight, Math.max(minimum, rail.clientHeight * copy.clientHeight / copy.scrollHeight));
+            const progress = Math.min(1, Math.max(0, copy.scrollTop / maximum));
+            thumb.style.height = height + 'px';
+            thumb.style.transform = 'translateY(' + progress * (rail.clientHeight - height) + 'px)';
+            rail.setAttribute('aria-valuenow', String(Math.round(progress * 100)));
+            rail.setAttribute('aria-valuetext', formatText(config.content.privacy.scrollProgress, { percent: Math.round(progress * 100) }));
+        }
+
+        /**
+         * Capture a thumb drag or jump to a clicked position on the visible rail.
+         * @param {PointerEvent} event - Pointer starting the interaction.
+         */
+        function startPrivacyScrollbarDrag(event) {
+            if (event.button !== 0) return;
+            const copy = document.getElementById('privacy-copy');
+            const rail = document.getElementById('privacy-scrollbar');
+            const thumb = document.getElementById('privacy-scrollbar-thumb');
+            const maximum = copy.scrollHeight - copy.clientHeight;
+            const travel = rail.clientHeight - thumb.offsetHeight;
+            if (maximum <= 0 || travel <= 0) return;
+            if (event.target !== thumb) {
+                const position = event.clientY - rail.getBoundingClientRect().top - thumb.offsetHeight / 2;
+                copy.scrollTop = Math.max(0, Math.min(1, position / travel)) * maximum;
+            }
+            privacyScrollbarDrag = { id: event.pointerId, y: event.clientY, scrollTop: copy.scrollTop };
+            rail.classList.add('is-dragging');
+            rail.setPointerCapture(event.pointerId);
+            rail.focus({ preventScroll: true });
+            event.preventDefault();
+            updatePrivacyScrollbar();
+        }
+
+        /**
+         * Convert pointer travel into native notice scrolling without moving the modal.
+         * @param {PointerEvent} event - Captured pointer movement.
+         */
+        function movePrivacyScrollbarDrag(event) {
+            if (!privacyScrollbarDrag || privacyScrollbarDrag.id !== event.pointerId) return;
+            const copy = document.getElementById('privacy-copy');
+            const rail = document.getElementById('privacy-scrollbar');
+            const travel = rail.clientHeight - document.getElementById('privacy-scrollbar-thumb').offsetHeight;
+            if (travel <= 0) return;
+            copy.scrollTop = privacyScrollbarDrag.scrollTop + (event.clientY - privacyScrollbarDrag.y) * (copy.scrollHeight - copy.clientHeight) / travel;
+            updatePrivacyScrollbar();
+        }
+
+        /**
+         * Finish or cancel an active scrollbar drag.
+         * @param {PointerEvent|Object} event - Released pointer identifier.
+         */
+        function stopPrivacyScrollbarDrag(event) {
+            if (!privacyScrollbarDrag || privacyScrollbarDrag.id !== event.pointerId) return;
+            privacyScrollbarDrag = null;
+            const rail = document.getElementById('privacy-scrollbar');
+            rail.classList.remove('is-dragging');
+            if (rail.hasPointerCapture(event.pointerId)) rail.releasePointerCapture(event.pointerId);
+        }
+
+        /**
+         * Support arrow, page, Home, End, and space keys on the custom scrollbar.
+         * @param {KeyboardEvent} event - Scrollbar keyboard event.
+         */
+        function handlePrivacyScrollbarKey(event) {
+            const copy = document.getElementById('privacy-copy');
+            const page = copy.clientHeight * 0.9;
+            const movements = { ArrowDown: 40, ArrowUp: -40, PageDown: page, PageUp: -page, ' ': event.shiftKey ? -page : page };
+            if (event.key === 'Home') copy.scrollTop = 0;
+            else if (event.key === 'End') copy.scrollTop = copy.scrollHeight;
+            else if (Object.prototype.hasOwnProperty.call(movements, event.key)) copy.scrollTop += movements[event.key];
+            else return;
+            event.preventDefault();
+            updatePrivacyScrollbar();
+        }
+
+        /** Initialize configurable motion tokens and observe the visitor's motion preference. */
+        function initializeAnimations() {
+            Object.entries(config.animations).forEach(([key, value]) => {
+                if (key === 'enabled') return;
+                const name = '--motion-' + key.replace(/([A-Z])/g, '-$1').toLowerCase();
+                document.documentElement.style.setProperty(name, typeof value === 'number' ? value + 'ms' : value);
+            });
+            motionPreference.addEventListener('change', refreshMotionPreference);
+            refreshMotionPreference();
+            console.log('[MOTION] Initialized');
+        }
+
+        /** Return whether enhanced motion is enabled and supported for this visitor. */
+        function isMotionEnabled() {
+            return !!config.animations?.enabled && !motionPreference.matches && typeof Element.prototype.animate === 'function';
+        }
+
+        /** Apply motion preference changes without hiding content or interrupting form entry. */
+        function refreshMotionPreference() {
+            document.documentElement.dataset.motion = isMotionEnabled() ? 'on' : 'off';
+            if (!isMotionEnabled()) activeAnimations.forEach(animation => animation.cancel());
+        }
+
+        /**
+         * Play one cancellable animation per element and release it after completion.
+         * @param {Element} element - Element to animate.
+         * @param {Array<Object>} frames - Transform and opacity keyframes.
+         * @param {Object} options - Configured timing overrides.
+         * @returns {Animation|null} Running animation when motion is available.
+         */
+        function animateElement(element, frames, options = {}) {
+            if (!element) return null;
+            activeAnimations.get(element)?.cancel();
+            if (!isMotionEnabled()) return null;
+            const animation = element.animate(frames, {
+                duration: config.animations.contentDuration,
+                easing: config.animations.easing,
+                fill: 'backwards',
+                ...options
+            });
+            activeAnimations.set(element, animation);
+            const release = () => {
+                if (activeAnimations.get(element) === animation) activeAnimations.delete(element);
+            };
+            animation.finished.then(release, release);
+            return animation;
+        }
+
+        /**
+         * Reveal content using composited movement without changing its layout dimensions.
+         * @param {Element} element - Content to reveal.
+         * @param {number} delay - Configured sequence delay.
+         * @param {number} distance - Vertical entrance distance in pixels.
+         * @param {number} duration - Configured entrance duration.
+         */
+        function revealElement(element, delay = 0, distance = 10, duration = config.animations.contentDuration) {
+            animateElement(element, [
+                { opacity: 0, transform: 'translateY(' + distance + 'px)' },
+                { opacity: 1, transform: 'translateY(0)' }
+            ], { delay: delay, duration: duration });
+        }
+
+        /**
+         * Reveal complete words while preserving a single accessible heading label.
+         * @param {HTMLElement} element - Heading with configured copy.
+         * @param {number} delay - Sequence delay in milliseconds.
+         */
+        function revealHeadline(element, delay = 0) {
+            if (!isMotionEnabled()) return;
+            const text = element.textContent;
+            element.setAttribute('aria-label', text);
+            element.dataset.motionLabel = 'true';
+            element.replaceChildren();
+            (text.match(/\S+\s*/g) || []).forEach((word, index) => {
+                const span = document.createElement('span');
+                span.className = 'motion-word';
+                span.textContent = word;
+                span.setAttribute('aria-hidden', 'true');
+                element.appendChild(span);
+                animateElement(span, [
+                    { opacity: 0, transform: 'translateY(70%)', clipPath: 'inset(0 0 100% 0)' },
+                    { opacity: 1, transform: 'translateY(0)', clipPath: 'inset(0 0 0 0)' }
+                ], { delay: delay + index * config.animations.contentStagger });
+            });
+        }
+
+        /** Keep the persistent logo stable and reveal the first screen without waiting on offscreen media. */
+        function playInitialEntrance() {
+            animateScreenContent(currentState, true);
+        }
+
+        /**
+         * Stagger the content for the current screen and reveal the confirmation indicator once.
+         * @param {string} state - Active screen name.
+         * @param {boolean} initial - Whether this is the first screen entrance.
+         */
+        function animateScreenContent(state, initial = false) {
+            const step = config.animations.entranceStagger;
+            if (state === 'initial') {
+                revealHeadline(document.getElementById('collection-title'), step);
+                revealElement(document.getElementById('collection-navigation'), step, 4);
+                const visible = [...document.querySelectorAll('.property-thumbnail:not([hidden])')];
+                visible.forEach((button, index) => revealElement(button, step * 2 + index * step / 2, 8));
+                revealElement(document.querySelector('.property-card'), step * 2, initial ? 16 : 8, config.animations.entranceDuration);
+                animatePropertyCopy(step * 3);
+                document.querySelectorAll('.property-actions .action-button').forEach((button, index) => {
+                    revealElement(button, step * (4 + index), 10);
+                });
+            } else if (state === 'formActive') {
+                revealElement(document.getElementById('form-back'), step / 2, 4);
+                revealHeadline(document.getElementById('form-heading'), step);
+                revealElement(document.getElementById('form-context'), step * 2, 8);
+                document.querySelectorAll('.form-field').forEach((field, index) => revealElement(field, step * 2 + index * step / 2, 8));
+                revealElement(document.querySelector('.form-footer'), step * 4, 8);
+            } else {
+                const icon = document.getElementById('confirmation-icon');
+                animateElement(icon, [
+                    { opacity: 0, transform: 'scale(0.72)' },
+                    { opacity: 1, transform: 'scale(1.06)', offset: 0.65 },
+                    { opacity: 1, transform: 'scale(1)' }
+                ], { duration: config.animations.confirmationDuration, easing: config.animations.springEasing });
+                animateElement(document.getElementById('confirmation-check'), [
+                    { opacity: 0, clipPath: 'inset(0 100% 0 0)', transform: 'scale(0.88)' },
+                    { opacity: 1, clipPath: 'inset(0 0 0 0)', transform: 'scale(1)' }
+                ], { delay: step * 2, duration: config.animations.contentDuration });
+                animateElement(document.getElementById('confirmation-ring'), [
+                    { opacity: 0.7, transform: 'scale(0.9)' },
+                    { opacity: 0, transform: 'scale(1.65)' }
+                ], { delay: step, duration: config.animations.confirmationDuration });
+                revealHeadline(document.getElementById('confirmation-heading'), step * 2);
+                ['confirmation-body', 'confirmation-followup'].forEach((id, index) => revealElement(document.getElementById(id), step * (3 + index), 8));
+                revealElement(document.querySelector('.confirmation-context'), step * 4, 12);
+                revealElement(document.getElementById('browse-button'), step * 5, 10);
+            }
+        }
+
+        /**
+         * Crossfade existing screens while keeping the leaving screen inert and inaccessible.
+         * @param {string} previousState - Leaving screen name.
+         * @param {string} newState - Entering screen name.
+         */
+        function animateScreenChange(previousState, newState) {
+            document.querySelectorAll('.state-view').forEach(view => {
+                activeAnimations.get(view)?.cancel();
+                view.classList.remove('is-leaving');
+            });
+            if (!isMotionEnabled()) return;
+            const previous = document.querySelector('[data-view="' + previousState + '"]');
+            const next = document.querySelector('[data-view="' + newState + '"]');
+            const direction = newState === 'initial' ? -1 : 1;
+            previous.classList.add('is-leaving');
+            const exit = animateElement(previous, [
+                { opacity: 1, transform: 'translateX(0)' },
+                { opacity: 0, transform: 'translateX(' + -direction * 10 + 'px)' }
+            ], { duration: config.animations.screenDuration });
+            const cleanup = () => {
+                if (activeAnimations.get(previous) !== exit && activeAnimations.has(previous)) return;
+                previous.classList.remove('is-leaving');
+            };
+            exit.finished.then(cleanup, cleanup);
+            animateElement(next, [
+                { opacity: 0, transform: 'translateX(' + direction * 14 + 'px)' },
+                { opacity: 1, transform: 'translateX(0)' }
+            ], { duration: config.animations.screenDuration });
+            animateScreenContent(newState);
+        }
+
+        /**
+         * Reveal the asking price, address, location, and facts without animating false values.
+         * @param {number} delay - Delay before the copy sequence.
+         */
+        function animatePropertyCopy(delay = 0) {
+            const elements = ['property-price', 'property-title', 'property-location'].map(id => document.getElementById(id));
+            elements.push(...document.querySelectorAll('.property-fact'));
+            elements.forEach((element, index) => revealElement(element, delay + index * config.animations.contentStagger, 8));
+        }
+
+        /**
+         * Animate the visible thumbnail page in the navigation direction.
+         * @param {number} direction - Previous or next direction.
+         */
+        function animateThumbnailPage(direction) {
+            document.querySelectorAll('.property-thumbnail:not([hidden])').forEach((button, index) => {
+                animateElement(button, [
+                    { opacity: 0, transform: 'translateX(' + direction * 10 + 'px)' },
+                    { opacity: 1, transform: 'translateX(0)' }
+                ], { duration: config.animations.pageDuration, delay: index * config.animations.contentStagger });
+            });
+        }
+
+        /** Preload only nearby gallery photos during idle time after the current image is ready. */
+        function scheduleNearbyImages() {
+            if (preloadTask !== null) {
+                if ('cancelIdleCallback' in window) window.cancelIdleCallback(preloadTask);
+                else clearTimeout(preloadTask);
+            }
+            if (document.hidden || navigator.connection?.saveData) return;
+            preloadTask = 'requestIdleCallback' in window ?
+                window.requestIdleCallback(preloadNearbyImages, { timeout: config.animations.preloadDelay }) :
+                setTimeout(preloadNearbyImages, config.animations.preloadDelay);
+        }
+
+        /** Cache a small moving window of adjacent images without downloading every property's gallery. */
+        function preloadNearbyImages() {
+            preloadTask = null;
+            if (document.hidden || currentState !== 'initial' || navigator.connection?.saveData) return;
+            const property = getSelectedProperty();
+            const index = imageIndices[selectedPropertyIndex];
+            const nextPropertyIndex = wrapIndex(selectedPropertyIndex + 1, config.content.properties.length);
+            const nextProperty = config.content.properties[nextPropertyIndex];
+            const photos = [
+                property.images[wrapIndex(index + 1, property.images.length)],
+                property.images[wrapIndex(index - 1, property.images.length)],
+                nextProperty.images[imageIndices[nextPropertyIndex] || 0]
+            ];
+            photos.forEach(photo => {
+                if (imagePreloads.has(photo.src)) return;
+                const image = new Image();
+                image.decoding = 'async';
+                image.fetchPriority = 'low';
+                image.src = photo.src;
+                imagePreloads.set(photo.src, image);
+                if (imagePreloads.size > 6) imagePreloads.delete(imagePreloads.keys().next().value);
+            });
+        }
+
+        /**
+         * Decode each requested photo before crossfading and discard superseded requests.
+         * @param {Object} photo - Configured photo source, alt text, fit, and crop.
+         * @param {number} direction - Direction of the requested navigation.
+         */
+        async function transitionGalleryImage(photo, direction) {
+            const request = ++galleryRequestId;
+            const image = document.getElementById('gallery-image');
+            const previous = document.getElementById('gallery-image-previous');
+            const gallery = document.getElementById('gallery');
+            activeAnimations.get(image)?.cancel();
+            activeAnimations.get(previous)?.cancel();
+            const outgoing = displayedGalleryPhoto;
+            const changed = outgoing && outgoing.src !== photo.src;
+            if (changed) {
+                previous.src = outgoing.src;
+                previous.style.objectFit = outgoing.fit;
+                previous.style.objectPosition = outgoing.position;
+                previous.hidden = false;
+                image.classList.add('is-pending');
+            } else {
+                previous.hidden = true;
+                image.classList.remove('is-pending');
+            }
+            image.src = photo.src;
+            image.alt = photo.alt;
+            image.style.objectPosition = photo.position;
+            image.style.objectFit = photo.fit;
+            gallery.setAttribute('aria-busy', 'true');
+            try {
+                await image.decode();
+            } catch (error) {
+                if (request !== galleryRequestId) return;
+                previous.hidden = true;
+                image.classList.remove('is-pending');
+                gallery.setAttribute('aria-busy', 'false');
+                displayedGalleryPhoto = null;
+                console.warn('[MEDIA] Current gallery image could not be decoded');
+                return;
+            }
+            if (request !== galleryRequestId) return;
+            displayedGalleryPhoto = { ...photo };
+            image.classList.remove('is-pending');
+            gallery.setAttribute('aria-busy', 'false');
+            if (isMotionEnabled()) {
+                animateElement(image, [
+                    { opacity: 0, transform: 'translateX(' + (changed ? direction * 12 : 0) + 'px) scale(1.035)' },
+                    { opacity: 1, transform: 'translateX(0) scale(1)' }
+                ], { duration: config.animations.imageDuration });
+                if (changed) {
+                    const exit = animateElement(previous, [
+                        { opacity: 1, transform: 'translateX(0) scale(1)' },
+                        { opacity: 0, transform: 'translateX(' + -direction * 8 + 'px) scale(1.01)' }
+                    ], { duration: config.animations.imageDuration });
+                    const cleanup = () => { if (request === galleryRequestId) previous.hidden = true; };
+                    exit.finished.then(cleanup, cleanup);
+                }
+            } else previous.hidden = true;
+            scheduleNearbyImages();
+        }
+
+        /** Bind frame-wide hover and page visibility controls for automatic property rotation. */
+        function initializeAutoAdvance() {
+            const ad = document.getElementById('ad-container');
+            isAdHovered = ad.matches(':hover');
+            ad.addEventListener('pointerenter', handleAdPointerEnter);
+            ad.addEventListener('pointerleave', handleAdPointerLeave);
+            document.addEventListener('visibilitychange', schedulePropertyAdvance);
+            console.log('[CAROUSEL] Initialized automatic property advance');
+        }
+
+        /**
+         * Pause automatic rotation when a hovering pointer enters any part of the ad.
+         * @param {PointerEvent} event - Pointer entering the ad frame.
+         */
+        function handleAdPointerEnter(event) {
+            if (event.pointerType === 'touch') return;
+            isAdHovered = true;
+            schedulePropertyAdvance();
+        }
+
+        /**
+         * Start a fresh countdown after a hovering pointer leaves the ad frame.
+         * @param {PointerEvent} event - Pointer leaving the ad frame.
+         */
+        function handleAdPointerLeave(event) {
+            if (event.pointerType === 'touch') return;
+            isAdHovered = false;
+            schedulePropertyAdvance();
+        }
+
+        /** Return whether automatic property rotation can run on the current screen. */
+        function canAdvanceProperty() {
+            const settings = config.media.carousel.autoAdvance;
+            return !!settings?.enabled && Number.isFinite(settings.interval) && settings.interval > 0 &&
+                currentState === 'initial' && !document.hidden && config.content.properties.length > 1 &&
+                !(settings.pauseOnHover && isAdHovered);
+        }
+
+        /** Keep one configurable countdown, paused during hover, hidden pages, and lead screens. */
+        function schedulePropertyAdvance() {
+            clearTimeout(propertyAdvanceTimer);
+            propertyAdvanceTimer = null;
+            if (!canAdvanceProperty()) return;
+            propertyAdvanceTimer = setTimeout(advanceFeaturedProperty, config.media.carousel.autoAdvance.interval);
+        }
+
+        /** Feature the next home and reveal its thumbnail when it crosses the visible collection page. */
+        function advanceFeaturedProperty() {
+            propertyAdvanceTimer = null;
+            if (!canAdvanceProperty()) return;
+            const nextIndex = wrapIndex(selectedPropertyIndex + 1, config.content.properties.length);
+            if (thumbnailButtons[nextIndex].hidden) thumbnailStart = nextIndex;
+            selectProperty(nextIndex, true);
+        }
+
+        /** Return the structured CTA configuration for each static control. */
+        function getButtonConfigs() {
+            const buttons = config.content.buttons;
+            return {
+                'request-button': buttons.cta,
+                'explore-button': buttons.explore,
+                'collection-previous': buttons.collectionPrevious,
+                'collection-next': buttons.collectionNext,
+                'gallery-previous': buttons.galleryPrevious,
+                'gallery-next': buttons.galleryNext,
+                'form-back': config.content.form.backCta,
+                'submit-button': config.content.form.submitCta,
+                'browse-button': config.content.confirmation.browseCta,
+                'open-privacy': config.content.form.consent.privacyCta,
+                'close-privacy': config.content.privacy.closeCta,
+                'back-to-form': config.content.privacy.backCta,
+                'privacy-policy-link': config.content.privacy.policyCta,
+                'privacy-terms-link': config.content.privacy.termsCta
+            };
+        }
+
+        /**
+         * Assign plain text without interpreting configuration as markup.
+         * @param {string} id - Content element ID.
+         * @param {string} value - Configured display copy.
+         */
+        function setText(id, value) {
+            const element = document.getElementById(id);
+            element.textContent = value;
+            if (element.dataset.motionLabel) {
+                element.removeAttribute('aria-label');
+                delete element.dataset.motionLabel;
+            }
+        }
+
+        /**
+         * Resolve configured plain-text placeholders.
+         * @param {string} template - Copy with named placeholders.
+         * @param {Object} values - Placeholder values.
+         * @returns {string} Resolved copy.
+         */
+        function formatText(template, values) {
+            return template.replace(/\{(\w+)\}/g, (match, key) =>
+                Object.prototype.hasOwnProperty.call(values, key) ? String(values[key]) : match
+            );
+        }
+
+        /**
+         * Wrap indices in either direction using the actual collection length.
+         * @param {number} value - Proposed index.
+         * @param {number} length - Collection length.
+         * @returns {number} Wrapped index.
+         */
+        function wrapIndex(value, length) {
+            return ((value % length) + length) % length;
+        }
+
+        /** Return the selected configured property. */
+        function getSelectedProperty() {
+            return config.content.properties[selectedPropertyIndex];
+        }
+
+        /** Render a full looping thumbnail window independently of the featured home. */
+        function renderThumbnailPage() {
+            const total = thumbnailButtons.length;
+            const count = Math.min(config.media.carousel.visibleItems, total);
+            const visible = Array.from({ length: count }, (_, slot) => wrapIndex(thumbnailStart + slot, total));
+            const visibleSet = new Set(visible);
+            thumbnailButtons.forEach((button, index) => {
+                button.hidden = !visibleSet.has(index);
+                button.setAttribute('aria-pressed', String(index === selectedPropertyIndex));
+            });
+            const order = visible.concat(thumbnailButtons.map((_, index) => index).filter(index => !visibleSet.has(index)));
+            const orderedButtons = order.map(index => thumbnailButtons[index]);
+            const picker = document.getElementById('property-picker');
+            if (orderedButtons.some((button, index) => picker.children[index] !== button)) {
+                picker.replaceChildren(...orderedButtons);
+            }
+            document.getElementById('collection-navigation').hidden = total <= count;
+            setText('collection-status', formatText(config.content.accessibility.visibleProperties, {
+                positions: visible.map(index => index + 1).join(', '),
+                total: total
+            }));
+        }
+
+        /**
+         * Populate selected-property details, destinations, and lead context.
+         * @param {number} direction - Image transition direction.
+         */
+        function renderSelectedProperty(direction = 1) {
+            const property = getSelectedProperty();
+            document.getElementById('ad-container').dataset.selectedProperty = property.id;
+            setText('property-title', property.title);
+            setText('property-location', property.location);
+            setText('property-price', property.price);
+            const facts = document.getElementById('property-facts');
+            facts.replaceChildren();
+            property.facts.forEach(fact => {
+                const wrapper = document.createElement('div');
+                wrapper.className = 'property-fact';
+                const value = document.createElement('strong');
+                value.textContent = fact.value;
+                const label = document.createElement('span');
+                label.textContent = fact.label;
+                wrapper.append(value, label);
+                facts.appendChild(wrapper);
+            });
+            const explore = document.getElementById('explore-button');
+            explore.href = property.url;
+            explore.setAttribute('aria-label', formatText(config.content.accessibility.exploreLabel, { title: property.title }));
+            setText('form-context', property.title + config.content.property.contextSeparator + property.price);
+            renderGallery(direction);
+            renderConfirmationContext();
+        }
+
+        /**
+         * Render the selected property's actual image, label, count, and crop.
+         * @param {number} direction - Previous or next image transition direction.
+         */
+        function renderGallery(direction = 1) {
+            const property = getSelectedProperty();
+            const index = wrapIndex(imageIndices[selectedPropertyIndex], property.images.length);
+            imageIndices[selectedPropertyIndex] = index;
+            const photo = property.images[index];
+            transitionGalleryImage(photo, direction);
+            const gallery = document.getElementById('gallery');
+            gallery.setAttribute('aria-label', formatText(config.content.accessibility.galleryLabel, { title: property.title }));
+            gallery.setAttribute('role', 'group');
+            setText('gallery-label', photo.label);
+            const counters = { current: index + 1, total: property.images.length };
+            setText('gallery-counter', formatText(config.content.property.imageCounter, counters));
+            document.getElementById('gallery-counter').setAttribute('aria-label', formatText(config.content.accessibility.galleryCounter, counters));
+            const previous = document.getElementById('gallery-previous');
+            const next = document.getElementById('gallery-next');
+            previous.hidden = next.hidden = property.images.length < 2;
+            previous.setAttribute('aria-label', formatText(config.content.accessibility.galleryPrevious, { title: property.title }));
+            next.setAttribute('aria-label', formatText(config.content.accessibility.galleryNext, { title: property.title }));
+            if (currentState === 'initial') {
+                revealElement(document.getElementById('gallery-label'), 0, 4);
+                revealElement(document.getElementById('gallery-counter'), config.animations.contentStagger, 4);
+            }
+        }
+
+        /** Use captured submission context for confirmation, including after form reset. */
+        function renderConfirmationContext() {
+            const property = submittedProperty || getSelectedProperty();
+            setText('confirmation-address', property.title);
+            setText('confirmation-location', property.location);
+        }
+
+        /**
+         * Page the collection without changing the selected property or photo.
+         * @param {number} direction - Previous or next direction.
+         */
+        function pageProperties(direction) {
+            const total = config.content.properties.length;
+            if (total <= config.media.carousel.visibleItems) return;
+            const previousStart = thumbnailStart;
+            thumbnailStart = wrapIndex(thumbnailStart + direction * config.media.carousel.pageStep, total);
+            renderThumbnailPage();
+            animateThumbnailPage(direction);
+            track('collection_paged', { from: previousStart, to: thumbnailStart, propertyId: getSelectedProperty().id });
+            schedulePropertyAdvance();
+        }
+
+        /**
+         * Select a property and preserve photo positions for properties already visited.
+         * @param {number} index - Configured property index.
+         * @param {boolean} automatic - Whether the countdown initiated this selection.
+         */
+        function selectProperty(index, automatic = false) {
+            if (index === selectedPropertyIndex) return;
+            const previousId = getSelectedProperty().id;
+            const direction = automatic || index > selectedPropertyIndex ? 1 : -1;
+            const pageChanged = thumbnailButtons[wrapIndex(index, config.content.properties.length)].hidden;
+            selectedPropertyIndex = wrapIndex(index, config.content.properties.length);
+            renderThumbnailPage();
+            renderSelectedProperty(direction);
+            if (pageChanged) animateThumbnailPage(direction);
+            animatePropertyCopy();
+            animateElement(thumbnailButtons[selectedPropertyIndex].querySelector('.thumbnail-frame'), [
+                { transform: 'scale(0.96)' },
+                { transform: 'scale(1.025)', offset: 0.6 },
+                { transform: 'scale(1)' }
+            ], { duration: config.animations.contentDuration, easing: config.animations.springEasing });
+            track(automatic ? 'property_auto_advanced' : 'property_selected', { from: previousId, propertyId: getSelectedProperty().id });
+            schedulePropertyAdvance();
+        }
+
+        /**
+         * Change only the selected property's gallery image.
+         * @param {number} direction - Previous or next direction.
+         */
+        function stepGallery(direction) {
+            const property = getSelectedProperty();
+            imageIndices[selectedPropertyIndex] = wrapIndex(imageIndices[selectedPropertyIndex] + direction, property.images.length);
+            renderGallery(direction);
+            track('gallery_changed', { propertyId: property.id, imageIndex: imageIndices[selectedPropertyIndex] });
+            schedulePropertyAdvance();
+        }
+
+        /**
+         * Update state visibility, focus, and accessibility with one persistent header.
+         * @param {string} newState - initial, formActive, or confirmation.
+         * @param {boolean} moveFocus - Whether focus should move to the new screen.
+         */
+        function setState(newState, moveFocus = true) {
+            const views = Array.from(document.querySelectorAll('[data-view]'));
+            if (!views.some(view => view.dataset.view === newState)) newState = 'initial';
+            if (newState === currentState) return;
+            if (!document.getElementById('privacy-overlay').hidden) closePrivacy(false, false);
+            const previousState = currentState;
+            currentState = newState;
+            document.getElementById('ad-container').dataset.state = newState;
+            views.forEach(view => {
+                const inactive = view.dataset.view !== newState;
+                view.inert = inactive;
+                view.setAttribute('aria-hidden', String(inactive));
+                if (!inactive) view.scrollTop = 0;
+            });
+            if (newState === 'confirmation') renderConfirmationContext();
+            if (previousState !== null) animateScreenChange(previousState, newState);
+            schedulePropertyAdvance();
+            if (moveFocus) {
+                const target = newState === 'formActive' ? 'form-back' :
+                    newState === 'confirmation' ? 'browse-button' : 'request-button';
+                document.getElementById(target).focus({ preventScroll: true });
+            }
+            if (previousState !== null) track('state_changed', { from: previousState, to: newState, propertyId: getSelectedProperty().id });
+            console.log('[STATE] Changed from', previousState, 'to', newState);
+        }
+
+        /**
+         * Route visible controls to their configured actions.
+         * @param {MouseEvent} event - Delegated click event.
+         */
+        function handleActionClick(event) {
+            const button = event.target.closest('[data-action]');
+            if (!button || button.disabled || button.closest('[inert]')) return;
+            if (button.dataset.action === 'select-property') {
+                if (suppressPickerClick && event.detail !== 0) {
+                    event.preventDefault();
+                    suppressPickerClick = false;
+                    return;
+                }
+                selectProperty(Number(button.dataset.propertyIndex));
+                return;
+            }
+            if (button.dataset.action === 'submit') return;
+            const buttonConfig = getButtonConfigs()[button.id];
+            if (!buttonConfig) return;
+            event.preventDefault();
+            if (button.closest('#privacy-overlay') && buttonConfig.action === 'externalLink') {
+                track('privacy_link_clicked', { link: button.dataset.action, propertyId: getSelectedProperty().id });
+            } else if (['openForm', 'closeForm', 'browseProperties', 'externalLink'].includes(buttonConfig.action)) {
+                track('cta_clicked', { button: button.dataset.action, action: buttonConfig.action, propertyId: getSelectedProperty().id });
+            }
+            executeAction(buttonConfig);
+        }
+
+        /**
+         * Execute structured CTAs without applying clickTag to secondary listing links.
+         * @param {Object} settings - Configured button action and destination.
+         */
+        function executeAction(settings) {
+            if (settings.action === 'previousProperties') return pageProperties(-1);
+            if (settings.action === 'nextProperties') return pageProperties(1);
+            if (settings.action === 'previousImage') return stepGallery(-1);
+            if (settings.action === 'nextImage') return stepGallery(1);
+            if (settings.action === 'openForm') return setState('formActive');
+            if (settings.action === 'openPrivacy') return openPrivacy();
+            if (settings.action === 'closePrivacy') return closePrivacy();
+            if (settings.action === 'closeForm' || settings.action === 'browseProperties') {
+                if (!isSubmitting) setState('initial');
+            } else if (settings.action === 'externalLink') {
+                const fallbackUrl = settings.url || getSelectedProperty().url;
+                const override = window.clickTag && window.clickTag !== 'http://www.google.com' ? window.clickTag : null;
+                const url = settings.useClickTag ? (override || fallbackUrl) : fallbackUrl;
+                window.open(url, '_blank', 'noopener,noreferrer');
+            }
+        }
+
+        /**
+         * Navigate property choices with arrow, Home, and End keys.
+         * @param {KeyboardEvent} event - Picker keyboard event.
+         */
+        function handlePickerKeydown(event) {
+            const button = event.target.closest('[data-property-index]');
+            if (!button) return;
+            const current = Number(button.dataset.propertyIndex);
+            let next;
+            if (event.key === 'ArrowLeft') next = wrapIndex(current - 1, thumbnailButtons.length);
+            if (event.key === 'ArrowRight') next = wrapIndex(current + 1, thumbnailButtons.length);
+            if (event.key === 'Home') next = 0;
+            if (event.key === 'End') next = thumbnailButtons.length - 1;
+            if (next === undefined) return;
+            event.preventDefault();
+            if (thumbnailButtons[next].hidden) thumbnailStart = next;
+            selectProperty(next);
+            renderThumbnailPage();
+            thumbnailButtons[next].focus();
+        }
+
+        /**
+         * Navigate gallery photos without changing the property collection.
+         * @param {KeyboardEvent} event - Gallery keyboard event.
+         */
+        function handleGalleryKeydown(event) {
+            if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+            event.preventDefault();
+            stepGallery(event.key === 'ArrowRight' ? 1 : -1);
+        }
+
+        /** Bind pointer gestures while allowing vertical publisher-page scrolling. */
+        function initializePickerGestures() {
+            const picker = document.getElementById('property-picker');
+            picker.addEventListener('pointerdown', beginPickerGesture);
+            picker.addEventListener('pointermove', movePickerGesture, { passive: false });
+            picker.addEventListener('pointerup', endPickerGesture);
+            picker.addEventListener('pointercancel', cancelPickerGesture);
+        }
+
+        /**
+         * Start touch or pen tracking and clear previous compatibility-click suppression.
+         * @param {PointerEvent} event - Pointer press.
+         */
+        function beginPickerGesture(event) {
+            suppressPickerClick = false;
+            if (event.pointerType === 'mouse' || !event.isPrimary) return;
+            pickerGesture = { id: event.pointerId, x: event.clientX, y: event.clientY, horizontal: false };
+        }
+
+        /**
+         * Capture horizontal movement while leaving vertical scrolling alone.
+         * @param {PointerEvent} event - Pointer movement.
+         */
+        function movePickerGesture(event) {
+            if (!pickerGesture || pickerGesture.id !== event.pointerId) return;
+            const dx = Math.abs(event.clientX - pickerGesture.x);
+            const dy = Math.abs(event.clientY - pickerGesture.y);
+            const settings = config.media.carousel;
+            if (dx > settings.gestureSlop && dx > dy * settings.axisRatio) {
+                pickerGesture.horizontal = true;
+                const picker = document.getElementById('property-picker');
+                if (event.isTrusted && !picker.hasPointerCapture(event.pointerId)) picker.setPointerCapture(event.pointerId);
+                if (event.cancelable) event.preventDefault();
+            }
+        }
+
+        /**
+         * Page once after a swipe and suppress its compatibility click.
+         * @param {PointerEvent} event - Pointer release.
+         */
+        function endPickerGesture(event) {
+            if (!pickerGesture || pickerGesture.id !== event.pointerId) return;
+            const dx = event.clientX - pickerGesture.x;
+            const dy = event.clientY - pickerGesture.y;
+            const settings = config.media.carousel;
+            const swipe = pickerGesture.horizontal && Math.abs(dx) >= settings.swipeThreshold &&
+                Math.abs(dx) > Math.abs(dy) * settings.axisRatio;
+            pickerGesture = null;
+            if (swipe) {
+                suppressPickerClick = true;
+                if (event.cancelable) event.preventDefault();
+                pageProperties(dx < 0 ? 1 : -1);
+            }
+        }
+
+        /** Discard an interrupted gesture. */
+        function cancelPickerGesture() {
+            pickerGesture = null;
+            suppressPickerClick = false;
+        }
+
+        /**
+         * Track the first actual field focus without prospect values.
+         * @param {FocusEvent} event - Form focus event.
+         */
+        function handleFormFocus(event) {
+            if (!event.target.matches('input, textarea') || formStarted) return;
+            formStarted = true;
+            track('form_started', { propertyId: getSelectedProperty().id });
+        }
+
+        /**
+         * Clear prior feedback while editing; reveal fresh errors only after blur.
+         * @param {InputEvent} event - Field edit event.
+         */
+        function handleFormInput(event) {
+            if (!event.target.matches('input[id^="field-"], textarea')) return;
+            const input = event.target;
+            const key = input.id.replace('field-', '');
+            input.setAttribute('aria-invalid', 'false');
+            input.classList.toggle('is-filled', input.value.trim().length > 0);
+            input.title = '';
+            setText('error-' + key, '');
+            document.getElementById('warning-' + key).hidden = true;
+            if (!document.querySelector('#lead-form [aria-invalid="true"]')) setFormFeedback('');
+            updateSubmitButton();
+        }
+
+        /**
+         * Format optional phone input on blur and reveal visited-field feedback.
+         * @param {FocusEvent} event - Field blur event.
+         */
+        function handleFormBlur(event) {
+            if (!event.target.matches('input[id^="field-"], textarea')) return;
+            if (event.target.id === 'field-mobile' && config.content.form.fields.mobile.formatUS) {
+                event.target.value = formatPhoneInput(event.target.value);
+            }
+            touchedFields.add(event.target.id);
+            validateForm(false);
+            updateSubmitButton();
+        }
+
+        /**
+         * Format domestic phone values without rewriting international input.
+         * @param {string} value - Entered phone value.
+         * @returns {string} Display-formatted value.
+         */
+        function formatPhoneInput(value) {
+            const digits = value.replace(/\D/g, '');
+            const domestic = digits.length === 11 && digits.startsWith('1') ? digits.slice(1) : digits;
+            if (domestic.length !== 10) return value;
+            return (digits.length === 11 ? '+1 ' : '') +
+                '(' + domestic.slice(0, 3) + ') ' + domestic.slice(3, 6) + '-' + domestic.slice(6);
+        }
+
+        /**
+         * Check a field without revealing feedback while the visitor types.
+         * @param {string} key - Configured form field key.
+         * @returns {boolean} Whether the current value satisfies its configured rules.
+         */
+        function isFieldValueValid(key) {
+            const settings = config.content.form.fields[key];
+            const value = document.getElementById('field-' + key).value.trim();
+            let valid = !settings.required || value.length > 0;
+            if (value && key === 'email') valid = valid && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+            if (value && key === 'mobile') {
+                const digits = value.replace(/\D/g, '');
+                valid = valid && /^[+\d\s().-]+$/.test(value) && digits.length >= settings.minDigits && digits.length <= settings.maxDigits;
+            }
+            return valid && value.length <= settings.maxLength;
+        }
+
+        /**
+         * Validate required inputs, explicit consent, and optional phone constraints from config.
+         * @param {boolean} showAll - Whether every invalid field should be exposed.
+         * @returns {Array<string>} Invalid field identifiers without prospect values.
+         */
+        function validateForm(showAll = false) {
+            const errors = [];
+            Object.keys(config.content.form.fields).forEach(key => {
+                const input = document.getElementById('field-' + key);
+                const settings = config.content.form.fields[key];
+                const value = input.value.trim();
+                const valid = isFieldValueValid(key);
+                if (!valid) errors.push(key);
+                const showError = !valid && (showAll || touchedFields.has(input.id));
+                input.setAttribute('aria-invalid', String(showError));
+                input.classList.toggle('is-filled', value.length > 0);
+                setText('error-' + key, showError ? settings.error : '');
+                const warning = document.getElementById('warning-' + key);
+                const wasHidden = warning.hidden;
+                warning.hidden = !showError;
+                if (showError && wasHidden) {
+                    animateElement(warning, [
+                        { opacity: 0, transform: 'scale(0.75)' },
+                        { opacity: 1, transform: 'scale(1)' }
+                    ], { duration: config.animations.validationDuration, easing: config.animations.springEasing });
+                }
+                input.title = showError ? settings.error : '';
+            });
+            const checkbox = document.getElementById('consent-checkbox');
+            const missingConsent = config.content.form.consent.required && !checkbox.checked;
+            if (missingConsent) errors.push('consent');
+            const consentError = missingConsent && showAll;
+            checkbox.setAttribute('aria-invalid', String(consentError));
+            setText('error-consent', consentError ? config.content.form.consent.error : '');
+            isFormValid = errors.length === 0;
+            return errors;
+        }
+
+        /**
+         * Show recoverable form feedback while retaining entered values.
+         * @param {string} message - Configured copy or an empty string.
+         */
+        function setFormFeedback(message) {
+            const feedback = document.getElementById('form-feedback');
+            feedback.textContent = message;
+            feedback.hidden = !message;
+        }
+
+        /**
+         * Reveal a field within the form scroller without scrolling the publisher page.
+         * @param {HTMLElement} input - Invalid or focused form control.
+         */
+        function revealFormField(input) {
+            const scroller = document.getElementById('form-fields');
+            const field = input.closest('.form-field');
+            const bounds = scroller.getBoundingClientRect();
+            const target = field.getBoundingClientRect();
+            if (target.bottom > bounds.bottom) scroller.scrollTop += target.bottom - bounds.bottom;
+            if (target.top < bounds.top) scroller.scrollTop -= bounds.top - target.top;
+        }
+
+        /** Gate submission on valid fields and consent, and distinguish a pending request. */
+        function updateSubmitButton() {
+            const button = document.getElementById('submit-button');
+            const wasDisabled = button.disabled;
+            const checkbox = document.getElementById('consent-checkbox');
+            isFormValid = Object.keys(config.content.form.fields).every(isFieldValueValid) &&
+                (!config.content.form.consent.required || checkbox.checked);
+            button.disabled = isSubmitting || !isFormValid;
+            button.setAttribute('aria-disabled', String(button.disabled));
+            button.classList.toggle('is-submitting', isSubmitting);
+            document.getElementById('consent-row').classList.toggle('is-checked', checkbox.checked);
+            button.querySelector('span').textContent = isSubmitting ?
+                config.content.form.submitCta.pendingText : config.content.form.submitCta.text;
+            document.getElementById('form-back').disabled = isSubmitting;
+            document.getElementById('open-privacy').disabled = isSubmitting;
+            document.getElementById('lead-form').setAttribute('aria-busy', String(isSubmitting));
+            document.querySelectorAll('#lead-form input, #lead-form textarea').forEach(input => {
+                input.disabled = isSubmitting;
+            });
+            if (wasDisabled && !button.disabled) {
+                revealElement(button, 0, 2, config.animations.controlDuration);
+            }
+        }
+
+        /** Collect lead-only values and retain the full name for backend mapping. */
+        function collectFormData() {
+            const fullName = document.getElementById('field-name').value.trim();
+            const parts = fullName.split(/\s+/);
+            return {
+                firstName: parts[0] || '',
+                lastName: parts.slice(1).join(' '),
+                fullName: fullName,
+                email: document.getElementById('field-email').value.trim(),
+                mobile: document.getElementById('field-mobile').value.trim(),
+                message: document.getElementById('field-message').value.trim(),
+                consent: document.getElementById('consent-checkbox').checked,
+                consentTimestamp: consentAcceptedAt,
+                consentVersion: config.content.privacy.noticeVersion,
+                privacyPolicyUrl: config.content.privacy.policyCta.url,
+                termsOfUseUrl: config.content.privacy.termsCta.url
+            };
+        }
+
+        /**
+         * Complete valid forms with an optional webhook, then show confirmation.
+         * @param {SubmitEvent} event - Native form submission.
+         */
+        async function submitForm(event) {
+            event.preventDefault();
+            if (isSubmitting || !document.getElementById('privacy-overlay').hidden) return;
+            const errors = validateForm(true);
+            if (!isFormValid) {
+                errors.forEach(key => touchedFields.add(key === 'consent' ? 'consent-checkbox' : 'field-' + key));
+                setFormFeedback('');
+                const firstInvalidField = document.getElementById(errors[0] === 'consent' ? 'consent-checkbox' : 'field-' + errors[0]);
+                firstInvalidField.focus({ preventScroll: true });
+                if (errors[0] !== 'consent') revealFormField(firstInvalidField);
+                track('form_error', { reason: 'validation', fields: errors, propertyId: getSelectedProperty().id });
+                return;
+            }
+
+            const webhook = config.lead.webhook;
+            const hasWebhook = webhook.enabled && !!webhook.url && webhook.url !== 'YOUR_WEBHOOK_URL_HERE';
+
+            const property = getSelectedProperty();
+            const formData = collectFormData();
+            const payload = {
+                ...webhook.payloadTemplate,
+                ...formData,
+                mobile: formData.mobile || null,
+                timestamp: new Date().toISOString(),
+                campaign: config.lead.webhook.metadata.campaign,
+                adUnit: config.lead.webhook.metadata.adUnit,
+                source: config.lead.webhook.metadata.source,
+                propertyId: property.id,
+                propertyAddress: property.title,
+                listingUrl: property.url
+            };
+            isSubmitting = true;
+            updateSubmitButton();
+            setFormFeedback('');
+            const controller = hasWebhook ? new AbortController() : null;
+            const timeout = hasWebhook ? setTimeout(() => controller.abort(), webhook.timeout) : null;
+
+            try {
+                if (hasWebhook) {
+                    const response = await fetch(webhook.url, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload),
+                        signal: controller.signal
+                    });
+                    if (!response.ok) throw new Error('submission_failed');
+                }
+                submittedProperty = property;
+                track('form_submitted', {
+                    propertyId: property.id,
+                    webhookSent: hasWebhook,
+                    fields: {
+                        name: !!formData.fullName,
+                        email: !!formData.email,
+                        mobile: !!formData.mobile,
+                        message: !!formData.message,
+                        consent: !!formData.consent
+                    }
+                });
+                document.getElementById('lead-form').reset();
+                consentAcceptedAt = null;
+                touchedFields.clear();
+                formStarted = false;
+                validateForm(false);
+                setState('confirmation');
+                console.log('[FORM] Submission completed');
+            } catch (error) {
+                const reason = error.name === 'AbortError' ? 'timeout' : 'request_failed';
+                setFormFeedback(config.content.form.messages.submissionError);
+                track('form_error', { reason: reason, propertyId: property.id });
+                console.warn('[FORM] Submission failed', reason);
+            } finally {
+                clearTimeout(timeout);
+                isSubmitting = false;
+                updateSubmitButton();
+            }
+        }
+
+        /**
+         * Track configured events and image pixels without prospect input values.
+         * @param {string} eventName - Configured snake_case event identifier.
+         * @param {Object} payload - Non-personal interaction context.
+         */
+        function track(eventName, payload = {}) {
+            if (!config.tracking.enabled) return;
+            const event = config.tracking.events[eventName];
+            if (!event || !event.enabled) return;
+            const eventData = {
+                event: event.name,
+                category: event.category,
+                timestamp: new Date().toISOString(),
+                ...payload
+            };
+            console.log('[TRACKING]', eventData);
+
+            if (event.convPixel) fireConversionPixel(event.convPixel);
+            if (event.rtPixel) fireRetargetingPixel(event.rtPixel);
+
+            if (typeof window.gtag === 'function') window.gtag('event', event.name, eventData);
+        }
+    </script>
+</body>
+</html>

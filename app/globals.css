@@ -1,0 +1,230 @@
+@import "tailwindcss";
+
+/* The ad bundles under public/ are built with Tailwind themselves and their
+   markup carries arbitrary values like bg-[url(images/bg.png)]. Without this,
+   Tailwind scans them as source, emits those utilities into this stylesheet,
+   and the build dies trying to resolve the ads' image paths from app/. */
+@source not "../public";
+
+/* ---------- Tokens ---------- */
+:root {
+  --bg: #efeee9;
+  --ink: #110b3b;
+  --brand: #2414ae;
+  --on-brand: #f4f2ff;
+  --muted: #4a4668;
+  --line: rgba(17, 11, 59, 0.18);
+  --card: #f8f7f3;
+  --chrome: #e2e1da;
+  --flap: rgba(36, 20, 174, 0.09);
+  /* Deep enough that white label text clears WCAG AA (4.5:1). The old
+     #ff4f1f only reached 3.3:1 against white, so it cannot come back
+     without the label going dark again. */
+  --signal: #d93a12;
+  /* Hover shade for signal buttons: the CTA deepens instead of lifting. */
+  --signal-deep: #c23210;
+  --on-signal: #ffffff;
+  color-scheme: light;
+}
+
+/* Dark: follows the OS unless the visitor picked a theme with the toggle. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0a0720;
+    --ink: #ece9ff;
+    --brand: #a99cff;
+    --on-brand: #0a0720;
+    --muted: #a5a0c8;
+    --line: rgba(169, 156, 255, 0.24);
+    --card: #120e30;
+    --chrome: #1a1542;
+    --flap: rgba(169, 156, 255, 0.13);
+    --signal: #d53d14;
+    --signal-deep: #bd3410;
+    --on-signal: #ffffff;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0a0720;
+  --ink: #ece9ff;
+  --brand: #a99cff;
+  --on-brand: #0a0720;
+  --muted: #a5a0c8;
+  --line: rgba(169, 156, 255, 0.24);
+  --card: #120e30;
+  --chrome: #1a1542;
+  --flap: rgba(169, 156, 255, 0.13);
+  --signal: #d53d14;
+  --signal-deep: #bd3410;
+  --on-signal: #ffffff;
+  color-scheme: dark;
+}
+
+@theme inline {
+  --color-paper: var(--bg);
+  --color-ink: var(--ink);
+  --color-brand: var(--brand);
+  --color-on-brand: var(--on-brand);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-card: var(--card);
+  --color-chrome: var(--chrome);
+  --color-signal: var(--signal);
+  --color-signal-deep: var(--signal-deep);
+  --color-on-signal: var(--on-signal);
+  --font-sans: var(--font-geist-sans), system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+  --font-display: "Archivo Variable", "Arial Narrow", sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 72px;
+}
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+::selection {
+  background: var(--brand);
+  color: var(--on-brand);
+}
+:focus-visible {
+  outline: 2px solid var(--signal);
+  outline-offset: 3px;
+}
+
+/* ---------- CTA arrow ---------- */
+/* Hovering a signal button slings the arrow up and to the right: it loads
+   back a touch, fires past its mark, then wobbles down to rest — a catapult,
+   not a slide. On mouse-out the transition below eases it home. */
+@keyframes arrow-sling {
+  0% {
+    translate: 0 0;
+  }
+  16% {
+    translate: -2px 2px;
+  }
+  44% {
+    translate: 8px -8px;
+  }
+  62% {
+    translate: 2px -2px;
+  }
+  78% {
+    translate: 5.5px -5.5px;
+  }
+  90% {
+    translate: 3.2px -3.2px;
+  }
+  100% {
+    translate: 4px -4px;
+  }
+}
+.cta-arrow {
+  translate: 0 0;
+  transition: translate 0.3s cubic-bezier(0.33, 1, 0.68, 1);
+}
+.group:hover .cta-arrow {
+  animation: arrow-sling 0.72s cubic-bezier(0.33, 1, 0.68, 1) both;
+}
+
+/* ---------- Display type ---------- */
+.display {
+  font-family: var(--font-display);
+  font-stretch: 62%;
+  font-weight: 800;
+  text-transform: uppercase;
+  line-height: 0.88;
+  letter-spacing: -0.012em;
+  word-spacing: 0.1em;
+}
+
+.label {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+/* ---------- Hero headline ---------- */
+.hero {
+  container-type: inline-size;
+}
+.hero-title {
+  font-size: clamp(2.6rem, 15.6cqi, 9rem);
+}
+@media (min-width: 1024px) {
+  .hero-title {
+    font-size: clamp(4.5rem, 8.6cqi, 11rem);
+    white-space: nowrap;
+  }
+}
+
+/* One split-flap tile */
+.flap {
+  position: relative;
+  display: inline-block;
+  padding: 0.02em 0.045em 0;
+  margin-right: 0.022em;
+  border-radius: 0.05em;
+  background: var(--flap);
+  transform-origin: 50% 50%;
+  backface-visibility: hidden;
+}
+.flap::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: max(1px, 0.014em);
+  background: var(--bg);
+}
+.flap-row {
+  perspective: 900px;
+}
+
+/* ---------- Ticker ---------- */
+@keyframes ticker {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+.ticker-track {
+  animation: ticker 38s linear infinite;
+}
+.ticker:hover .ticker-track {
+  animation-play-state: paused;
+}
+
+/* ---------- Browser tabs ---------- */
+.tabstrip {
+  scrollbar-width: none;
+}
+.tabstrip::-webkit-scrollbar {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .ticker-track {
+    animation: none;
+  }
+  body {
+    transition: none;
+  }
+  .cta-arrow,
+  .group:hover .cta-arrow {
+    animation: none;
+    transition: none;
+  }
+}
