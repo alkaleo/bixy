@@ -70,7 +70,7 @@ const ICONS: Record<AdIcon, React.ReactNode> = {
  * how this shipped broken once.
  */
 const demoSrc = (id: string) =>
-  process.env.NODE_ENV === "production" ? `/demos/${id}` : `/demos/${id}/index.html`;
+  process.env.NODE_ENV === "production" ? `/demos/${id}/` : `/demos/${id}/index.html`;
 
 function Bar({ w, h = 8, strong = false }: { w: string; h?: number; strong?: boolean }) {
   return (
