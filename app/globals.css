@@ -10,8 +10,13 @@
 :root {
   --bg: #efeee9;
   --ink: #110b3b;
+  /* Two jobs, two tokens. --brand is ink: it has to LIGHTEN on a dark page or
+     it drops to 1.68:1 and vanishes. --brand-surface is a large fill: it has
+     to STAY DEEP on a dark page or it glares. One token cannot do both. */
   --brand: #2414ae;
   --on-brand: #f4f2ff;
+  --brand-surface: #2414ae;
+  --on-brand-surface: #f4f2ff;
   --muted: #4a4668;
   --line: rgba(17, 11, 59, 0.18);
   --card: #f8f7f3;
@@ -34,6 +39,10 @@
     --ink: #ece9ff;
     --brand: #a99cff;
     --on-brand: #0a0720;
+    /* Lifted just enough to read as its own block against #0a0720 (2.7:1)
+       without becoming the lavender slab that a lightened --brand gave. */
+    --brand-surface: #4a3ad8;
+    --on-brand-surface: #ffffff;
     --muted: #a5a0c8;
     --line: rgba(169, 156, 255, 0.24);
     --card: #120e30;
@@ -50,6 +59,8 @@
   --ink: #ece9ff;
   --brand: #a99cff;
   --on-brand: #0a0720;
+  --brand-surface: #4a3ad8;
+  --on-brand-surface: #ffffff;
   --muted: #a5a0c8;
   --line: rgba(169, 156, 255, 0.24);
   --card: #120e30;
@@ -66,6 +77,8 @@
   --color-ink: var(--ink);
   --color-brand: var(--brand);
   --color-on-brand: var(--on-brand);
+  --color-brand-surface: var(--brand-surface);
+  --color-on-brand-surface: var(--on-brand-surface);
   --color-muted: var(--muted);
   --color-line: var(--line);
   --color-card: var(--card);
@@ -95,6 +108,71 @@ body {
 :focus-visible {
   outline: 2px solid var(--signal);
   outline-offset: 3px;
+}
+
+/* ---------- Duotone point icons ---------- */
+/* Two tones from one colour: a soft plate behind, the solid figure on top.
+   Hovering the card plays a short springy move per icon — Stripe's trick is
+   that the motion settles and stops, so it reads as a response, not a loop. */
+.pt-icon .duo-plate {
+  opacity: 0.16;
+}
+.pt-icon .duo-eye {
+  opacity: 0.38;
+}
+.pt-icon .duo-pupil,
+.pt-icon .duo-rays,
+.pt-icon .duo-ripple,
+.pt-icon .duo-cursor,
+.pt-icon .duo-bars rect {
+  transform-box: fill-box;
+  transition:
+    transform 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.4s ease;
+}
+.pt-icon .duo-pupil {
+  transform-origin: center;
+}
+.pt-icon .duo-rays {
+  opacity: 0.55;
+  transform-origin: center;
+}
+.pt-icon .duo-ripple {
+  opacity: 0;
+  transform-origin: center;
+}
+.pt-icon .duo-cursor {
+  transform-origin: top left;
+}
+.pt-icon .duo-bars rect {
+  transform-origin: bottom;
+}
+
+/* Attention: the pupil flicks to the side and the rays flare. */
+.group:hover .pt-icon .duo-pupil {
+  transform: translateX(3.5px);
+}
+.group:hover .pt-icon .duo-rays {
+  opacity: 1;
+  transform: translateY(-1.5px) scale(1.08);
+}
+/* Act: the cursor presses in and a ring pulses out from the tap. */
+.group:hover .pt-icon .duo-cursor {
+  transform: translate(2.5px, 2.5px);
+}
+.group:hover .pt-icon .duo-ripple {
+  opacity: 0.75;
+  transform: scale(1.35);
+}
+/* Boost: the bars grow, each a beat behind the last. */
+.group:hover .pt-icon .duo-bars rect {
+  transform: scaleY(1.22);
+}
+.group:hover .pt-icon .duo-bars rect:nth-child(2) {
+  transition-delay: 0.06s;
+}
+.group:hover .pt-icon .duo-bars rect:nth-child(3) {
+  transition-delay: 0.12s;
 }
 
 /* ---------- CTA arrow ---------- */
@@ -226,5 +304,8 @@ body {
   .group:hover .cta-arrow {
     animation: none;
     transition: none;
+  }
+  .pt-icon * {
+    transition: none !important;
   }
 }

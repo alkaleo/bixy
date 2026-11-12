@@ -4,12 +4,7 @@ import { BrowserDemo } from "./BrowserDemo";
 export function Hero() {
   return (
     <section className="border-b border-line">
-      <div className="hero mx-auto max-w-[1440px] px-4 pt-6 pb-10 md:px-10 md:pt-8 md:pb-14">
-        <div className="flex items-center justify-between gap-4 pb-4">
-          <span className="label text-muted">01 / Interactive display ads</span>
-          <span className="label hidden text-muted sm:inline">300 × 600 and beyond</span>
-        </div>
-
+      <div className="hero mx-auto max-w-[1440px] px-4 pt-16 pb-10 md:px-10 md:pt-24 md:pb-14">
         <HeroTitle />
 
         <div className="mt-5 flex flex-wrap items-end justify-between gap-x-10 gap-y-3 md:mt-6">
@@ -33,7 +28,9 @@ export function Hero() {
           </p>
         </div>
 
-        <div id="examples" className="mx-auto mt-6 max-w-[1200px] md:mt-8">
+        {/* Full content width: a narrower mock than the text above it looked
+            like a mistake rather than a frame. */}
+        <div id="examples" className="mt-6 md:mt-8">
           <BrowserDemo />
         </div>
       </div>

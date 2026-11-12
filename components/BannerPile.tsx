@@ -189,12 +189,16 @@ export function BannerPile() {
   return (
     <div
       ref={wrapRef}
-      className="relative h-[340px] overflow-hidden border-y border-line bg-card select-none md:h-[440px]"
+      className="relative h-[340px] overflow-hidden bg-brand-surface text-on-brand-surface select-none md:h-[440px]"
     >
-      <span className="label absolute top-4 left-4 text-muted md:left-6">Static banners: ignored</span>
-      <span className="label absolute top-4 right-4 hidden text-muted sm:block md:right-6">
-        Drag them around
-      </span>
+      {/* The pile runs full-bleed, but these labels line up with the site's
+          content column like every other label on the page. */}
+      <div className="pointer-events-none absolute inset-x-0 top-10 md:top-14">
+        <div className="mx-auto flex max-w-[1440px] items-center justify-between px-4 md:px-10">
+          <span className="label text-on-brand-surface/70">Static banners: ignored</span>
+          <span className="label hidden text-on-brand-surface/70 sm:block">Drag them around</span>
+        </div>
+      </div>
       {items.map((it, i) =>
         it.hero ? (
           <div
@@ -224,10 +228,10 @@ export function BannerPile() {
               nodesRef.current[i] = n;
             }}
             aria-hidden="true"
-            className="absolute top-0 left-0 flex items-center justify-center rounded-[3px] border border-line bg-paper opacity-0 will-change-transform"
+            className="absolute top-0 left-0 flex items-center justify-center rounded-[3px] border border-on-brand-surface/15 bg-on-brand-surface/10 opacity-0 will-change-transform"
             style={{ width: it.w, height: it.h }}
           >
-            <span className="font-mono text-[9px] tracking-wider text-muted/70">{it.label}</span>
+            <span className="font-mono text-[9px] tracking-wider text-on-brand-surface/45">{it.label}</span>
           </div>
         ),
       )}

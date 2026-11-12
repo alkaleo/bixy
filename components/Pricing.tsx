@@ -24,7 +24,7 @@ export function Pricing() {
     <section id="pricing" className="border-b border-line">
       <div className="mx-auto max-w-[1440px] px-4 pt-16 md:px-10 md:pt-28">
         <div className="flex items-center justify-between pb-4">
-          <span className="label text-muted">03 / Pricing</span>
+          <span className="label text-muted">Pricing</span>
         </div>
         <Rule />
         <Rise>
@@ -40,10 +40,10 @@ export function Pricing() {
               delay={i * 0.1}
               className="border-line not-last:border-b md:not-last:border-r md:not-last:border-b-0"
             >
-              <article className="group flex h-full flex-col gap-10 px-1 py-9 transition-colors duration-300 hover:bg-brand hover:text-on-brand md:px-8 md:py-10">
+              <article className="group flex h-full flex-col gap-10 px-1 py-9 transition-colors duration-300 hover:bg-brand-surface hover:text-on-brand-surface md:px-8 md:py-10">
                 <div className="flex items-baseline justify-between gap-4">
                   <h3 className="display text-5xl md:text-7xl">{plan.name}</h3>
-                  <span className="label text-muted transition-colors duration-300 group-hover:text-on-brand">
+                  <span className="label text-muted transition-colors duration-300 group-hover:text-on-brand-surface">
                     0{i + 1}
                   </span>
                 </div>
@@ -72,7 +72,7 @@ export function Pricing() {
                   <div>
                     <p className="flex items-baseline gap-2">
                       <span className="display text-[clamp(5rem,12vw,9.5rem)]">$500</span>
-                      <span className="text-lg text-muted transition-colors duration-300 group-hover:text-on-brand">
+                      <span className="text-lg text-muted transition-colors duration-300 group-hover:text-on-brand-surface">
                         / month
                       </span>
                     </p>

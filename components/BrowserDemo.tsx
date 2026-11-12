@@ -208,7 +208,9 @@ export function BrowserDemo() {
         </div>
 
         {/* The ad slot: always exactly 300x600 */}
-        <div className="relative h-[600px] w-[300px] flex-none overflow-hidden rounded-md border border-line bg-white">
+        {/* No border or background here: every ad bundle draws its own, and
+            two stacked frames read as a mistake. */}
+        <div className="relative h-[600px] w-[300px] flex-none overflow-hidden rounded-md">
           <AnimatePresence mode="wait" initial={false}>
             <motion.iframe
               key={current.id}
