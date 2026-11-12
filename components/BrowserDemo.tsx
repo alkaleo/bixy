@@ -60,6 +60,18 @@ const ICONS: Record<AdIcon, React.ReactNode> = {
   ),
 };
 
+/**
+ * Where a category's ad actually answers, which is not the same path twice.
+ *
+ * `next dev` serves public/ literally, so it only answers the full filename.
+ * On Vercel the Next router owns .html paths and 404s this one, while the very
+ * same file answers at the extensionless path. Hard-coding either spelling
+ * ships a hero full of empty frames in the other environment, which is exactly
+ * how this shipped broken once.
+ */
+const demoSrc = (id: string) =>
+  process.env.NODE_ENV === "production" ? `/demos/${id}` : `/demos/${id}/index.html`;
+
 function Bar({ w, h = 8, strong = false }: { w: string; h?: number; strong?: boolean }) {
   return (
     <div
@@ -92,7 +104,7 @@ export function BrowserDemo() {
 
   useEffect(() => {
     let cancelled = false;
-    fetch(`/demos/${sel}/index.html`)
+    fetch(demoSrc(sel))
       .then((res) => {
         if (!cancelled) setFailedId((prev) => (res.ok ? (prev === sel ? null : prev) : sel));
       })
@@ -214,7 +226,7 @@ export function BrowserDemo() {
           <AnimatePresence mode="wait" initial={false}>
             <motion.iframe
               key={current.id}
-              src={`/demos/${current.id}/index.html`}
+              src={demoSrc(current.id)}
               title={`${current.label} interactive ad example, 300 by 600`}
               width={300}
               height={600}
@@ -242,7 +254,7 @@ export function BrowserDemo() {
                 ignored or filtered. Ours is a real, playable one.
               </p>
               <a
-                href={`/demos/${current.id}/index.html`}
+                href={demoSrc(current.id)}
                 target="_blank"
                 rel="noreferrer"
                 className="rounded-full bg-signal px-5 py-2.5 text-sm font-semibold text-on-signal"
